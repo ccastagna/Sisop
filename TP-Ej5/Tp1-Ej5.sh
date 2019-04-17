@@ -17,6 +17,7 @@ DIR="$2"
 DATE=`date "+%Y-%m-%d"`
 TIME=`date "+%H-%M-%S"`
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"/BackUps
+EXTENSIONFILES=""
 
 help(){
 	echo 'Uso: TP-Ej5 [OPTION...] [DIRECTORY]'
@@ -42,7 +43,7 @@ validateDirectory(){
         fi
 }
 
-validateExtension(){
+validateExtension1(){
 	FILESWITHEXTENSION=(`ls "$DIR"*."$1"`)
 	echo $FILESWITHEXTENSION
 	if [[ ! "$FILESWITHEXTENSION" || ${#FILESWITHEXTENSION[@]} -eq 0 ]]; then
@@ -51,6 +52,15 @@ validateExtension(){
         fi	       
 }
 
+
+validateExtension(){
+	EXT=$1
+	
+	if [[ -z `find "$DIR" -name *."$EXT" -print -quit` ]]; then
+                echo No hay archivos con esa extension en el directorio especificado
+                exit 1
+	fi
+}
 
 validateBackupDirectories(){
 	if [ ! -d "$SCRIPTDIR" ]; then
@@ -63,9 +73,11 @@ validateBackupDirectories(){
 }
 
 generateLogContent(){
-	echo usuario: $USER
-	echo fecha: $DATE
-	echo hora: $TIME
+	echo Usuario: $USER
+	echo Fecha: $DATE
+	echo Hora: $TIME
+	echo ""
+	echo Archivos:
 	for LINE in `tar -tf "$1".tar.gz` 
 	do
 	       echo "$LINE"
@@ -81,11 +93,13 @@ compressAll(){
 
 	case "$DIR" in 
 		/*)	
-			tar -czf "$TARFILENAME".tar.gz --absolute-names "$DIR"
+			tar -cf "$TARFILENAME".tar --absolute-names "$DIR"
 			;;
 		*)
-			tar -czf "$TARFILENAME".tar.gz "$DIR"
+			tar -cf "$TARFILENAME".tar "$DIR"
 	esac
+
+	gzip "$TARFILENAME".tar
 
 	validateBackupDirectories "Full"    
 
@@ -102,14 +116,17 @@ compressByExtension(){
 
         validateDirectory
 	validateExtension "$1"
-	
+
 	case "$DIR" in
                 /*)
-                        tar -czf "$TARFILENAME".tar.gz --absolute-names "$DIR"*."$1"
+			find "$DIR" -name "*.""$1" -exec tar -rvf "$TARFILENAME".tar {} \; 2>/dev/null
                         ;;
                 *)
-                        tar -czf "$TARFILENAME".tar.gz "$DIR"*."$1"
+			find "$DIR" -name "*.""$1" -exec tar -rvf "$TARFILENAME".tar {} \;
+
         esac
+
+	gzip "$TARFILENAME".tar
 
         validateBackupDirectories $1
 
