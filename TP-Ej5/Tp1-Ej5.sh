@@ -51,6 +51,7 @@ validateExtension(){
         fi	       
 }
 
+
 validateBackupDirectories(){
 	if [ ! -d "$SCRIPTDIR" ]; then
                 mkdir "$SCRIPTDIR"
@@ -65,7 +66,7 @@ generateLogContent(){
 	echo usuario: $USER
 	echo fecha: $DATE
 	echo hora: $TIME
-	for LINE in `tar -tf "$1".tar` 
+	for LINE in `tar -tf "$1".tar.gz` 
 	do
 	       echo "$LINE"
        	done	       
@@ -80,15 +81,15 @@ compressAll(){
 
 	case "$DIR" in 
 		/*)	
-			tar -cf "$TARFILENAME".tar --absolute-names "$DIR"
+			tar -czf "$TARFILENAME".tar.gz --absolute-names "$DIR"
 			;;
 		*)
-			tar -cf "$TARFILENAME".tar "$DIR"
+			tar -czf "$TARFILENAME".tar.gz "$DIR"
 	esac
 
 	validateBackupDirectories "Full"    
 
-	mv  "$TARFILENAME".tar ""$SCRIPTDIR"/FullBackUps"
+	mv  "$TARFILENAME".tar.gz ""$SCRIPTDIR"/FullBackUps"
 		
 	cd ""$( dirname "${BASH_SOURCE[0]}")"/BackUps/FullBackUps"
 
@@ -104,15 +105,15 @@ compressByExtension(){
 	
 	case "$DIR" in
                 /*)
-                        tar -cf "$TARFILENAME".tar --absolute-names "$DIR"*."$1"
+                        tar -czf "$TARFILENAME".tar.gz --absolute-names "$DIR"*."$1"
                         ;;
                 *)
-                        tar -cf "$TARFILENAME".tar "$DIR"*."$1"
+                        tar -czf "$TARFILENAME".tar.gz "$DIR"*."$1"
         esac
 
         validateBackupDirectories $1
 
-        mv  "$TARFILENAME".tar ""$SCRIPTDIR"/"$1"BackUps"
+        mv  "$TARFILENAME".tar.gz ""$SCRIPTDIR"/"$1"BackUps"
 
         cd ""$( dirname "${BASH_SOURCE[0]}")"/BackUps/"$1"BackUps"
 
@@ -121,7 +122,7 @@ compressByExtension(){
 
 
 deleteOlderBackup(){
-	BACKUPFILES=(`ls *.tar -t`)
+	BACKUPFILES=(`ls *.tar.gz -t`)
 
 	if [ ${#BACKUPFILES[@]} -gt 5 ]; then
 		local FILEBASENAME="$( echo "${BACKUPFILES[-1]}" | cut -f 1 -d '.')"
@@ -129,7 +130,7 @@ deleteOlderBackup(){
 		echo eliminando "${BACKUPFILES[-1]}"
 		echo eliminando "$( echo "${BACKUPFILES[-1]}" | cut -f 1 -d '.')".txt
 	
-		rm ""$FILEBASENAME".tar"
+		rm ""$FILEBASENAME".tar.gz"
 		rm ""$FILEBASENAME".txt"
 	fi	
 }

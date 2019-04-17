@@ -1,6 +1,0 @@
-usuario: cristian
-fecha: 2019-04-16
-hora: 18-50-38
-ExampleFiles/file1.txt
-ExampleFiles/file2.txt
-ExampleFiles/file3.txt
