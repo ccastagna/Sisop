@@ -24,43 +24,39 @@ function help(){
 function replacement(){
 	declare replace="s/${pattern}/${text_replacement}/"
 	declare new_filename="$(echo ${filename} | sed ${replace})"
-	# mv "${filename}" "$(echo ${filename} | sed ${replace})" 
 	mv "${filename}" "$(echo ${new_filename})"
 	filename=${new_filename}
 }
 
-# GetOpts Analize
 
-while getopts ":?h-" OPTION
+# Getopt Analize
+
+# Option strings
+SHORT=h\?
+LONG=help
+
+# Read the options"
+OPTS=$(getopt -o :$SHORT --long $LONG -- "$@")
+
+eval set -- "${OPTS}"
+
+# Handling the different allowed options
+while true
 do
-        case $OPTION in
-		- )
-			case "${OPTARG}" in
-				help )
-					help
-					exit 0
-					;;
-		esac
-		;;
-
-		h )
+	case "$1" in
+		-h | --help )
 			help
-			exit 0
-			;;
-
-		\? )
-			if [[ "${OPTARG}" != \? ]]
-			then
-				echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
-				exit 1
-			else
-				help
-	                        exit 0
-			fi
-                        ;;
-esac
+                       	exit 0
+                       	shift;;
+#              	-? )
+#			help
+#		  	exit 0
+#		      	shift;;
+		* )
+			echo "La opcion ingresada no es valida. Ejecute $0 -h para mas informacion."
+			exit 1
+       esac
 done
-
 
 # Parameters Received Validation
 if [ $# -ne "3" ]
@@ -82,8 +78,6 @@ then
 	echo "El directorio ingresado no contiene archivos."
 	exit 1	
 fi
-
-
 
 
 # Filename replacement
