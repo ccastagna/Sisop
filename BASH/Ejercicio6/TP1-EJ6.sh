@@ -7,17 +7,12 @@
 # Miguel Amengual 35991055
 # Cristian Castagna 37398696 
 
-# Parameters Description
-# $1: directory
-# $2: pattern
-# $3: text replacement
-
-declare directory = $1
-declare pattern = $2
-declare text_replacement = $3
+# Parameters rename
+declare directory="$1"
+declare pattern="$2"
+declare text_replacement="$3"
 
 # Declare Functions
-
 function help(){
 	echo "Script utilizado para renombrar todos los archivos de un directorio."
 	echo ""
@@ -27,9 +22,9 @@ function help(){
 }
 
 function replacement(){
-	declare replace="s/${patron}/${text_replacement}/"
-	mv "$archivo" "$(echo $archivo | sed $replace)"  
-        }
+	declare replace="s/${pattern}/${text_replacement}/"
+	mv "${file}" "$(echo ${file} | sed ${replace})"  
+}
 
 # GetOpts Analize
 
@@ -79,7 +74,7 @@ then
 	exit 1
 fi
 
-if [ ! "$(ls -A "$1")" ]
+if [ ! "$(ls -A "${directory}")" ]
 then
 	echo "El directorio ingresado no contiene archivos."
 	exit 1	
@@ -89,21 +84,21 @@ fi
 
 
 # Filename replacement
-declare counter = 0
+declare counter=0
 
-for archivo in "$1"*
+for file in "${directory}/"*
 do
-	if [[ $archivo == *"${patron}"* ]]
+	if [[ ${file} == *"${patron}"* ]]
 	then
-		((counter++)
+		((counter++))
 	fi
-	while [[ $archivo == *"${patron}"* ]]
+	while [[ ${file} == *"${patron}"* ]]
 	do
-		replacement $archivo $pattern $text_replacement 
+		replacement ${file} ${pattern} ${text_replacement} 
         done
 	
 done
 
-echo "Se renombraron $counter archivo(s) de forma exitosa."
+echo "Se renombraron ${counter} archivo(s) de forma exitosa."
 
 exit 0
