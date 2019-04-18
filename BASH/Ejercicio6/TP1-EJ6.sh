@@ -23,7 +23,10 @@ function help(){
 
 function replacement(){
 	declare replace="s/${pattern}/${text_replacement}/"
-	mv "${file}" "$(echo ${file} | sed ${replace})"  
+	declare new_filename="$(echo ${filename} | sed ${replace})"
+	# mv "${filename}" "$(echo ${filename} | sed ${replace})" 
+	mv "${filename}" "$(echo ${new_filename})"
+	filename=${new_filename}
 }
 
 # GetOpts Analize
@@ -68,7 +71,7 @@ then
 	exit 1
 fi
 
-if [ ! -d "$1"  ]
+if [ ! -d "${directory}"  ]
 then
 	echo "El directorio ingresado no existe."
 	exit 1
@@ -86,17 +89,16 @@ fi
 # Filename replacement
 declare counter=0
 
-for file in "${directory}/"*
+for filename in "${directory}/"*
 do
-	if [[ ${file} == *"${patron}"* ]]
+	if [[ ${filename} == *"${pattern}"* ]]
 	then
 		((counter++))
 	fi
-	while [[ ${file} == *"${patron}"* ]]
+	while [[ ${filename} == *"${pattern}"* ]]
 	do
-		replacement ${file} ${pattern} ${text_replacement} 
-        done
-	
+		replacement ${filename} ${pattern} ${text_replacement}	
+        done	
 done
 
 echo "Se renombraron ${counter} archivo(s) de forma exitosa."
