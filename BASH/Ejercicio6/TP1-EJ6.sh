@@ -12,6 +12,7 @@ declare directory="$1"
 declare pattern="$2"
 declare text_replacement="$3"
 
+
 # Declare Functions
 function help(){
 	echo "Script utilizado para renombrar todos los archivos de un directorio."
@@ -24,41 +25,39 @@ function help(){
 function replacement(){
 	declare replace="s/${pattern}/${text_replacement}/"
 	declare new_filename="$(echo ${filename} | sed ${replace})"
-	mv "${filename}" "$(echo ${new_filename})"
-	filename=${new_filename}
+	mv "${file_directory}/${filename}" "$(echo ${file_directory}/${new_filename})"
+	filename="${new_filename}"
 }
 
 
 # Getopt Analize
 
 # Option strings
-SHORT=h\?
-LONG=help
+#SHORT=h?
+#LONG=help
 
 # Read the options"
-OPTS=$(getopt -o :$SHORT --long $LONG -- "$@")
+#OPTS=$(getopt -o :$SHORT --long $LONG -- "$@")
 
-eval set -- "${OPTS}"
+#eval set -- "${OPTS}"
 
 # Handling the different allowed options
-while true
-do
-	case "$1" in
-		-h | --help )
-			help
-                       	exit 0
-                       	shift;;
-#              	-? )
+#while true
+#do
+#	case "$1" in
+#		-h | --help )
 #			help
-#		  	exit 0
-#		      	shift;;
-		* )
-			echo "La opcion ingresada no es valida. Ejecute $0 -h para mas informacion."
-			exit 1
-       esac
-done
+#                       	exit 0
+#                       	;;
+#              	-? )
+#			echo "La opcion ingresada no es valida. Ejecute $0 -h para mas informacion."
+#			exit 1
+#			shift;;
+#       esac
+#done
 
 # Parameters Received Validation
+
 if [ $# -ne "3" ]
 then
 	echo "El presente script espera recibir 3 parametros."
@@ -83,16 +82,16 @@ fi
 # Filename replacement
 declare counter=0
 
-for filename in "${directory}/"*
+# Add IFS so the loop parse per each line (does not break because of a space in name)
+IFS=$'\n'
+for filename in $(find ${directory} -type f -name "*${pattern}*" -exec basename {} \;)
 do
-	if [[ ${filename} == *"${pattern}"* ]]
-	then
-		((counter++))
-	fi
+	file_directory=$(find ${directory} -name ${filename} -printf '%h\n')
 	while [[ ${filename} == *"${pattern}"* ]]
 	do
-		replacement ${filename} ${pattern} ${text_replacement}	
-        done	
+		replacement ${file_directory} ${filename} ${pattern} ${text_replacement}	
+	done
+	((counter++))	
 done
 
 echo "Se renombraron ${counter} archivo(s) de forma exitosa."
