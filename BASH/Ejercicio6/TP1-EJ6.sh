@@ -11,7 +11,6 @@
 declare directory="$1"
 declare pattern="$2"
 declare text_replacement="$3"
-declare parameters_received=$#
 
 #Declare Functions
 function help(){
