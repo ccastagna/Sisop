@@ -87,7 +87,8 @@ function validateStructure(){
 	fi
 	if ! [ -f "$2" ]; then
 		echo "Error: No es un archivo de texto válido"
-		exit
+		echo "$@"
+		#exit
 	fi
 }
 
@@ -112,7 +113,7 @@ do
 		c | d | n )    	
 			validateStructure $# $fileAFIP
 			validateLength ${OPTARG} $valueToSearch
-			searchInFile ${OPTARG} "$valueToSearch"  $fileAFIP
+			searchInFile ${OPTARG} "$valueToSearch"  $@
 			exit 0
 			;;
 
