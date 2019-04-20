@@ -11,9 +11,9 @@
 declare directory="$1"
 declare pattern="$2"
 declare text_replacement="$3"
+declare parameters_received=$#
 
-
-# Declare Functions
+#Declare Functions
 function help(){
 	echo "Script utilizado para renombrar todos los archivos de un directorio."
 	echo ""
@@ -29,32 +29,37 @@ function replacement(){
 	filename="${new_filename}"
 }
 
+# Getopts Analize
+OPTSPEC=":?h-"
 
-# Getopt Analize
-
-# Option strings
-#SHORT=h?
-#LONG=help
-
-# Read the options"
-#OPTS=$(getopt -o :$SHORT --long $LONG -- "$@")
-
-#eval set -- "${OPTS}"
-
-# Handling the different allowed options
-#while true
-#do
-#	case "$1" in
-#		-h | --help )
-#			help
-#                       	exit 0
-#                       	;;
-#              	-? )
-#			echo "La opcion ingresada no es valida. Ejecute $0 -h para mas informacion."
-#			exit 1
-#			shift;;
-#       esac
-#done
+while getopts "${OPTSPEC}" OPTION
+do
+	case "${OPTION}" in
+		- )
+			case "${OPTARG}" in
+				help )
+					help
+					exit 0
+					;;
+			esac
+			;;
+		
+		h )
+			help
+			exit 0
+			;;
+		\? )
+			if [[ "${OPTARG}" != \? ]]
+			then
+				echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
+				exit 1
+			else
+				help
+				exit 0
+			fi
+			;;
+	esac
+done
 
 # Parameters Received Validation
 
