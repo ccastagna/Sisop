@@ -79,20 +79,23 @@ function searchInFile(){
 }
 
 function validateStructure(){
+
 	if [ $1 != 3 ]; then
 		echo "Error: Ingrese todos los parametros"
+		help
 		exit
 	fi
 	if ! [ -f "$2" ]; then
 		echo "Error: No es un archivo de texto válido"
-		exit
+		echo "$@"
+		#exit
 	fi
 }
 
 # GetOpts Analize
 while getopts ":cdn:?h-" OPTION
 do
-	validateStructure $# $fileAFIP
+
 	case $OPTION in
 		- )
 		case "${OPTARG}" in
@@ -108,8 +111,9 @@ do
                         exit 0
                         ;;
 		c | d | n )    	
+			validateStructure $# $fileAFIP
 			validateLength ${OPTARG} $valueToSearch
-			searchInFile ${OPTARG} "$valueToSearch"  $fileAFIP
+			searchInFile ${OPTARG} "$valueToSearch"  $@
 			exit 0
 			;;
 
