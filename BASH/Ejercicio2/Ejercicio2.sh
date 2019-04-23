@@ -108,9 +108,9 @@ do
                         exit 0
                         ;;
 		c | d | n )    	 
-			validateStructure $# $fileAFIP
-			validateLength $OPTION $valueToSearch
-			searchInFile $OPTION "$valueToSearch"  $@
+			validateStructure $#
+			validateLength
+			searchInFile
 			exit 0
 			;;
 
