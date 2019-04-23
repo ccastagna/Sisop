@@ -43,16 +43,6 @@ validateDirectory(){
         fi
 }
 
-validateExtension1(){
-	FILESWITHEXTENSION=(`ls "$DIR"*."$1"`)
-	echo $FILESWITHEXTENSION
-	if [[ ! "$FILESWITHEXTENSION" || ${#FILESWITHEXTENSION[@]} -eq 0 ]]; then
-                echo No hay archivos con esa extension en el directorio especificado
-                exit 1
-        fi	       
-}
-
-
 validateExtension(){
 	EXT=$1
 	
@@ -158,14 +148,22 @@ if [[ "$#" -eq "0" || "$#" -gt "3" ]]; then
 	exit 1
 fi
 
-OPTSPEC=":tx:?h-"
+OPTSPEC=":tx:?h-:"
 while getopts "$OPTSPEC" OPTCHAR; do
+	echo argumento: ${OPTCHAR}
 	case "${OPTCHAR}" in
-		- )
+		- )	
+			echo argumento: ${OPTARG}
+
 			case "${OPTARG}" in
 				help )
+					echo estoy en help
 					help
 					exit 0 
+					;;
+				*)
+					echo la opcion no es correcta
+					exit 1
 					;;
 			esac
 			;;
@@ -181,11 +179,14 @@ while getopts "$OPTSPEC" OPTCHAR; do
 	      	        exit 0 
 			;;
 		h ) 	
+			echo argumento: ${OPTARG}
 			help
 			exit 0
 			;;
-		\? )
-			if [[ "${OPTARG}" != "\?" ]]; then
+		? )
+			echo argumento: ${OPTARG}
+
+			if [[ "${OPTARG}" != '?' ]]; then
 
 				echo "la opcion no es correcta"
 				exit 1
