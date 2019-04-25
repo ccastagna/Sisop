@@ -8,9 +8,9 @@
 # Cristian Castagna 37398696 
 
 # Parameters rename
-declare directory="$1"
-declare pattern="$2"
-declare text_replacement="$3"
+directory="$1"
+pattern="$2"
+text_replacement="$3"
 
 #Declare Functions
 function help(){
@@ -22,14 +22,14 @@ function help(){
 }
 
 function replacement(){
-	declare replace="s/${pattern}/${text_replacement}/"
-	declare new_filename="$(echo ${filename} | sed ${replace})"
+	replace="s/${pattern}/${text_replacement}/"
+	new_filename="$(echo ${filename} | sed ${replace})"
 	mv "${file_directory}/${filename}" "$(echo ${file_directory}/${new_filename})"
 	filename="${new_filename}"
 }
 
 # Getopts Analize
-OPTSPEC=":?h-"
+OPTSPEC=":?h-:"
 
 while getopts "${OPTSPEC}" OPTION
 do
@@ -39,6 +39,11 @@ do
 				help )
 					help
 					exit 0
+					;;
+
+				* )
+					echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
+	                                exit 1
 					;;
 			esac
 			;;
@@ -84,16 +89,17 @@ fi
 
 
 # Filename replacement
-declare counter=0
+counter=0
 
 # Add IFS so the loop parse per each line (does not break because of a space in name)
 IFS=$'\n'
+
 for filename in $(find ${directory} -type f -name "*${pattern}*" -exec basename {} \;)
 do
 	file_directory=$(find ${directory} -name ${filename} -printf '%h\n')
 	while [[ ${filename} == *"${pattern}"* ]]
 	do
-		replacement ${file_directory} ${filename} ${pattern} ${text_replacement}	
+		replacement	
 	done
 	((counter++))	
 done
