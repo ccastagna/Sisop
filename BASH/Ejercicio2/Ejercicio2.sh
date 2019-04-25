@@ -41,7 +41,6 @@ function validateParameterMode(){
 }
 
 function validateLength(){
-	
 	if [[ $typeOfValueToSearch = "-c" && ${#valueToSearch} -ne "11" ]]; then
 		echo "Nro de cuit invalido"
 		exit 2
@@ -79,21 +78,19 @@ function searchInFile(){
 }
 
 function validateStructure(){
-
 	if [ $1 != 3 ]; then
 		echo "Error: Ingrese todos los parametros"
 		help
 		exit
 	fi
-	if ! [ -f "$2" ]; then
+	if ! [ -f "$fileAFIP" ]; then
 		echo "Error: No es un archivo de texto válido"
-		echo "$@"
-		#exit
+		exit
 	fi
 }
 
 # GetOpts Analize
-while getopts ":cdn:?h-" OPTION
+while getopts ":c:d:n:?h-" OPTION
 do
 
 	case $OPTION in
@@ -110,10 +107,10 @@ do
                         help
                         exit 0
                         ;;
-		c | d | n )    	
-			validateStructure $# $fileAFIP
-			validateLength ${OPTARG} $valueToSearch
-			searchInFile ${OPTARG} "$valueToSearch"  $@
+		c | d | n )    	 
+			validateStructure $#
+			validateLength
+			searchInFile
 			exit 0
 			;;
 
