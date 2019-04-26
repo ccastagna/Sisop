@@ -14,11 +14,14 @@ text_replacement="$3"
 
 #Declare Functions
 function help(){
-	echo "Script utilizado para renombrar todos los archivos de un directorio."
+	echo "Script utilizado para renombrar todos los archivos de un directorio dado "
+	echo "un directorio ingresado, el patron a reemplazar y el text con el cual"
+	echo "reemplazar al patron."
 	echo ""
 	echo "Uso: $0 [directorio] [patron] [texto a reemplazar] Renombra los archivos del directorio."
                         echo "Argumentos: "
                         echo "  -h o -? o --help      Impresión de la ayuda (este mensaje)."
+			echo ""
 }
 
 function replacement(){
@@ -78,12 +81,14 @@ fi
 if [ ! -d "${directory}"  ]
 then
 	echo "El directorio ingresado no existe."
+	echo ""
 	exit 1
 fi
 
 if [ ! "$(ls -A "${directory}")" ]
 then
 	echo "El directorio ingresado no contiene archivos."
+	echo ""
 	exit 1	
 fi
 
@@ -94,9 +99,10 @@ counter=0
 # Add IFS so the loop parse per each line (does not break because of a space in name)
 IFS=$'\n'
 
-for filename in $(find ${directory} -type f -name "*${pattern}*" -exec basename {} \;)
+for file_and_directory in $(find ${directory} -type f -name "*${pattern}*")
 do
-	file_directory=$(find ${directory} -name ${filename} -printf '%h\n')
+	filename=$(basename "${file_and_directory}")
+	file_directory=$(dirname "${file_and_directory}")
 	while [[ ${filename} == *"${pattern}"* ]]
 	do
 		replacement	
@@ -105,5 +111,6 @@ do
 done
 
 echo "Se renombraron ${counter} archivo(s) de forma exitosa."
+echo ""
 
 exit 0
