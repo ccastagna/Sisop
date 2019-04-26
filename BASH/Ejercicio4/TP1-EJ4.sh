@@ -47,7 +47,7 @@ do
 					;;
 			esac
 			;;
-		
+
 		h )
 			ayuda
 			exit 0
@@ -83,11 +83,11 @@ declare ARCHIVOBASE="$1"
 if [  "$#" -eq "2" ]
 then
 #Se asigna el directorio de ejecucion
-	declare DIRECTORIO=`./`
+	declare DIRECTORIO=`dirname "$0"`
 	declare PORCENTAJE="$2"
 #Sino asignamos a cada variable el valor recibido
 else
-	declare DIRECTORIO="$2""/*"
+	declare DIRECTORIO="$2"
 	declare PORCENTAJE="$3"
 fi
 
@@ -95,24 +95,26 @@ fi
 #echo "Directorio: ""${DIRECTORIO}"
 #echo "Porcentaje de similitud: ""${PORCENTAJE}"
 
-declare CANTIDADLINEAS
+declare LINEASDIFERENTES #Cantidad de lineas diferentes
+declare PORCARCHACTUAL   #Porcentaje calculado de similitud de cada archivo
+
+#Obtengo la cantidad de lineas de ARCHIVOBASE
+declare LINEASARCHBASE=`wc -l < $ARCHIVOBASE`
 
 #Para cada archivo del DIRECTORIO enviado se realiza la comparacion con el ARCHIVOBASE
 for ARCHIVOACTUAL in "$BUSCAR_ARCHIVO"$DIRECTORIO
 do
-##### BORRAR - prueba #########
-	echo $ARCHIVOBASE
-	echo $ARCHIVOACTUAL
-#################################
-#Obtengo la cantidad de lineas del archivo
-         CANTIDADLINEAS=`wc -l ARCHIVOACTUAL`
-
 #Obtengo la cantidad de lineas diferentes entre ARCHIVOBASE vs ARCHIVOACTUAL
-#diff...
+	LINEASDIFERENTES=`diff -y --suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | wc -l`
 
-#Calculo el porcentaje de similitud como: [(Lineas Totales - Lineas Diferentes)*100]/Lineas Totales ---REVISAR DEFINICION
+#Calculo el porcentaje de similitud como: [(Lineas ARCHIVOBASE - Lineas Diferentes)*100]%Lineas ARCHIVOBASE
+	ANS1=$((LINEASARCHBASE - LINEASDIFERENTES))
+	ANS2=$((ANS1 * "100"))
+	ANSF=$((ANS2 / LINEASARCHBASE))
 
 #Si el porcentaje obtenido es mayor o igual al parametro Porcentaje
-#echo ARCHIVOACTUAL
-
+	if [ "$ANSF" -ge "$PORCENTAJE" ]
+	then
+		echo "$ARCHIVOACTUAL"
+	fi
 done
