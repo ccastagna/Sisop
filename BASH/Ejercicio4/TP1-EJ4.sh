@@ -102,19 +102,31 @@ declare PORCARCHACTUAL   #Porcentaje calculado de similitud de cada archivo
 declare LINEASARCHBASE=`wc -l < $ARCHIVOBASE`
 
 #Para cada archivo del DIRECTORIO enviado se realiza la comparacion con el ARCHIVOBASE
-for ARCHIVOACTUAL in "$BUSCAR_ARCHIVO"$DIRECTORIO
+for ARCHIVOACTUAL in $(find ${DIRECTORIO} -type f)
 do
 #Obtengo la cantidad de lineas diferentes entre ARCHIVOBASE vs ARCHIVOACTUAL
+	LINEASARCHACTUAL=`wc -l < $ARCHIVOACTUAL` 
 	LINEASDIFERENTES=`diff -y --suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | wc -l`
 
+	echo "$ARCHIVOACTUAL | LINEASARCHBASE: $LINEASARCHBASE | LINEASARCHACTUAL: $LINEASARCHACTUAL | LINEASDIFERENTES: $LINEASDIFERENTES"
+
 #Calculo el porcentaje de similitud como: [(Lineas ARCHIVOBASE - Lineas Diferentes)*100]%Lineas ARCHIVOBASE
-	ANS1=$((LINEASARCHBASE - LINEASDIFERENTES))
-	ANS2=$((ANS1 * "100"))
-	ANSF=$((ANS2 / LINEASARCHBASE))
+	if [[ $LINEASARCHBASE -ge $LINEASARCHACTUAL  ]]
+	then
+		ANS1=$(bc <<<"scale=2;$LINEASDIFERENTES/$LINEASARCHBASE")
+	else
+		ANS1=$(bc <<<"scale=2;$LINEASDIFERENTES/$LINEASARCHACTUAL")
+	fi
+	ANS2=$(bc <<<"scale=2;$ANS1 * 100")
+	ANSF=$(bc <<<"scale=2;100 - $ANS2")
+	ANSF=${ANSF%.*}
+
+	echo "ANS1: $ANS1 | ANS2: $ANS2 | ANSF: $ANSF"
 
 #Si el porcentaje obtenido es mayor o igual al parametro Porcentaje
-	if [ "$ANSF" -ge "$PORCENTAJE" ]
+	if [[ $ANSF -ge $PORCENTAJE ]]
 	then
-		echo "$ARCHIVOACTUAL"
+		echo ""
+	#	echo "$ARCHIVOACTUAL | ANS1: $ANS1 | ANS2: $ANS2 | ANSF: $ANSF"
 	fi
 done
