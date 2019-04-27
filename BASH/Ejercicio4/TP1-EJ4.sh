@@ -108,6 +108,9 @@ do
 	LINEASARCHACTUAL=`wc -l < $ARCHIVOACTUAL` 
 	LINEASDIFERENTES=`diff -y --suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | wc -l`
 
+	echo "ARCHIVOBASE: $ARCHIVOBASE | ARCHIVOACTUAL: $ARCHIVOACTUAL"
+        echo "LINEASARCHBASE: $LINEASARCHBASE | LINEASARCHACTUAL: $LINEASARCHACTUAL | LINEASDIFERENTES: $LINEASDIFERENTES"
+
 #Calculo el porcentaje de similitud como: [(Lineas ARCHIVOBASE - Lineas Diferentes)*100]%Lineas ARCHIVOBASE
 	if [[ $LINEASARCHBASE -ge $LINEASARCHACTUAL  ]]
 	then
@@ -119,9 +122,12 @@ do
 	ANSF=$(bc <<<"scale=2;100 - $ANS2")
 	ANSF=${ANSF%.*}
 
+	echo "ANS1: $ANS1 | ANS2: $ANS2 | ANSF: $ANSF"
+
 #Si el porcentaje obtenido es mayor o igual al parametro Porcentaje
 	if [[ $ANSF -ge $PORCENTAJE ]]
 	then
-		echo "$ARCHIVOACTUAL"
+#		echo "$ARCHIVOACTUAL"
+		echo""
 	fi
 done
