@@ -106,7 +106,11 @@ for ARCHIVOACTUAL in $(find ${DIRECTORIO} -type f)
 do
 #Obtengo la cantidad de lineas diferentes entre ARCHIVOBASE vs ARCHIVOACTUAL
 	LINEASARCHACTUAL=`wc -l < $ARCHIVOACTUAL` 
-	LINEASDIFERENTES=`diff -y --suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | wc -l`
+	#LINEASDIFERENTES=`diff -y --suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | wc -l`
+
+#	LINEASDIFERENTES=`diff --left-column suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | wc -l`
+
+	LINEASDIFERENTES=`diff --side-by-side --suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | grep -w -F '<' | wc -l`
 
 	echo "ARCHIVOBASE: $ARCHIVOBASE | ARCHIVOACTUAL: $ARCHIVOACTUAL"
         echo "LINEASARCHBASE: $LINEASARCHBASE | LINEASARCHACTUAL: $LINEASARCHACTUAL | LINEASDIFERENTES: $LINEASDIFERENTES"
