@@ -31,6 +31,7 @@ function help(){
 	echo "	-n para nombre"
                         echo "Argumentos: "
                         echo "  -h o -? o --help      Impresión de la ayuda (este mensaje)."
+	echo "Es nacesario dar permisos de escritura y ejecucicion, ejecute el comando: chmod 775 'nombreDelScript' "
 }
 
 function validateParameterMode(){
