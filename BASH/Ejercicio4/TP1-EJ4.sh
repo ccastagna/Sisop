@@ -65,14 +65,6 @@ do
 	esac
 done
 
-# Se valida la cantidad de parametros recibidos en la llamada
-
-if [ "$#" -lt "1" ]
-then
-	echo "La cantidad de parametros es INCORRECTA. Puede revisar la ayuda usando -h, -? o --help"
-	exit 1
-fi
-
 #Parametro 1: Archivo base a comparar [OBLIGATORIO]
 #Parametro 2: Directorio de los archivos a comparar [OPCIONAL]
 #Parametro 3: Porcentaje de igualdad [OBLIGATORIO]
@@ -101,37 +93,48 @@ declare PORCARCHACTUAL   #Porcentaje calculado de similitud de cada archivo
 #Obtengo la cantidad de lineas de ARCHIVOBASE
 declare LINEASARCHBASE=`wc -l < $ARCHIVOBASE`
 
+# Se valida la cantidad de parametros recibidos en la llamada
+if [ "$#" -lt "1" ]
+then
+        echo "La cantidad de parametros es INCORRECTA. Puede revisar la ayuda usando -h, -? o --help"
+        exit 1
+fi
+
+if [ ! -d "${DIRECTORIO}"  ]
+then
+        echo "El directorio ingresado no existe."
+        echo ""
+        exit 1
+fi
+
+if [ ! "$(ls -A "${DIRECTORIO}")" ]
+then
+        echo "El directorio ingresado no contiene archivos."
+        echo ""
+        exit 0
+fi 
+
 #Para cada archivo del DIRECTORIO enviado se realiza la comparacion con el ARCHIVOBASE
 for ARCHIVOACTUAL in $(find ${DIRECTORIO} -type f)
 do
-#Obtengo la cantidad de lineas diferentes entre ARCHIVOBASE vs ARCHIVOACTUAL
-	LINEASARCHACTUAL=`wc -l < $ARCHIVOACTUAL` 
-	#LINEASDIFERENTES=`diff -y --suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | wc -l`
-
-#	LINEASDIFERENTES=`diff --left-column suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | wc -l`
-
-	LINEASDIFERENTES=`diff --side-by-side --suppress-common-lines $ARCHIVOBASE $ARCHIVOACTUAL | grep -w -F '<' | wc -l`
-
-	echo "ARCHIVOBASE: $ARCHIVOBASE | ARCHIVOACTUAL: $ARCHIVOACTUAL"
-        echo "LINEASARCHBASE: $LINEASARCHBASE | LINEASARCHACTUAL: $LINEASARCHACTUAL | LINEASDIFERENTES: $LINEASDIFERENTES"
-
-#Calculo el porcentaje de similitud como: [(Lineas ARCHIVOBASE - Lineas Diferentes)*100]%Lineas ARCHIVOBASE
-	if [[ $LINEASARCHBASE -ge $LINEASARCHACTUAL  ]]
-	then
-		ANS1=$(bc <<<"scale=2;$LINEASDIFERENTES/$LINEASARCHBASE")
+	differences=`diff -u -s $ARCHIVOBASE $ARCHIVOACTUAL`
+	if [[ $differences >/dev/null ]]; then
+		equals=1
+		totals=1
 	else
-		ANS1=$(bc <<<"scale=2;$LINEASDIFERENTES/$LINEASARCHACTUAL")
-	fi
-	ANS2=$(bc <<<"scale=2;$ANS1 * 100")
-	ANSF=$(bc <<<"scale=2;100 - $ANS2")
-	ANSF=${ANSF%.*}
+        	equals=$(echo "$differences" | tail -n +4 | grep "^[[:space:]]" | wc -l)
+	        totals=$(echo "$differences" | tail -n +4 | wc -l)
+        fi
 
-	echo "ANS1: $ANS1 | ANS2: $ANS2 | ANSF: $ANSF"
+	if [[ $totals -eq 0 ]]; then
+		echo $differences
+	fi
+	equality_percentaje=$(bc <<<"scale=2;"$equals"/"$totals"*100")
 
 #Si el porcentaje obtenido es mayor o igual al parametro Porcentaje
-	if [[ $ANSF -ge $PORCENTAJE ]]
+	if [[ ${equality_percentaje%.*} -ge $PORCENTAJE ]];
 	then
-#		echo "$ARCHIVOACTUAL"
+		echo "$ARCHIVOACTUAL" "${equality_percentaje%.*}"
 		echo""
 	fi
 done
