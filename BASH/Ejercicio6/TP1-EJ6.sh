@@ -103,11 +103,16 @@ for file_and_directory in $(find ${directory} -type f -name "*${pattern}*")
 do
 	filename=$(basename "${file_and_directory}")
 	file_directory=$(dirname "${file_and_directory}")
+	change_flag=false
 	while [[ ${filename} == *"${pattern}"* ]]
 	do
-		replacement	
+		replacement
+		change_flag=true
 	done
-	((counter++))	
+	if [[ change_flag -eq "true"  ]]
+	then
+		((counter++))	
+	fi
 done
 
 echo "Se renombraron ${counter} archivo(s) de forma exitosa."
