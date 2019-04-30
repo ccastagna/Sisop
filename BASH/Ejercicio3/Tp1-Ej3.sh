@@ -3,6 +3,7 @@
 
 # Trabajo Practico 1
 # Ejercicio 3
+# Entrega
 
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
@@ -289,3 +290,5 @@ while true
 do
         sleep 2
 done
+
+exit 0

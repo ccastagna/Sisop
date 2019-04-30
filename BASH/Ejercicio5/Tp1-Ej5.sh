@@ -3,6 +3,7 @@
 
 # Trabajo Practico 1
 # Ejercicio 5
+# Entrega
 
 # Integrantes del Equipo
 # Franco Dario Scarpello	37842567
@@ -192,3 +193,4 @@ while getopts "$OPTSPEC" OPTCHAR; do
 	esac
 done
 
+exit 0

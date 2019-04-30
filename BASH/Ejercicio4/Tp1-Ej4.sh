@@ -3,6 +3,7 @@
 
 # Trabajo Practico 1
 # Ejercicio 4
+# Entrega
 
 # Integrantes del Equipo
 # Franco Dario Scarpello	37842567
@@ -149,3 +150,5 @@ do
 		echo""
 	fi
 done
+
+exit 0
