@@ -52,6 +52,10 @@ do
         first=1
         for y in $carton;
         do
+		if ! [[ $y =~ $es_numero ]]
+        	then
+               		break
+        	fi
                 if [[ first -eq 0 ]]
                 then
                         if [[ $x -eq $y ]]
