@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script: Tp-Ej4
+# Script: Tp1-Ej4
 
 # Trabajo Practico 1
 # Ejercicio 4
@@ -16,7 +16,7 @@
 
 function ayuda(){
 	clear
-	echo "SCRIPT: Tp1-EJj.sh"
+	echo "SCRIPT: Tp1-Ej4.sh"
 	echo 'Controlar la similitud de un archivo base contra los archivos contenidos en un directorio'
 	echo ""
 	echo 'El script comparara el archivo pasado como parametro (OBLIGATORIO) contra cada uno de los archivos '
