@@ -30,6 +30,9 @@ echo "Los numeros que pueden salir son del 0 al 99."
 echo "Luego de validar los cartones con los que se jugara, el script queda en espera de recibir la signal SIGUSR1."
 echo "Cada vez que se recibe la signal, se saca una bolilla y se verifican los cartones a ver si hay algun ganador."
 echo "Al finalizar, se muestra por pantalla un resumen de cantidad de bolillas sorteadas y los numero de carton ganadores de linea y bingo."
+echo "Ejecucion:"
+echo "1) Ejecutar el script en una terminal"
+echo "2) En otra terminal ejecutar: kill -SIGUSR1 PID , donde PID es el ID del proceso de la primer terminal"
 }
 
 # FUNCTION validate_carton()

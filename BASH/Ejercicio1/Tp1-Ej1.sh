@@ -1,5 +1,5 @@
 #! /bin/bash
-# TP1-EJ2
+# TP1-EJ1
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
 # Federico Piacentini 36258738
