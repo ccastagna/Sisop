@@ -1,21 +1,22 @@
 #!/bin/bash
-# Script: TP1-EJ4.sh
+# Script: Tp-Ej4
 
-# Trabajo Practico 1 - Ejercicio 4
+# Trabajo Practico 1
+# Ejercicio 4
 
 # Integrantes del Equipo
+# Franco Dario Scarpello	37842567
+# Federico Piacentini		36258738
+# Hernan Baini 			32883285
+# Miguel Amengual 		35991055
+# Cristian Castagna 		37398696
 
-# Amengual, Miguel 		35991055
-# Baini, Hernan 		32883285
-# Castagna, Cristian 		37398696
-# Piacentini,Federico		36258738
-# Scarpello, Franco Dario 	37842567
 
 ### F U N C I O N E S ###
 
 function ayuda(){
 	clear
-	echo "SCRIPT: TP1-EJ4.sh"
+	echo "SCRIPT: Tp1-EJj.sh"
 	echo 'Controlar la similitud de un archivo base contra los archivos contenidos en un directorio'
 	echo ""
 	echo 'El script comparara el archivo pasado como parametro (OBLIGATORIO) contra cada uno de los archivos '
@@ -93,7 +94,9 @@ declare PORCARCHACTUAL   #Porcentaje calculado de similitud de cada archivo
 #Obtengo la cantidad de lineas de ARCHIVOBASE
 declare LINEASARCHBASE=`wc -l < $ARCHIVOBASE`
 
-# Se valida la cantidad de parametros recibidos en la llamada
+# Se valida la cantidad de parametros recibidos en la llamada y su formato
+es_numero='^[0-9]+$'
+
 if [ "$#" -lt "1" ]
 then
         echo "La cantidad de parametros es INCORRECTA. Puede revisar la ayuda usando -h, -? o --help"
@@ -111,8 +114,16 @@ if [ ! "$(ls -A "${DIRECTORIO}")" ]
 then
         echo "El directorio ingresado no contiene archivos."
         echo ""
-        exit 0
+        exit 1
 fi 
+
+if ! [[ $PORCENTAJE =~ $es_numero || $PORCENTAJE -lt 0 || $PORCENTAJE -gt 100 ]]
+then
+	echo "El porcentaje debe ser un numero del 0 al 100."
+        echo ""
+	exit 1
+fi
+
 
 #Para cada archivo del DIRECTORIO enviado se realiza la comparacion con el ARCHIVOBASE
 for ARCHIVOACTUAL in $(find ${DIRECTORIO} -type f)

@@ -1,11 +1,16 @@
 #!/bin/bash
-# TP1-EJ3
+# Script: Tp1-Ej3
+
+# Trabajo Practico 1
+# Ejercicio 3
+
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
-# Federico Piacentini 36258738 
+# Federico Piacentini 36258738
 # Hernan Baini 32883285
 # Miguel Amengual 35991055
-# Cristian Castagna 37398696 
+# Cristian Castagna 37398696
+ 
 
 # Parameters description
 # $1 Archivo de cartones

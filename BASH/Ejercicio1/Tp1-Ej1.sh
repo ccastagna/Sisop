@@ -1,11 +1,16 @@
 #! /bin/bash
-# TP1-EJ1
+# Script: Tp1-Ej1
+
+# Trabajo Practico 1
+# Ejercicio 1
+
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
 # Federico Piacentini 36258738
 # Hernan Baini 32883285
 # Miguel Amengual 35991055
 # Cristian Castagna 37398696
+
 
 if [ $# != 2 ]; then
 echo "Error: No se ingresaron todos los parametros"

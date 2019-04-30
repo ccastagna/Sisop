@@ -1,11 +1,16 @@
 #! /bin/bash
-# TP1-EJ6
+# Script: Tp-Ej6
+
+# Trabajo Practico 1
+# Ejercicio 6
+
 # Integrantes del Equipo
-# Franco Dario Scarpello 37842567
-# Federico Piacentini 36258738 
-# Hernan Baini 32883285
-# Miguel Amengual 35991055
-# Cristian Castagna 37398696 
+# Franco Dario Scarpello        37842567
+# Federico Piacentini           36258738
+# Hernan Baini                  32883285
+# Miguel Amengual               35991055
+# Cristian Castagna             37398696
+ 
 
 # Parameters rename
 directory="$1"
@@ -46,6 +51,7 @@ do
 
 				* )
 					echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
+					echo ""
 	                                exit 1
 					;;
 			esac
@@ -59,6 +65,7 @@ do
 			if [[ "${OPTARG}" != \? ]]
 			then
 				echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
+				echo ""
 				exit 1
 			else
 				help
