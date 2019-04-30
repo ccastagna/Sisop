@@ -146,8 +146,8 @@ do
 #Si el porcentaje obtenido es mayor o igual al parametro Porcentaje
 	if [[ ${equality_percentaje%.*} -ge $PORCENTAJE ]];
 	then
-		echo "$ARCHIVOACTUAL" "${equality_percentaje%.*}"
-		echo""
+		echo "$ARCHIVOACTUAL"
+		echo ""
 	fi
 done
 
