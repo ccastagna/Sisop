@@ -255,7 +255,7 @@ fi
 # READ THE FILE
 declare -a cartones
 exec 10<&0
-exec < $1
+exec < "$1"
 let count_cartones=0
 while read carton; do
         validate_carton "$carton"
