@@ -35,10 +35,26 @@
     ./TP1-EJ6.ps1 -Entrada "path de entrada" -Transponer
 #>
 param(
-	[parameter(Mandatory=$true)] 	    #filePath is a mandatory parameter
-    [ValidateScript({Test-Path $_})]    #filePath is a valid File
-    [string]                            #filePath is a string
-    $filePath      
+	[parameter(Mandatory=$true)] 	    #Entrada is a mandatory parameter
+    [ValidateScript({Test-Path $_})]    #Entrada is a valid File
+    [string] $Entrada,                  #Entrada is a string
+    [parameter(Mandatory=$false, ParameterSetName="Producto")]
+    [int] $Producto,
+    [parameter(Mandatory=$false, ParameterSetName="Transponer")]
+    [switch] $Transponer     
     )					
 
-Write-Output "$filePath"
+    switch ($PsCmdlet.ParameterSetName) {
+        "Producto" {
+            Write-Output "$Producto"
+            break
+        }
+        "Transponer" {
+            Write-Output "$Transponer"
+            break
+        }
+        Default {
+            Write-Output "Default"
+        }
+    }
+Write-Output "$Entrada $Producto"
