@@ -1,11 +1,17 @@
 #! /bin/bash
-# TP1-EJ2
+# Script: TP1-EJ2
+
+# Trabajo Practico 1
+# Ejercicio 2
+# Entrega
+
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
-# Federico Piacentini
-# Hernan Baini
+# Federico Piacentini 36258738
+# Hernan Baini 32883285
 # Miguel Amengual 35991055
 # Cristian Castagna 37398696
+
 
 # Parameters Description
 # $1: modificador:
@@ -31,6 +37,7 @@ function help(){
 	echo "	-n para nombre"
                         echo "Argumentos: "
                         echo "  -h o -? o --help      Impresión de la ayuda (este mensaje)."
+	echo "Es nacesario dar permisos de escritura y ejecucicion, ejecute el comando: chmod 775 'nombreDelScript' "
 }
 
 function validateParameterMode(){
@@ -90,7 +97,7 @@ function validateStructure(){
 }
 
 # GetOpts Analize
-while getopts ":c:d:n:?h-" OPTION
+while getopts ":c:d:n:?h-:" OPTION
 do
 
 	case $OPTION in
@@ -99,6 +106,10 @@ do
 				help )
 					help
 					exit 0
+					;;
+				* )
+					echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
+					exit 1
 					;;
                 esac
                 ;;
@@ -126,4 +137,3 @@ do
 		;;
 	esac
 done
-

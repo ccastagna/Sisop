@@ -1,11 +1,17 @@
 #!/bin/bash
-# TP1-EJ3
+# Script: Tp1-Ej3
+
+# Trabajo Practico 1
+# Ejercicio 3
+# Entrega
+
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
-# Federico Piacentini 36258738 
+# Federico Piacentini 36258738
 # Hernan Baini 32883285
 # Miguel Amengual 35991055
-# Cristian Castagna 37398696 
+# Cristian Castagna 37398696
+ 
 
 # Parameters description
 # $1 Archivo de cartones
@@ -30,6 +36,9 @@ echo "Los numeros que pueden salir son del 0 al 99."
 echo "Luego de validar los cartones con los que se jugara, el script queda en espera de recibir la signal SIGUSR1."
 echo "Cada vez que se recibe la signal, se saca una bolilla y se verifican los cartones a ver si hay algun ganador."
 echo "Al finalizar, se muestra por pantalla un resumen de cantidad de bolillas sorteadas y los numero de carton ganadores de linea y bingo."
+echo "Ejecucion:"
+echo "1) Ejecutar el script en una terminal"
+echo "2) En otra terminal ejecutar: kill -SIGUSR1 PID , donde PID es el ID del proceso de la primer terminal"
 }
 
 # FUNCTION validate_carton()
@@ -52,6 +61,10 @@ do
         first=1
         for y in $carton;
         do
+		if ! [[ $y =~ $es_numero ]]
+        	then
+               		break
+        	fi
                 if [[ first -eq 0 ]]
                 then
                         if [[ $x -eq $y ]]
@@ -255,7 +268,7 @@ fi
 # READ THE FILE
 declare -a cartones
 exec 10<&0
-exec < $1
+exec < "$1"
 let count_cartones=0
 while read carton; do
         validate_carton "$carton"
@@ -277,3 +290,5 @@ while true
 do
         sleep 2
 done
+
+exit 0

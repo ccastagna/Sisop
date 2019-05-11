@@ -1,15 +1,16 @@
 #!/bin/bash
-# Script: TP1-EJ5
+# Script: Tp1-Ej5
 
 # Trabajo Practico 1
 # Ejercicio 5
+# Entrega
 
 # Integrantes del Equipo
-# Franco Dario Scarpello 37842567
-# Federico Piacentini 36258738
-# Hernan Baini 32883285
-# Miguel Amengual 35991055
-# Cristian Castagna 37398696
+# Franco Dario Scarpello	37842567
+# Federico Piacentini		36258738
+# Hernan Baini			32883285
+# Miguel Amengual		35991055
+# Cristian Castagna		37398696
 
 # Entrega
 
@@ -21,21 +22,21 @@ EXTENSIONFILES=""
 
 help(){
 	echo 'Uso: TP-Ej5 [OPTION...] [DIRECTORY]'
-	echo TP-Ej5 realiza un backup de los archivos del directorio especificado
+	echo TP-Ej5 realiza un backup de los archivos del directorio especificado.
 	echo ""
 	echo Ejemplos:
-	echo '  TP-Ej5 -t /home/username/document/ #Hace un backup del directorio ./document'
-	echo '  TP-Ej5 -x txt /home/username/document/ #Hace un backup todos los archivos con extension txt en ./document'
+	echo '  TP-Ej5 -t /home/username/document/ #Hace un backup del directorio ./document.'
+	echo '  TP-Ej5 -x txt /home/username/document/ #Hace un backup todos los archivos con extension txt en ./document.'
 	echo ""
 	echo OPCIONES:
-	echo '	-h,	-?,	--help	Muestra esta lista de ayuda'
-	echo '	-t			Hacer backup de todo un directorio'
-	echo '	-x			espera una extension como argumento con el que filtrar los archivos para el backup'
+	echo '	-h,	-?,	--help	Muestra esta lista de ayuda.'
+	echo '	-t			Hacer backup de todo un directorio.'
+	echo '	-x			espera una extension como argumento con el que filtrar los archivos para el backup.'
 }
 
 validateDirectory(){
 	if [ ! -d "$DIR" ]; then
-                echo El directorio especificado no es valido
+                echo El directorio especificado no es valido.
                 exit 1
         fi
         if [[ "${DIR: -1}" != "/" ]]; then
@@ -144,25 +145,21 @@ deleteOlderBackup(){
 
 
 if [[ "$#" -eq "0" || "$#" -gt "3" ]]; then
-	echo "Cantidad de atributos incorrecta"
+	echo "Cantidad de atributos incorrecta."
 	exit 1
 fi
 
 OPTSPEC=":tx:?h-:"
 while getopts "$OPTSPEC" OPTCHAR; do
-	echo argumento: ${OPTCHAR}
 	case "${OPTCHAR}" in
 		- )	
-			echo argumento: ${OPTARG}
-
 			case "${OPTARG}" in
 				help )
-					echo estoy en help
 					help
 					exit 0 
 					;;
 				*)
-					echo la opcion no es correcta
+					echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
 					exit 1
 					;;
 			esac
@@ -179,16 +176,13 @@ while getopts "$OPTSPEC" OPTCHAR; do
 	      	        exit 0 
 			;;
 		h ) 	
-			echo argumento: ${OPTARG}
 			help
 			exit 0
 			;;
 		? )
-			echo argumento: ${OPTARG}
-
 			if [[ "${OPTARG}" != '?' ]]; then
 
-				echo "la opcion no es correcta"
+				echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
 				exit 1
 			
 			fi
@@ -199,3 +193,4 @@ while getopts "$OPTSPEC" OPTCHAR; do
 	esac
 done
 
+exit 0

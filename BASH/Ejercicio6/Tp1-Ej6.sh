@@ -1,11 +1,17 @@
 #! /bin/bash
-# TP1-EJ6
+# Script: Tp-Ej6
+
+# Trabajo Practico 1
+# Ejercicio 6
+# Entrega
+
 # Integrantes del Equipo
-# Franco Dario Scarpello 37842567
-# Federico Piacentini 36258738 
-# Hernan Baini 32883285
-# Miguel Amengual 35991055
-# Cristian Castagna 37398696 
+# Franco Dario Scarpello        37842567
+# Federico Piacentini           36258738
+# Hernan Baini                  32883285
+# Miguel Amengual               35991055
+# Cristian Castagna             37398696
+ 
 
 # Parameters rename
 directory="$1"
@@ -46,6 +52,7 @@ do
 
 				* )
 					echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
+					echo ""
 	                                exit 1
 					;;
 			esac
@@ -59,6 +66,7 @@ do
 			if [[ "${OPTARG}" != \? ]]
 			then
 				echo "Opcion ingresada invalida, ejecute $0 -h para mas informacion."
+				echo ""
 				exit 1
 			else
 				help
@@ -103,11 +111,16 @@ for file_and_directory in $(find ${directory} -type f -name "*${pattern}*")
 do
 	filename=$(basename "${file_and_directory}")
 	file_directory=$(dirname "${file_and_directory}")
+	change_flag=false
 	while [[ ${filename} == *"${pattern}"* ]]
 	do
-		replacement	
+		replacement
+		change_flag=true
 	done
-	((counter++))	
+	if [[ change_flag -eq "true"  ]]
+	then
+		((counter++))	
+	fi
 done
 
 echo "Se renombraron ${counter} archivo(s) de forma exitosa."
