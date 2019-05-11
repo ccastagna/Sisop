@@ -1,11 +1,15 @@
-# TP2-EJ2
+# Script Tp2-Ej2
+
+# Trabajo práctico 2
+# Ejercicio 2
+# Entrega
 
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
 # Federico Piacentini 36258738 
 # Hernan Baini 32883285
 # Miguel Amengual 35991055
-# Cristian Castagna 37398696 
+# Cristian Castagna 37398696
 
 # Get-Help Script
 
