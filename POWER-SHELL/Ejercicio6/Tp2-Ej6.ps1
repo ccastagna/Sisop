@@ -34,6 +34,7 @@ El parametro Transponer indica que se transpone la matriz de entrada.
 .EXAMPLE 
 ./TP1-EJ6.ps1 -Entrada "path de entrada" -Transponer
 #>
+
 param(
 [parameter(Mandatory=$true)] 	    #Entrada is a mandatory parameter
 [ValidateScript({Test-Path $_})]    #Entrada is a valid File
@@ -42,10 +43,12 @@ param(
 [int] $Producto,
 [parameter(Mandatory=$false, ParameterSetName="Transponer")]
 [switch] $Transponer     
-)					
+)		
+
+#ATRIBUTOS
 $rows = 0;
 $columns = 0;
-$routeNewFile;
+$routeNewFile = "";
 
 function Read-File-And-Create-Matrix(){
     Param([string] $Route)
@@ -67,27 +70,28 @@ if ($rows -gt 0){
     $columns = $Matrix[0].Length;
 }
 
-function Create-Path-Name {
+function Create-Path-Name() {
     param (
         [String] $Entrada
     )
     $Path = Split-Path -Path $Entrada -Parent #ME DA EL DIRECTORIO DEL PARAMETRO SIN EL NOMBRE DEL ARCHIVO 
     $FileName = (Get-Item $Entrada | Select-Object basename)[0].BaseName #SOLO EL NOMBRE DEL ARCHIVO
-    $newPath= "$Path/salida.$FileName"
-    return $newPath;
+    $global:routeNewFile = "$Path/salida.$FileName"
+    return $routeNewFile;
 }
 
 function Create-Empty-File(){
     Param([String] $Entrada);
-    $newPath = Create-Path-Name $Entrada
-    if(Test-Path $newPath){
-        return $null;
+    Create-Path-Name $Entrada;
+    if(Test-Path $global:routeNewFile){
+        $global:routeNewFile = $null;
+        return;
     }
-    New-Item -Path $newPath -ItemType File;
+   $null = New-Item -Path $global:routeNewFile -ItemType File; # $null es para ignorar todo lo que devuelva.
 }
 
 function Traspose-Matrix(){
-    Param([Array] $Matrix , [int] $rows, [int] $columns, [String] $routeOfNewFile);
+    Param([Array] $Matrix , [int] $rows, [int] $columns);
 
     for($currentColumn = 0; $currentColumn -lt $columns; $currentColumn++){
         $newLine=""
@@ -95,21 +99,38 @@ function Traspose-Matrix(){
             $newLine += $Matrix[$currentRow][$currentColumn].ToString()+"|";
         }
         $newLine=$newLine.Substring(0,$newLine.Length-1)
-        Add-Content $routeOfNewFile $newLine
+        Add-Content $global:routeNewFile $newLine
+    }  
+}
+function Scalar-product(){
+    Param([Array] $Matrix , [int] $rows, [int] $columns, [int] $Producto);
+
+    for($currentRow = 0; $currentRow -lt $rows; $currentRow++){
+        $newLine=""
+        for($currentColumn = 0; $currentColumn -lt $columns; $currentColumn++){
+            $newLine += ($Matrix[$currentRow][$currentColumn]*$Producto).ToString()+"|";
+        }
+        $newLine=$newLine.Substring(0,$newLine.Length-1)
+        Add-Content $global:routeNewFile $newLine
     }  
 }
 
 switch ($PsCmdlet.ParameterSetName) {
     "Producto" {
-        Write-Output "$Producto"
+        Create-Empty-File $Entrada
+        if($global:routeNewFile){
+            Scalar-product $Matrix $rows $columns $Producto
+            Write-Output "Se relizó el producto escalar en: $global:routeNewFile"
+        }else{
+            Write-Error "Ya existe el archivo destino"
+        }
         break
     }
     "Transponer" {
-        $routeOfNewFile = Create-Empty-File $Entrada
-        if($routeOfNewFile){
-            Traspose-Matrix $Matrix $rows $columns $routeOfNewFile;
-            $newPath = Create-Path-Name $Entrada
-            Write-Output "Se creó la transpuesta en: $newPath"
+        Create-Empty-File $Entrada
+        if($global:routeNewFile){
+            Traspose-Matrix $Matrix $rows $columns;
+            Write-Output "Se creó la transpuesta en: $global:routeNewFile"
         }else{
             Write-Error "Ya existe el archivo destino"
         }
