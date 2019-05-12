@@ -16,13 +16,14 @@
 # Parameters description
 # $1 Archivo de cartones
 
+
 declare -r CANT_BOLILLAS=100
 es_numero='^[0-9]+$'
 declare -a bolillas
 count_bolilla=0
 cantaron_linea=0
-ganadores_linea="Los cartones que cantaron linea son: "
-ganadores_bingo="Los cartones que cantaron bingo son: "
+ganadores_linea="El carton que canto linea es: "
+ganadores_bingo="El carton que canto bingo es: "
 
 # DECLARE FUNCTIONS
 
@@ -107,22 +108,16 @@ then
 fi
 
 random=$(((RANDOM%$CANT_BOLILLAS)))
-count=0
+if [[ ${bolillas[$random]} -eq $random ]]
+then
+        obtener_bolilla
+        return 1
+fi
 
-while [ $count -lt $count_bolilla ];
-do
-        if [[ ${bolillas[$count]} == $random ]]
-        then
-                obtener_bolilla
-                return 1
-        fi
-        ((count++))
-done
-
-bolillas[$count_bolilla]=$random
-((count_bolilla++))
+echo "Salio la bolilla " $random
+bolillas[$random]=$random
 bolilla=$random
-echo "Salio la bolilla " $bolilla
+((count_bolilla++))
 }
 
 # FUNCTION actualizar_cartones
@@ -156,7 +151,10 @@ do
         then
                 cartones[$position]="$carton_editado"
                 echo "Anoto el carton " $nro_carton
-                verificar_ganador
+                if [[ hubo_ganador -eq 0 ]]
+                then
+                        verificar_ganador
+                fi
         fi
 done
 if [[ hubo_ganador -eq 1 ]]
@@ -202,7 +200,7 @@ then
                 hubo_ganador=1
         fi
 else
-        if [[ ! ${carton_array[1]} =~ $es_numero ]] && [[ ! ${carton_array[2]} =~ $es_numero ]] && [[ ! ${carton_array[3]} =~ $es_numero ]] && [[ ! ${carton_array[4]} =~ $es_numero ]] && [[ ! ${carton_array[5]} =~ $es_numero ]] && [[ ! ${carton_array[6]} =~ $es_numero ]] && [[ ! ${carton_array[7]} =~ $es_numero ]] &&      [[ ! ${carton_array[8]} =~ $es_numero ]] && [[ ! ${carton_array[9]} =~ $es_numero ]] && [[ ! ${carton_array[10]} =~ $es_numero ]] && [[ ! ${carton_array[11]} =~ $es_numero ]] && [[ ! ${carton_array[12]} =~ $es_numero ]] &&  [[ ! ${carton_array[13]} =~ $es_numero ]] && [[ ! ${carton_array[14]} =~ $es_numero ]] && [[ ! ${carton_array[15]} =~ $es_numero ]]
+        if [[ ! ${carton_array[1]} =~ $es_numero ]] && [[ ! ${carton_array[2]} =~ $es_numero ]] && [[ ! ${carton_array[3]} =~ $es_numero ]] && [[ ! ${carton_array[4]} =~ $es_numero ]] && [[ ! ${carton_array[5]} =~ $es_numero ]] && [[ ! ${carton_array[6]} =~ $es_numero ]] && [[ ! ${carton_array[7]} =~ $es_numero ]] &&  [[ ! ${carton_array[8]} =~ $es_numero ]] && [[ ! ${carton_array[9]} =~ $es_numero ]] && [[ ! ${carton_array[10]} =~ $es_numero ]] && [[ ! ${carton_array[11]} =~ $es_numero ]] && [[ ! ${carton_array[12]} =~ $es_numero ]] &&  [[ ! ${carton_array[13]} =~ $es_numero ]] && [[ ! ${carton_array[14]} =~ $es_numero ]] && [[ ! ${carton_array[15]} =~ $es_numero ]]
         then
                 echo "El carton " ${carton_array[0]} " canto bingo."
                 ganadores_bingo+="${carton_array[0]} "
