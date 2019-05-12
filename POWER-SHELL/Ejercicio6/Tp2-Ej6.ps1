@@ -46,26 +46,19 @@ param(
     $rows = 0;
     $columns = 0;
 
-    switch ($PsCmdlet.ParameterSetName) {
-        "Producto" {
-            Write-Output "$Producto"
-            break
+    function Read-File-And-Create-Matrix(){
+        Param([string] $Route)
+
+        $Matrix = @(); #Crea una matriz vacia
+        
+        foreach($line in Get-Content $Route) { #por cada linea del texto de entrada
+            #Agrego una nueva fila , reemplazando | por , para luego ejecutar un comando y poder agregar esa fila
+            $Matrix += ,@( Invoke-Expression -Command $line.replace("|",",")); 
         }
-        "Transponer" {
-            Write-Output "$Transponer"
-            break
-        }
-        Default {
-            Write-Output "Opcion Invalida"
-        }
+        return $Matrix;
     }
-   
-    #
-    $Matrix = @(); #Crea una matriz vacia
-    foreach($line in Get-Content $Entrada) { #por cada linea del texto de entrada
-        #Agrego una nueva fila , reemplazando | por , para luego ejecutar un comando y poder agregar esa fila
-        $Matrix += ,@( Invoke-Expression -Command $line.replace("|",",")); 
-    }
+    
+    $Matrix = Read-File-And-Create-Matrix $Entrada
     
     $rows = $Matrix.Length;
     
@@ -73,3 +66,36 @@ param(
         $columns = $Matrix[0].Length;
     }
 
+    function Traspose-Matrix(){
+        Param([Array] $Matrix , [int] $rows, $columns);
+        $Traspose = New-Object 'object[,]' $columns,$rows
+
+        for($currentRow = 0; $currentRow -lt $rows; $currentRow++){
+            for($currentColumn = 0; $currentColumn -lt $columns; $currentColumn++){
+                $Traspose[$currentColumn,$currentRow] = $Matrix[$currentRow][$currentColumn];
+            }
+        }  
+       # Write-Output "Original " $Matrix[0];
+       # Write-Output "Transpuesta " $Traspose[0,0];
+    }
+
+    switch ($PsCmdlet.ParameterSetName) {
+        "Producto" {
+            Write-Output "$Producto"
+            break
+        }
+        "Transponer" {
+            Traspose-Matrix $Matrix $rows $columns;
+            $Path = Split-Path -Path $Entrada -Parent #ME DA EL DIRECTORIO DEL PARAMETRO SIN EL NOMBRE DEL ARCHIVO ;)
+            $FileName = (Get-Item $Entrada | Select-Object basename)[0].BaseName #SOLO EL NOMBRE DEL ARCHIVO
+            #Write-Output "salida."$FileName
+            #Write-Output $Path -Directory
+            #New-Item -Path $Path"/salida."$FileName -ItemType File
+            break
+        }
+        Default {
+            Write-Output "Opcion Invalida"
+        }
+    }
+
+   
