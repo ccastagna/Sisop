@@ -43,6 +43,8 @@ param(
     [parameter(Mandatory=$false, ParameterSetName="Transponer")]
     [switch] $Transponer     
     )					
+    $rows = 0;
+    $columns = 0;
 
     switch ($PsCmdlet.ParameterSetName) {
         "Producto" {
@@ -54,7 +56,20 @@ param(
             break
         }
         Default {
-            Write-Output "Default"
+            Write-Output "Opcion Invalida"
         }
     }
-Write-Output "$Entrada $Producto"
+   
+    #
+    $Matrix = @(); #Crea una matriz vacia
+    foreach($line in Get-Content $Entrada) { #por cada linea del texto de entrada
+        #Agrego una nueva fila , reemplazando | por , para luego ejecutar un comando y poder agregar esa fila
+        $Matrix += ,@( Invoke-Expression -Command $line.replace("|",",")); 
+    }
+    
+    $rows = $Matrix.Length;
+    
+    if ($rows -gt 0){
+        $columns = $Matrix[0].Length;
+    }
+
