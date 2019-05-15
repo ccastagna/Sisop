@@ -36,29 +36,37 @@ param(
 $hashTable = @{}
 
 # Main Logic
-foreach ($file in Get-ChildItem -Path $path -Recurse -File) {
-	$length = ($file | Measure-Object Length -Sum).Sum
-	$name = $file.Name +"|"+ $length
+$files = Get-ChildItem -Path $path -Recurse -File
+
+$files | ForEach-Object -Process {
+	$length = ($_ | Measure-Object Length -Sum).Sum
+	$name = $_.Name +"|"+ $length
 	$exist = $false
 
-	foreach($key in $hashTable.GetEnumerator()) {
-		if ( $key.Name -eq $name){
-			$hashTable[$key.Name] = $($key.Value + 1)
-			$exist = $true
-			break
+	try {
+		$hashTable.Keys | ForEach-Object -Process {
+			if ( $_ -eq $name ){
+				$hashTable[$_] = $($hashTable[$_] + 1)
+				$exist = $true
+				return
+			}
 		}
 	}
+	catch {
+		
+	}	
 
-	if ($exist -eq $false) {
+	if( $exist -eq $false ){
 		$hashTable.Add($name, 1)
 	}
 }
+
 ""
 "Archivos repetidos dentro del directorio `"$path`"`:"
 
-foreach($key in $hashTable.GetEnumerator()) {
-	if($key.Value -gt 1){
-		$($key.Name).Substring(0, $($key.Name).IndexOf('|'))
+$hashTable.GetEnumerator() | ForEach-Object -Process {
+	if($_.Value -gt 1){
+		$($_.Name).Substring(0, $($_.Name).IndexOf('|'))
 	}
 }
 ""

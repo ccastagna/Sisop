@@ -52,6 +52,5 @@ Param(
         [String] $pathsalida )
 
 c) ¿Con qué cmdlet se podría reemplazar el script para mostrar una salida similar?
-Select-Object brindaría una salida similar
-Get-ChildItem -Path "F:\eclipse-workspace\Sisop\POWER-SHELL\Ejercicio1" -File | Select-Object Name, @{Name="Length";Expression={(Get-Item $_.name).length}}
+Get-ChildItem -Path $pathsalida -File | Select-Object -Property Name, Length
 #>
