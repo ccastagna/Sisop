@@ -36,39 +36,45 @@ param(
 $hashTable = @{}
 
 # Main Logic
+$at_least_one_duplicated = $false
 $files = Get-ChildItem -Path $path -Recurse -File
 
-$files | ForEach-Object -Process {
+
+$files | ForEach-Object {
 	$length = ($_ | Measure-Object Length -Sum).Sum
 	$name = $_.Name +"|"+ $length
 	$exist = $false
 
-	try {
-		$hashTable.Keys | ForEach-Object -Process {
-			if ( $_ -eq $name ){
-				$hashTable[$_] = $($hashTable[$_] + 1)
-				$exist = $true
-				return
-			}
+	$hashTable.GetEnumerator() | ForEach-Object {
+		if ( $_.Key -eq $name ){
+			$duplicate_key = $_.Key
+			$exist = $true
+			$at_least_one_duplicated = $true
+			return
 		}
 	}
-	catch {
-		
-	}	
 
 	if( $exist -eq $false ){
 		$hashTable.Add($name, 1)
+	} else {
+		$hashTable[$duplicate_key] += 1
 	}
 }
 
 ""
-"Archivos repetidos dentro del directorio `"$path`"`:"
+if ($at_least_one_duplicated -eq $true) {
+	"Archivos repetidos dentro del directorio `"$path`"`:"
 
-$hashTable.GetEnumerator() | ForEach-Object -Process {
-	if($_.Value -gt 1){
-		$($_.Name).Substring(0, $($_.Name).IndexOf('|'))
+	$hashTable.GetEnumerator() | ForEach-Object {
+		if($_.Value -gt 1){
+			$($_.Name).Substring(0, $($_.Name).IndexOf('|'))
+		}
 	}
+} else {
+	"No se encontraron archivos repetidos dentro del directorio `"$path`" "
 }
+
+
 ""
 
 exit 0
