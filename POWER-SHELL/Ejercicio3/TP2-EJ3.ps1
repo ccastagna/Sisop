@@ -115,12 +115,14 @@ $ordenado | ForEach-Object {
 }
 
 # Ultimo registro
-$nuevoRegistro = New-Object System.Object
-$nuevoRegistro | Add-Member -MemberType NoteProperty -Name "Patente" -Value $Patente
-$nuevoRegistro | Add-Member -MemberType NoteProperty -Name "Año" -Value $añoAnt
-$nuevoRegistro | Add-Member -MemberType NoteProperty -Name "TotalMultas" -Value $saldoAño
+if ($patente -ne 0) {
+    $nuevoRegistro = New-Object System.Object
+    $nuevoRegistro | Add-Member -MemberType NoteProperty -Name "Patente" -Value $Patente
+    $nuevoRegistro | Add-Member -MemberType NoteProperty -Name "Año" -Value $añoAnt
+    $nuevoRegistro | Add-Member -MemberType NoteProperty -Name "TotalMultas" -Value $saldoAño
 
-$resumen += $nuevoRegistro
+    $resumen += $nuevoRegistro
+}
 
 if ($resumen -ne $null) {
     try {
