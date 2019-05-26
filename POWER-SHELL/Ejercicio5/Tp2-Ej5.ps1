@@ -62,7 +62,7 @@ if ($Procesos -eq $true) {
 }
 elseif ($Archivos -eq $true) { 
     while ($true) {
-        Get-ChildItem -Path $Directorio -File | Measure-Object | %{$_.Count}
+        Get-ChildItem -Path $Directorio -File | Measure-Object | ForEach-Object{$_.Count}
         Start-Sleep -s 3
     }
 }
