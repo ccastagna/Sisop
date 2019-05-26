@@ -70,7 +70,7 @@ if ($rows -gt 0){
     $columns = $Matrix[0].Length;
 }
 
-function Create-Path-Name() {
+function Generar-Ruta-Archivo-Salida() {
     param (
         [String] $Entrada
     )
@@ -82,7 +82,7 @@ function Create-Path-Name() {
 
 function Create-Empty-File(){
     Param([String] $Entrada);
-    Create-Path-Name $Entrada;
+    Generar-Ruta-Archivo-Salida $Entrada;
     if(Test-Path $global:routeNewFile){
         $global:routeNewFile = $null;
         return;
@@ -115,30 +115,20 @@ function Scalar-product(){
     }  
 }
 
-switch ($PsCmdlet.ParameterSetName) {
-    "Producto" {
-        Create-Empty-File $Entrada
-        if($global:routeNewFile){
-            Scalar-product $Matrix $rows $columns $Producto
-            Write-Output "Se relizó el producto escalar en: $global:routeNewFile"
-        }else{
-            Write-Error "Ya existe el archivo destino"
-        }
-        break
+if ($PsCmdlet.ParameterSetName -eq "Producto"){
+    Create-Empty-File $Entrada
+    if($global:routeNewFile){
+        Scalar-product $Matrix $rows $columns $Producto
+        Write-Output "Se relizó el producto escalar en: $global:routeNewFile"
+    }else{
+        Write-Error "Ya existe el archivo destino"
     }
-    "Trasponer" {
-        Create-Empty-File $Entrada
-        if($global:routeNewFile){
-            Traspose-Matrix $Matrix $rows $columns;
-            Write-Output "Se creó la traspuesta en: $global:routeNewFile"
-        }else{
-            Write-Error "Ya existe el archivo destino"
-        }
-        break
-    }
-    Default {
-        Write-Output "Opcion Invalida"
+}elseif ($Trasponer -eq $true) {
+    Create-Empty-File $Entrada
+    if($global:routeNewFile){
+        Traspose-Matrix $Matrix $rows $columns;
+        Write-Output "Se creó la traspuesta en: $global:routeNewFile"
+    }else{
+        Write-Error "Ya existe el archivo destino"
     }
 }
-
-
