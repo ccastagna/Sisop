@@ -15,24 +15,24 @@
 
 <#
 .SYNOPSIS
-El script permite realizar producto escalar y transposición de matrices.
+El script permite realizar producto escalar y trasposición de matrices.
 .DESCRIPTION
 El script recibe 2 parametros:
     -Entrada
-    -Producto o Transponer (No se pueden usar ambos a la vez)
+    -Producto o Trasponer (No se pueden usar ambos a la vez)
 Si se recibe Producto, se debe recibir un numero entero, que va a ser el numero con el que se va a multiplicar la matriz de entrada
-Si se recibe Transponer, no se necesita recibir nada mas, realizará la transposicion de la matriz de entrada
+Si se recibe Trasponer, no se necesita recibir nada mas, realizará la trasposicion de la matriz de entrada
 El resultado obtenido se guardará en un archivo que se llamará: “salida.nombreArchivoEntrada”
 .PARAMETER Entrada
 El parametro Entrada espera recibir el archivo de entrada.
 .PARAMETER Producto
 El parametro Producto espera recibir el escalar a ser utilizado en el producto escalar.
-.PARAMETER Transponer
-El parametro Transponer indica que se transpone la matriz de entrada.
+.PARAMETER Trasponer
+El parametro Trasponer indica que se traspone la matriz de entrada.
 .EXAMPLE
 ./TP1-EJ6.ps1 -Entrada "path de entrada" -Producto 2
 .EXAMPLE 
-./TP1-EJ6.ps1 -Entrada "path de entrada" -Transponer
+./TP1-EJ6.ps1 -Entrada "path de entrada" -Trasponer
 #>
 
 param(
@@ -41,8 +41,8 @@ param(
 [string] $Entrada,                  #Entrada is a string
 [parameter(Mandatory=$false, ParameterSetName="Producto")]
 [int] $Producto,
-[parameter(Mandatory=$false, ParameterSetName="Transponer")]
-[switch] $Transponer     
+[parameter(Mandatory=$false, ParameterSetName="Trasponer")]
+[switch] $Trasponer     
 )		
 
 #ATRIBUTOS
@@ -126,11 +126,11 @@ switch ($PsCmdlet.ParameterSetName) {
         }
         break
     }
-    "Transponer" {
+    "Trasponer" {
         Create-Empty-File $Entrada
         if($global:routeNewFile){
             Traspose-Matrix $Matrix $rows $columns;
-            Write-Output "Se creó la transpuesta en: $global:routeNewFile"
+            Write-Output "Se creó la traspuesta en: $global:routeNewFile"
         }else{
             Write-Error "Ya existe el archivo destino"
         }
