@@ -41,7 +41,7 @@ $files = Get-ChildItem -Path $path -Recurse -File
 
 
 $files | ForEach-Object {
-	$length = ($_ | Measure-Object Length -Sum).Sum
+	$length = ($_ | Measure-Object Length)
 	$name = $_.Name +"|"+ $length
 	$exist = $false
 
