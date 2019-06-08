@@ -2,7 +2,7 @@
 
 # Trabajo práctico 2
 # Ejercicio 6
-# Entrega
+# Primer Reentrega
 
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
@@ -83,11 +83,7 @@ function Generar-Ruta-Archivo-Salida() {
 function Create-Empty-File(){
     Param([String] $Entrada);
     Generar-Ruta-Archivo-Salida $Entrada;
-    if(Test-Path $global:routeNewFile){
-        $global:routeNewFile = $null;
-        return;
-    }
-   $null = New-Item -Path $global:routeNewFile -ItemType File; # $null es para ignorar todo lo que devuelva.
+   $null = New-Item -Path $global:routeNewFile -ItemType File -Force; # $null es para ignorar todo lo que devuelva.
 }
 
 function Traspose-Matrix(){
@@ -121,7 +117,7 @@ if ($PsCmdlet.ParameterSetName -eq "Producto"){
         Scalar-product $Matrix $rows $columns $Producto
         Write-Output "Se relizó el producto escalar en: $global:routeNewFile"
     }else{
-        Write-Error "Ya existe el archivo destino"
+        Write-Error "ERROR"
     }
 }elseif ($Trasponer -eq $true) {
     Create-Empty-File $Entrada
@@ -129,6 +125,6 @@ if ($PsCmdlet.ParameterSetName -eq "Producto"){
         Traspose-Matrix $Matrix $rows $columns;
         Write-Output "Se creó la traspuesta en: $global:routeNewFile"
     }else{
-        Write-Error "Ya existe el archivo destino"
+        Write-Error "ERROR"
     }
 }
