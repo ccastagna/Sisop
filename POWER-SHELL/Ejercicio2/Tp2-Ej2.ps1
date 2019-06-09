@@ -2,7 +2,7 @@
 
 # Trabajo práctico 2
 # Ejercicio 2
-# Entrega
+# Primera reentrega
 
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
@@ -27,10 +27,17 @@
 
 # Parameters Validation
 param(
-	[parameter(Mandatory=$true)] 							#path is a mandatory parameter
-	[ValidateScript({Test-Path $_ -PathType 'Container'})]	#path does not exist
-	[ValidateScript({Test-Path $_\* -PathType 'Leaf'})]		#path does not contain files
-	[String] $path)											#path is a string
+	[parameter(Mandatory=$true)] 									#path is a mandatory parameter
+	[ValidateScript({Test-Path -Path $_ -PathType 'Container'})]	#path does not exist
+	[ValidateScript({
+		$files = Get-ChildItem -Path $_ -Recurse -File
+		if (-Not $files){
+			return $false
+		}
+		else {
+			return $true
+		}})]															#path does not contain files
+	[String] $path)													#path is a string
 
 # HashTable Instantiation
 $hashTable = @{}
