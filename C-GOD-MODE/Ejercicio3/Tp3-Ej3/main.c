@@ -9,7 +9,7 @@
 
 
 /*
- * Realiza la cuenta de la velocidad maxima con la velocidad de la camara y el monto predefinido
+ * Realiza la cuenta de la velocidad maxima con la velocidad de la camara y el monto predefinido.
  */
 double calculateAmount(double mount, double maximumSpeed, double currentSpeed){
     return (currentSpeed - maximumSpeed) * mount;
@@ -35,7 +35,7 @@ FILE *createFile(char fileName[], char mode[]){
 }
 
 /*
- * Genera el nombre del archivo dado los parametros
+ * Genera el nombre del archivo dado los parametros.
  */
 char *createNameOfFile(char *string, int day, int month, int year){
     char yearBuffer[5];
@@ -44,23 +44,65 @@ char *createNameOfFile(char *string, int day, int month, int year){
     snprintf(yearBuffer, 10, "%d", year);
     snprintf(monthBuffer, 10, "%d", month);
     snprintf(dayBuffer, 10, "%d", day);
-    //  es el offset del string, AAAA MM DD, el fin del string y el _
-    char *result = (char *) malloc(strlen(string) + strlen(yearBuffer) + strlen(monthBuffer) + strlen(dayBuffer) + 2);
+    //  es el offset del string, AAAA MM DD, el fin del string, el _ y el .txt
+    char *result = (char *) malloc(strlen(string) + strlen(yearBuffer) + strlen(monthBuffer) + strlen(dayBuffer) + 6);
     result = strcpy(result, string);
     result = strcat(result, "_");
     result = strcat(result, yearBuffer);
     result = strcat(result, monthBuffer);
     result = strcat(result, dayBuffer);
+    result = strcat(result, ".txt");
     result = strcat(result, "\0");
     return result;
 }
 
+/*
+ * Verifica si cambio de dia.
+ */
+int isEndOfTheDay(struct tm fixedDate, struct tm currentDate) {
+    if(fixedDate.tm_mday == currentDate.tm_mday && fixedDate.tm_mon == currentDate.tm_mon && fixedDate.tm_year == currentDate.tm_year ){
+        return FALSE;
+    }
+    return TRUE;
+}
+
 int main(int argc, char* argv[])
 {
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    char* hola = createNameOfFile(DAILY_FILE_NAME, tm.tm_mday, tm.tm_mon + OFFSET_MONTH, tm.tm_year + OFFSET_YEAR);
-    printf("%s", hola);
+    // Punteros a los archivos que voy a manejar
+    FILE *fpToTraffic;
+    FILE *fpToCreateTrafficTicket;
+    // Son para saber si tengo que crear un nuevo archivo o no.
+    int isFirstTime = TRUE;
+    time_t auxFixedDate = time(NULL);
+    time_t auxCurrentDate = time(NULL);
+    struct tm fixedDate = *localtime(&auxFixedDate);
+    struct tm currentDate = *localtime(&auxCurrentDate);
+
+    // INICIO DE SERVICIO    
+    //while(TRUE) {
+
+        if(isFirstTime) {
+            isFirstTime = FALSE;
+            char *fileName = createNameOfFile(TRAFFIC_FILE_NAME,fixedDate.tm_mday, fixedDate.tm_mon + OFFSET_MONTH, fixedDate.tm_year + OFFSET_YEAR); 
+            if( access(  fileName , F_OK ) != -1 ) {
+                printf("YA EXISTE EL ARCHIVO, ABRIENDO PARA ESCRIBIR AL FINAL");
+                fpToTraffic = createFile(fileName,"a+");
+                fprintf(fpToTraffic, "%s", "Archivo reutilizado\n");
+            } else {
+                printf("NO EXISTE EL ARCHIVO, CREO UNO DE CERO");
+                fpToTraffic = createFile(fileName,"w+");
+                fprintf(fpToTraffic, "%s", "Archivo nuevo\n");
+            }
+        }
+        if(isEndOfTheDay(fixedDate, currentDate)) {
+
+        }
+        fprintf(fpToTraffic, "%s", "Escibiendo...\n");
+        fclose(fpToTraffic);
+    //}
+
+    //char* hola = createNameOfFile(DAILY_FILE_NAME, tm.tm_mday, tm.tm_mon + OFFSET_MONTH, tm.tm_year + OFFSET_YEAR);
+    //printf("%s", hola);
 
     // pid_t pid = 0;
     // pid_t sid = 0;
