@@ -2,7 +2,7 @@
 
 # Trabajo práctico 2
 # Ejercicio 4
-# Entrega
+# Primer Reentrega
 
 # Integrantes del Equipo
 # Franco Dario Scarpello 37842567
@@ -49,8 +49,10 @@ se agrupan los directorios |
 se seleccionan los nombres de los directorios | 
 se agrega cada directorio al archivo comprimido    
 #>
-Get-ChildItem $pathLogs -Recurse | Select-String -Pattern $cadena | Group-Object Path | Select-Object Name | ForEach-Object {
+Get-ChildItem $pathLogs -Recurse -File | Select-String -Pattern $cadena | Group-Object Path | Select-Object Name | ForEach-Object {
     $filepath = $_.Name;
+
+    Write-Host $filepath
     
     if( Test-Path $pathSalida){
         Compress-Archive $filepath -Update $pathSalida  
