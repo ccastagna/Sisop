@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-
+#define NUM_THREADS 1
 #define DAILY_FILE_NAME "Crear_Multas"
 #define TRAFFIC_FILE_NAME "Transito"
 #define AMOUNT 15000
