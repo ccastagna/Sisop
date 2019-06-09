@@ -1,4 +1,5 @@
 #include "functions.h"
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -33,19 +34,33 @@ FILE *createFile(char fileName[], char mode[]){
     return fp;
 }
 
+/*
+ * Genera el nombre del archivo dado los parametros
+ */
+char *createNameOfFile(char *string, int day, int month, int year){
+    char yearBuffer[5];
+    char monthBuffer[3];
+    char dayBuffer[3];
+    snprintf(yearBuffer, 10, "%d", year);
+    snprintf(monthBuffer, 10, "%d", month);
+    snprintf(dayBuffer, 10, "%d", day);
+    //  es el offset del string, AAAA MM DD, el fin del string y el _
+    char *result = (char *) malloc(strlen(string) + strlen(yearBuffer) + strlen(monthBuffer) + strlen(dayBuffer) + 2);
+    result = strcpy(result, string);
+    result = strcat(result, "_");
+    result = strcat(result, yearBuffer);
+    result = strcat(result, monthBuffer);
+    result = strcat(result, dayBuffer);
+    result = strcat(result, "\0");
+    return result;
+}
 
 int main(int argc, char* argv[])
 {
-    FILE *primerPuntero;
-    FILE *segundoPuntero;
-
-    primerPuntero = createFile("TercerArchivo.txt","w+");
-    segundoPuntero = createFile("CuartoArchivo.txt","w+");
-    fprintf(primerPuntero, "%s %s %s %d", "We", "are", "in", 2012);
-    fprintf(segundoPuntero, "%s %s %s %d", "We", "are", "in", 2013);
-    fprintf(primerPuntero, "%s %s %s %d", "We", "are", "in", 2014);
-    fclose(primerPuntero);
-    fclose(segundoPuntero);
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    char* hola = createNameOfFile(DAILY_FILE_NAME, tm.tm_mday, tm.tm_mon + OFFSET_MONTH, tm.tm_year + OFFSET_YEAR);
+    printf("%s", hola);
 
     // pid_t pid = 0;
     // pid_t sid = 0;
@@ -85,6 +100,6 @@ int main(int argc, char* argv[])
     //     i++;
     // }
     // fclose(fp);
-  
+
     // return (0);
 }
