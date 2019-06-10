@@ -1,4 +1,5 @@
 #include "functions.h"
+#include "colaDinamica.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +7,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <pthread.h>
+// ATRIBUTOS - VAR GLOBALES
+int didDayChange = FALSE;
 
 
 /*
@@ -66,43 +70,69 @@ int isEndOfTheDay(struct tm fixedDate, struct tm currentDate) {
     return TRUE;
 }
 
+//FUNCION PARA EL HILO
+void *validateEndOfDay(void *fixedDate) {
+    while(TRUE){
+        struct tm *parameter = (struct tm*)fixedDate;
+        time_t auxCurrent = time(NULL);
+        struct tm currentDate = *localtime(&auxCurrent);
+        didDayChange = isEndOfTheDay(*parameter, currentDate);
+        //printf("HOLA\n");
+        //fflush(stdout);
+        sleep(1);
+    }
+}
+
 int main(int argc, char* argv[])
 {
+
+    t_cola cola;
+    crearCola(&cola);
+
     // Punteros a los archivos que voy a manejar
-    FILE *fpToTraffic;
-    FILE *fpToCreateTrafficTicket;
-    // Son para saber si tengo que crear un nuevo archivo o no.
+    FILE *fpToTraffic; // TODOS
+    FILE *fpToCreateTrafficTicket; // SOLO LOS QUE SUPERAN VEL MAX
+
     int isFirstTime = TRUE;
+
     time_t auxFixedDate = time(NULL);
-    time_t auxCurrentDate = time(NULL);
-    struct tm fixedDate = *localtime(&auxFixedDate);
-    struct tm currentDate = *localtime(&auxCurrentDate);
+    struct tm *fixedDate; // ESTA FECHA SIRVE PARA REFERENCIA
+    fixedDate = malloc(sizeof(struct tm));
+    *fixedDate = *localtime(&auxFixedDate);
+    //struct tm fixedDate = *localtime(&auxFixedDate);
 
-    // INICIO DE SERVICIO    
-    //while(TRUE) {
+    pthread_t threads[NUM_THREADS];
+    int thread;
+    thread = pthread_create(&threads[0], NULL, validateEndOfDay, (void *) fixedDate);
+                //pthread_create(&cmp_thread[index++], NULL, Compare, (void*) pair);
+    if (thread) {
+        printf("Error:unable to create thread, %d\n", thread);
+        exit(-1);
+    }
 
-        if(isFirstTime) {
-            isFirstTime = FALSE;
-            char *fileName = createNameOfFile(TRAFFIC_FILE_NAME,fixedDate.tm_mday, fixedDate.tm_mon + OFFSET_MONTH, fixedDate.tm_year + OFFSET_YEAR); 
-            if( access(  fileName , F_OK ) != -1 ) {
-                printf("YA EXISTE EL ARCHIVO, ABRIENDO PARA ESCRIBIR AL FINAL");
-                fpToTraffic = createFile(fileName,"a+");
-                fprintf(fpToTraffic, "%s", "Archivo reutilizado\n");
-            } else {
-                printf("NO EXISTE EL ARCHIVO, CREO UNO DE CERO");
-                fpToTraffic = createFile(fileName,"w+");
-                fprintf(fpToTraffic, "%s", "Archivo nuevo\n");
-            }
-        }
-        if(isEndOfTheDay(fixedDate, currentDate)) {
 
-        }
-        fprintf(fpToTraffic, "%s", "Escibiendo...\n");
-        fclose(fpToTraffic);
-    //}
+    //pthread_exit(NULL); // Cierra el Thread
 
-    //char* hola = createNameOfFile(DAILY_FILE_NAME, tm.tm_mday, tm.tm_mon + OFFSET_MONTH, tm.tm_year + OFFSET_YEAR);
-    //printf("%s", hola);
+    // INICIO DE SERVICIO
+    while(TRUE) {
+
+        // if(didDayChange){
+        //     // didDayChange = FALSE; // CAMBIARLO A FALSE
+        //     // ACTUALIZAR LA FECHA
+        //     //HACER LA LOGICA DE DESACOLADO Y GENERAR ARCHIVOS.
+        // }
+
+        // if(isFirstTime) {
+        //     isFirstTime = FALSE;
+        //     char *fileName = createNameOfFile(TRAFFIC_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
+        //     if( access(  fileName , F_OK ) != -1 ) {
+        //         fpToTraffic = createFile(fileName,"a+");
+        //     } else {
+        //         fpToTraffic = createFile(fileName,"w+");
+        //     }
+        // }
+        // fclose(fpToTraffic);
+    }
 
     // pid_t pid = 0;
     // pid_t sid = 0;
@@ -135,6 +165,8 @@ int main(int argc, char* argv[])
     // close(STDERR_FILENO);
 
     // fp = fopen ("mydaemonfile.txt", "w+");
+
+    //ACA IMPLEMENTACION DEL SERVICIO
     // while (i < 10)
     // {
     //     sleep(1);
