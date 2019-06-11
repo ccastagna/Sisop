@@ -14,19 +14,18 @@ int listaVacia(const t_list *pl){
     return *pl == NULL;
 }
 
-int insertarAlComienzoDeLista(t_list *pl, const t_dato *d){
-    // Reservo memoria y pregunto si hay
-    t_nodo *nue = (t_nodo *)malloc(sizeof(t_nodo));
-    if (!nue){
-        return SIN_MEMORIA;
+int insertarAlFinal(t_list *p, const t_dato *d) {
+    t_nodo *nue = ( t_nodo *) malloc( sizeof(t_nodo) );
+    if ( nue == NULL ) {
+        return 0;
     }
-    // Asigno la info correspondiente al nuevo nodo.
-    nue -> info = *d;
-    // Indico que el nodo siguiente al nuevo es al que apunta actualmente *pl
-    nue -> sig = *pl;
-    // Le indico a *pl que apunte al nodo nuevo.
-    *pl = nue;
-    return TODO_OK;
+    while ( *p ) {
+        p = &(*p)->sig;
+    }
+    nue->info = *d;
+    nue->sig = NULL;
+    *p = nue;
+    return 1;
 }
 
 int eliminarPorClave(t_list *pl, const t_dato *d, int (*comparar)(const t_dato *d1, const t_dato *d2)){
@@ -41,4 +40,22 @@ int eliminarPorClave(t_list *pl, const t_dato *d, int (*comparar)(const t_dato *
         return VERDADERO;
     }
     return FALSO;
+}
+
+int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a) {
+    t_nodo *aux;
+    while ( *p && comparar( &(*p)->info, d ) != 0 ){
+        p = &(*p)->sig;
+    }
+
+    if(*p) {
+        aux = *p;
+        *d = aux->info;
+        if( ELIMINAR_O_NO == ELIMINAR_NODO ) {
+            *p = aux->sig;
+            free(aux);
+        }
+        return 1;
+    }
+    return 0;
 }

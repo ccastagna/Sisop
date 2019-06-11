@@ -1,6 +1,9 @@
 #ifndef FUNCTIONS_H_INCLUDED
 #define FUNCTIONS_H_INCLUDED
 
+#include <list.h>
+#include <info.h>
+
 #define NO_EXISTE_PATENTE 0
 #define EXISTE_PATENTE 1
 
@@ -21,15 +24,15 @@ int abrirArchivo(FILE **, const char*, const char*, int);
 //escribirArchivo();
 
 /*
+    Recibe la patente y devuelve si existe o no.
+*/
+int existePatente(char*);
+
+/*
     Recibe patente y el monto de la nueva multa. Si existe suma monto al total y aumenta
     cantidad de multas, sino existe crea un nuevo registro en la base de datos.
 */
 int ingresarMulta(char*, double);
-
-/*
-    Recibe la patente y devuelve si existe o no.
-*/
-int existePatente(char*);
 
 /*
     Buscar lista de registros a suspender. Los registros a suspender son aquellos
@@ -52,5 +55,7 @@ double buscarMontoTotal(char*);
     Muestra el monto total a pagar de cada infractor
 */
 t_list verMontoTotalInfractores();
+
+int compararPatente(const t_dato *, const t_dato *);
 
 #endif // FUNCTIONS_H_INCLUDED
