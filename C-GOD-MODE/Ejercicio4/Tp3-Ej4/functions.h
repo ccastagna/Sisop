@@ -15,24 +15,28 @@
 #define CAMBIO 1
 #define ELIMINAR 2
 
+// Usado para archivos
 #define DATABASE_NAME "infractores.txt"
+#define READ_TEXT         "rt"  //Abre un fichero de texto para lectura
+#define READ_TEXT_UPDATE  "r+t" //Abre un fichero de texto para actualización (lectura y escritura)
+#define CON_MSG 1
 
 int abrirArchivo(FILE **, const char*, const char*, int);
 
-//leerArchivo();
+void leerArchivo(FILE **, t_list *);
 
 //escribirArchivo();
-
-/*
-    Recibe la patente y devuelve si existe o no.
-*/
-int existePatente(char*);
 
 /*
     Recibe patente y el monto de la nueva multa. Si existe suma monto al total y aumenta
     cantidad de multas, sino existe crea un nuevo registro en la base de datos.
 */
 int ingresarMulta(char*, double);
+
+/*
+    Recibe la patente y devuelve si existe o no.
+*/
+int existePatente(char*);
 
 /*
     Buscar lista de registros a suspender. Los registros a suspender son aquellos
@@ -56,6 +60,11 @@ double buscarMontoTotal(char*);
 */
 t_list verMontoTotalInfractores();
 
+/*
+    Compara las dos patentes enviadas, retorna:
+    0: si son iguales
+    !0: si no son iguales
+*/
 int compararPatente(const t_dato *, const t_dato *);
 
 #endif // FUNCTIONS_H_INCLUDED

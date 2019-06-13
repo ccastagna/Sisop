@@ -11,8 +11,11 @@
 // Miguel Amengual 35991055
 // Cristian Castagna 3739869
 
+// Bibliotecas pre-compiladas.
 #include <stdio.h>
 #include <stdlib.h>
+
+// Bibliotecas propias.
 #include <info.h>
 #include <funciones.h>
 #include <list.h>

@@ -27,6 +27,6 @@ int listaLlena(const t_list *);
 int listaVacia(const t_list *);
 int insertarAlFinal(t_list *, const t_dato * );
 int eliminarPorClave(t_list l, const t_dato *, int (*comparar)(const t_dato *, const t_dato *));
-int buscarEnListaNoOrdenadaPorClave (t_list *, t_dato *, int );
+int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, int );
 
 #endif // LIST_H_INCLUDED
