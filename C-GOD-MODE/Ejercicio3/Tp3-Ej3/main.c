@@ -8,14 +8,25 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <pthread.h>
+#include <fcntl.h>
+#include <errno.h>
 
-// ATRIBUTOS - VAR GLOBALES
-int didDayChange = FALSE;
-struct tm *fixedDate; // ESTA FECHA SIRVE PARA REFERENCIA
+
+typedef struct{
+    char plate[7];
+    char camera[4];
+    int speed;
+}t_fifo;
+
+FILE *pf_archLog;
 
 // ATRIBUTOS - VAR GLOBALES PARA EL PROCESO DEMONIO
 pid_t pid = 0;
 pid_t sid = 0;
+
+// ATRIBUTOS - VAR GLOBALES
+int didDayChange = FALSE;
+struct tm *fixedDate; // ESTA FECHA SIRVE PARA REFERENCIA
 
 /*
  * Realiza la cuenta de la velocidad maxima con la velocidad de la camara y el monto predefinido.
@@ -38,6 +49,8 @@ FILE *createFile(char fileName[], char mode[]){
     FILE *fp;
     fp = fopen (fileName, mode);
     if(fp == NULL){
+        printf("ERROR al abrir el archivo %s", fileName);
+        exit(1);
         return NULL;
     }
     return fp;
@@ -86,15 +99,15 @@ void *validateEndOfDay(void *fixedDate) {
         //Se agrega este if para ver si realmente debo cambiar, ya que sino, solo por un seg estaria en TRUE
         if(mustChange){
             didDayChange = TRUE;
+            fprintf(pf_archLog,"Cambio de dia \n");
         }
         //fflush(stdout); // es para imprimir por consola si no ponemos el \n
         sleep(1);
     }
 }
 
-void createDaemonProcess(){
-    // FILE *fp= NULL;
-    // int i = 0;
+static void createDaemonProcess(){
+
     pid = fork();// fork a new child process
 
     if (pid < 0)
@@ -120,31 +133,63 @@ void createDaemonProcess(){
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
-
-    // fp = fopen ("mydaemonfile.txt", "w+");
-
-    // ACA IMPLEMENTACION DEL SERVICIO
-    // while (i < 10)
-    // {
-    //     sleep(1);
-    //     fprintf(fp, "%d", i);
-    //     i++;
-    // }
-    // fclose(fp);
-
-    // return (0);
 }
 
-int main(int argc, char* argv[])
-{
-    // Variables para el manejo de hilos
-    pthread_t threads[NUM_THREADS];
+void createThreadDateTime(){
     int thread;
-    
+    pthread_t threads[NUM_THREADS];
+
+    thread = pthread_create(&threads[0], NULL, validateEndOfDay, (void *) fixedDate);
+
+    if (thread) {
+        printf("Error:unable to create thread, %d\n", thread);
+        exit(-1);
+    }
+    //pthread_exit(NULL); // Cierra el Thread
+}
+
+t_fifo *readString (char *fifoString){
+
+    t_fifo *valueToReturn=(t_fifo*)malloc(sizeof(t_fifo));
+    char delim[] = " ";
+    char *p;
+    int i;
+    char plate = "ASD123";
+    for (i = 1, p = strtok(fifoString,delim); p != NULL; p = strtok(NULL,delim), i++) {
+        printf("Output%u=%s;\n", i, p);
+        if(i == 1){
+            strcpy((*valueToReturn).plate, p);
+        }else if (i == 2){
+            strcpy((*valueToReturn).camera, p);
+        }else if (i == 3) {
+            (*valueToReturn).speed = atoi(p);
+        }
+
+    }
+    // while( token != NULL ) {
+    //     counter++;
+    //     token = strtok(fifoString, delim);
+    //     token = strtok(NULL, delim);
+
+    //     if(counter == 1){
+    //         strcpy(*valueToReturn->plate, token);
+    //     }else if (counter == 2){
+    //         strcpy(*valueToReturn->camera, token);
+    //     }else {
+    //         valueToReturn->speed = atoi(token);
+    //     }
+    //     printf(token);
+    // }
+     return valueToReturn;
+}
+
+int main(int argc, char* argv[]) {
+
     // Cola para menejar el procesamiento del archivo
     t_cola cola;
     crearCola(&cola);
-
+    // Archivo de Log
+    pf_archLog = createFile("Log.txt","w+");
     // Punteros a los archivos que voy a manejar
     FILE *fpToTraffic; // TODOS
     FILE *fpToCreateTrafficTicket; // SOLO LOS QUE SUPERAN VEL MAX
@@ -154,29 +199,32 @@ int main(int argc, char* argv[])
 
     // Variable para el manejo de fechas
     time_t auxFixedDate = time(NULL);
-    
+
     //Logica de fechas
     fixedDate = malloc(sizeof(struct tm));
     *fixedDate = *localtime(&auxFixedDate);
 
-    //struct tm fixedDate = *localtime(&auxFixedDate);
-    thread = pthread_create(&threads[0], NULL, validateEndOfDay, (void *) fixedDate);
-    
-    if (thread) {
-        printf("Error:unable to create thread, %d\n", thread);
-        exit(-1);
-    }
+    // TODO: Descomentar cuando funcione FIFO
+    // createDaemonProcess();
+    // createThreadDateTime();
 
-    //pthread_exit(NULL); // Cierra el Thread
-
+    //VAriables para el FIFO
+    int fd;
+    char readbuf[80];
+    char end[10];
+    int to_end;
+    int read_bytes;
+    char fifoFileName[] = "Prueba.txt";
+    /* Create the FIFO if it does not exist */
+    mknod(fifoFileName, S_IFIFO|0640, 0);
+    strcpy(end, "end");
     // INICIO DE SERVICIO
     while(TRUE) {
-
-        if(didDayChange){
-            didDayChange = FALSE; // Pongo como que ya lo lei, para que no actualice todo
-            *fixedDate = *localtime(&auxFixedDate); // Actualizo la fecha de referencia
-            //HACER LA LOGICA DE DESACOLADO Y GENERAR ARCHIVOS.
-        }
+        // if(didDayChange){
+        //     didDayChange = FALSE; // Pongo como que ya lo lei, para que no actualice todo
+        //     *fixedDate = *localtime(&auxFixedDate); // Actualizo la fecha de referencia
+        //     //HACER LA LOGICA DE DESACOLADO Y GENERAR ARCHIVOS.
+        // }
 
         // if(isFirstTime) {
         //     isFirstTime = FALSE;
@@ -188,7 +236,25 @@ int main(int argc, char* argv[])
         //     }
         // }
         // fclose(fpToTraffic);
+
+
+        // LOGICA FIFO
+        printf("----->");
+        fd = open(fifoFileName, O_RDONLY);
+        read_bytes = read(fd, readbuf, sizeof(readbuf));
+        readbuf[read_bytes] = '\0';
+        printf("Received string: \"%s\" and length is %d\n", readbuf, (int)strlen(readbuf));
+        fprintf(pf_archLog,"Se Recibe: \"%s\" \n",readbuf );
+        readString(readbuf);
+        to_end = strcmp(readbuf, end);
+        if (to_end == 0) {
+            fprintf(pf_archLog, "TERMINANDO");
+            close(fd);
+            close(pf_archLog);
+            break;
+        }
     }
 
-    
+
+    // return 0;
 }
