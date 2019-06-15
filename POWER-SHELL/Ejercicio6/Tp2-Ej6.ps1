@@ -115,7 +115,7 @@ if ($PsCmdlet.ParameterSetName -eq "Producto"){
     Create-Empty-File $Entrada
     if($global:routeNewFile){
         Scalar-product $Matrix $rows $columns $Producto
-        Write-Output "Se relizó el producto escalar en: $global:routeNewFile"
+        Write-Output "Se realizo el producto escalar en: $global:routeNewFile"
     }else{
         Write-Error "ERROR"
     }
@@ -123,7 +123,7 @@ if ($PsCmdlet.ParameterSetName -eq "Producto"){
     Create-Empty-File $Entrada
     if($global:routeNewFile){
         Traspose-Matrix $Matrix $rows $columns;
-        Write-Output "Se creó la traspuesta en: $global:routeNewFile"
+        Write-Output "Se creo la traspuesta en: $global:routeNewFile"
     }else{
         Write-Error "ERROR"
     }

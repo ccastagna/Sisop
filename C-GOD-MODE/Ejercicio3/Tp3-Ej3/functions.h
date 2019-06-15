@@ -17,3 +17,4 @@ int isMaximumSpeedExceded(double maximumSpeed, double currentSpeed);
 FILE *createFile(char fileName[], char mode[]);
 char *createNameOfFile(char *string, int day, int month, int year);
 int isEndOfTheDay(struct tm fixedDate, struct tm currentDate);
+void createDaemonProcess();
