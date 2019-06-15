@@ -1,4 +1,6 @@
-#include "lista.h"
+#include "list.h"
+
+/** PRIMITIVAS */
 
 void crearLista(t_list *pl){
     *pl = NULL;
@@ -28,23 +30,23 @@ int insertarAlFinal(t_list *p, const t_dato *d) {
     return 1;
 }
 
-int eliminarPorClave(t_list *pl, const t_dato *d, int (*comparar)(const t_dato *d1, const t_dato *d2)){
-    while (*pl && comparar(d, &(*pl)->info) != 0) {
+int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
+    while (*pl && cmp(d, &(*pl)->info) != 0) {
         pl = &(*pl)->sig;
     }
-    if (*pl && comparar(d, &(*pl)->info == 0)) {
+    if (*pl && cmp(d, &(*pl)->info) == 0) {
         t_nodo *nae;
         nae = *pl;
         *pl = nae->sig;
         free(nae);
-        return VERDADERO;
+        return TODO_OK;
     }
     return FALSO;
 }
 
-int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a) {
+int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a, t_cmp cmp) {
     t_nodo *aux;
-    while ( *p && comparar( &(*p)->info, d ) != 0 ){
+    while ( *p && cmp( &(*p)->info, d ) != 0 ){
         p = &(*p)->sig;
     }
 
@@ -58,4 +60,20 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a) {
         return 1;
     }
     return 0;
+}
+
+/** FUNCIONES EXTRA */
+
+int *compararPatente (const void *d1, const void *d2) {
+    t_dato *pd1 = (t_nodo *)d1;
+    t_dato *pd2 = (t_nodo *)d2;
+    if (pd1->patente == pd2->patente){
+        return 0;
+    }
+    if (pd1->patente > pd2->patente){
+        return 1;
+    }
+    if (pd1->patente < pd2->patente){
+       return -1;
+    }
 }
