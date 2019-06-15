@@ -12,9 +12,11 @@
 #define OFFSET_YEAR 1900
 #define OFFSET_MONTH 1
 
+
 double calculateAmount(double mount, double maximumSpeed, double currentSpeed);
 int isMaximumSpeedExceded(double maximumSpeed, double currentSpeed);
 FILE *createFile(char fileName[], char mode[]);
 char *createNameOfFile(char *string, int day, int month, int year);
 int isEndOfTheDay(struct tm fixedDate, struct tm currentDate);
-void createDaemonProcess();
+static void createDaemonProcess();
+void createThreadDateTime();
