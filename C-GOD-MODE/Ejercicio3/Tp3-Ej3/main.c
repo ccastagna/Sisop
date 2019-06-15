@@ -8,9 +8,14 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <pthread.h>
+
 // ATRIBUTOS - VAR GLOBALES
 int didDayChange = FALSE;
+struct tm *fixedDate; // ESTA FECHA SIRVE PARA REFERENCIA
 
+// ATRIBUTOS - VAR GLOBALES PARA EL PROCESO DEMONIO
+pid_t pid = 0;
+pid_t sid = 0;
 
 /*
  * Realiza la cuenta de la velocidad maxima con la velocidad de la camara y el monto predefinido.
@@ -72,20 +77,71 @@ int isEndOfTheDay(struct tm fixedDate, struct tm currentDate) {
 
 //FUNCION PARA EL HILO
 void *validateEndOfDay(void *fixedDate) {
+    int mustChange = FALSE;
     while(TRUE){
         struct tm *parameter = (struct tm*)fixedDate;
         time_t auxCurrent = time(NULL);
         struct tm currentDate = *localtime(&auxCurrent);
-        didDayChange = isEndOfTheDay(*parameter, currentDate);
-        //printf("HOLA\n");
-        //fflush(stdout);
+        mustChange = isEndOfTheDay(*parameter, currentDate);
+        //Se agrega este if para ver si realmente debo cambiar, ya que sino, solo por un seg estaria en TRUE
+        if(mustChange){
+            didDayChange = TRUE;
+        }
+        //fflush(stdout); // es para imprimir por consola si no ponemos el \n
         sleep(1);
     }
 }
 
+void createDaemonProcess(){
+    // FILE *fp= NULL;
+    // int i = 0;
+    pid = fork();// fork a new child process
+
+    if (pid < 0)
+    {
+        printf("fork failed!\n");
+        exit(1);
+    }
+
+    if (pid > 0)// its the parent process
+    {
+       printf("pid of child process %d \n", pid);
+        exit(0); //terminate the parent process succesfully
+    }
+
+    umask(0);//unmasking the file mode
+
+    sid = setsid();//set new session
+    if(sid < 0)
+    {
+        exit(1);
+    }
+
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+
+    // fp = fopen ("mydaemonfile.txt", "w+");
+
+    // ACA IMPLEMENTACION DEL SERVICIO
+    // while (i < 10)
+    // {
+    //     sleep(1);
+    //     fprintf(fp, "%d", i);
+    //     i++;
+    // }
+    // fclose(fp);
+
+    // return (0);
+}
+
 int main(int argc, char* argv[])
 {
-
+    // Variables para el manejo de hilos
+    pthread_t threads[NUM_THREADS];
+    int thread;
+    
+    // Cola para menejar el procesamiento del archivo
     t_cola cola;
     crearCola(&cola);
 
@@ -93,34 +149,34 @@ int main(int argc, char* argv[])
     FILE *fpToTraffic; // TODOS
     FILE *fpToCreateTrafficTicket; // SOLO LOS QUE SUPERAN VEL MAX
 
+    // Variable local para manejar la logica de apertura de archivo
     int isFirstTime = TRUE;
 
+    // Variable para el manejo de fechas
     time_t auxFixedDate = time(NULL);
-    struct tm *fixedDate; // ESTA FECHA SIRVE PARA REFERENCIA
+    
+    //Logica de fechas
     fixedDate = malloc(sizeof(struct tm));
     *fixedDate = *localtime(&auxFixedDate);
-    //struct tm fixedDate = *localtime(&auxFixedDate);
 
-    pthread_t threads[NUM_THREADS];
-    int thread;
+    //struct tm fixedDate = *localtime(&auxFixedDate);
     thread = pthread_create(&threads[0], NULL, validateEndOfDay, (void *) fixedDate);
-                //pthread_create(&cmp_thread[index++], NULL, Compare, (void*) pair);
+    
     if (thread) {
         printf("Error:unable to create thread, %d\n", thread);
         exit(-1);
     }
-
 
     //pthread_exit(NULL); // Cierra el Thread
 
     // INICIO DE SERVICIO
     while(TRUE) {
 
-        // if(didDayChange){
-        //     // didDayChange = FALSE; // CAMBIARLO A FALSE
-        //     // ACTUALIZAR LA FECHA
-        //     //HACER LA LOGICA DE DESACOLADO Y GENERAR ARCHIVOS.
-        // }
+        if(didDayChange){
+            didDayChange = FALSE; // Pongo como que ya lo lei, para que no actualice todo
+            *fixedDate = *localtime(&auxFixedDate); // Actualizo la fecha de referencia
+            //HACER LA LOGICA DE DESACOLADO Y GENERAR ARCHIVOS.
+        }
 
         // if(isFirstTime) {
         //     isFirstTime = FALSE;
@@ -134,46 +190,5 @@ int main(int argc, char* argv[])
         // fclose(fpToTraffic);
     }
 
-    // pid_t pid = 0;
-    // pid_t sid = 0;
-    // FILE *fp= NULL;
-    // int i = 0;
-    // pid = fork();// fork a new child process
-
-    // if (pid < 0)
-    // {
-    //     printf("fork failed!\n");
-    //     exit(1);
-    // }
-
-    // if (pid > 0)// its the parent process
-    // {
-    //    printf("pid of child process %d \n", pid);
-    //     exit(0); //terminate the parent process succesfully
-    // }
-
-    // umask(0);//unmasking the file mode
-
-    // sid = setsid();//set new session
-    // if(sid < 0)
-    // {
-    //     exit(1);
-    // }
-
-    // close(STDIN_FILENO);
-    // close(STDOUT_FILENO);
-    // close(STDERR_FILENO);
-
-    // fp = fopen ("mydaemonfile.txt", "w+");
-
-    //ACA IMPLEMENTACION DEL SERVICIO
-    // while (i < 10)
-    // {
-    //     sleep(1);
-    //     fprintf(fp, "%d", i);
-    //     i++;
-    // }
-    // fclose(fp);
-
-    // return (0);
+    
 }
