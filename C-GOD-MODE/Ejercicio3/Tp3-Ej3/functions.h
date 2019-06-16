@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "colaDinamica.h"
 
+#define MAXIMUM_SPEED 60
 #define NUM_THREADS 1
 #define DAILY_FILE_NAME "Crear_Multas"
 #define TRAFFIC_FILE_NAME "Transito"
-#define AMOUNT 15000
+#define AMOUNT 1500
 #define FALSE 0
 #define TRUE 1
+
+#define TODO_OK 0
 
 #define OFFSET_YEAR 1900
 #define OFFSET_MONTH 1
@@ -20,3 +24,4 @@ char *createNameOfFile(char *string, int day, int month, int year);
 int isEndOfTheDay(struct tm fixedDate, struct tm currentDate);
 static void createDaemonProcess();
 void createThreadDateTime();
+t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola);

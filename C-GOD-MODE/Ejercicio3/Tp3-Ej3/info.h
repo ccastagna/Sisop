@@ -2,15 +2,11 @@
 #define INFO_H_INCLUDED
 
 typedef struct{
-    char plate[6];
+    char plate[7];
+    char camera[7];
+    int speed;
     int hour;
     int minutes;
-    int day;
-    int month;
-    int year; 
-    double speed;
-    double amount;
-
 }t_dato;
 
 #endif // INFO_H_INCLUDED

@@ -12,11 +12,13 @@
 #include <errno.h>
 
 
-typedef struct{
-    char plate[7];
-    char camera[4];
-    int speed;
-}t_fifo;
+// typedef struct{
+//     char plate[7];
+//     char camera[4];
+//     int speed;
+//     int hour;
+//     int minutes;
+// }t_dato;
 
 FILE *pf_archLog;
 
@@ -148,39 +150,68 @@ void createThreadDateTime(){
     //pthread_exit(NULL); // Cierra el Thread
 }
 
-t_fifo *readString (char *fifoString){
+t_dato *readString (char *fifoString) {
+    t_dato *value =(t_dato*)malloc(sizeof(t_dato));
+    (*value).plate[0]='\0';
+    (*value).camera[0]='\0';
+    // strcpy((*value).plate,"\0");
+    // strcpy((*value).camera, "\0");
+    (*value).speed = 0;;
 
-    t_fifo *valueToReturn=(t_fifo*)malloc(sizeof(t_fifo));
-    char delim[] = " ";
-    char *p;
+    if(value == NULL){
+        exit(2);
+    }
+    char delim[] = " ", *p;
     int i;
-    char plate = "ASD123";
     for (i = 1, p = strtok(fifoString,delim); p != NULL; p = strtok(NULL,delim), i++) {
-        printf("Output%u=%s;\n", i, p);
         if(i == 1){
-            strcpy((*valueToReturn).plate, p);
+            strcpy((*value).plate, p);
         }else if (i == 2){
-            strcpy((*valueToReturn).camera, p);
+            strcpy((*value).camera, p);
         }else if (i == 3) {
-            (*valueToReturn).speed = atoi(p);
+            (*value).speed = atoi(p);
         }
 
     }
-    // while( token != NULL ) {
-    //     counter++;
-    //     token = strtok(fifoString, delim);
-    //     token = strtok(NULL, delim);
+    return value;
+}
 
-    //     if(counter == 1){
-    //         strcpy(*valueToReturn->plate, token);
-    //     }else if (counter == 2){
-    //         strcpy(*valueToReturn->camera, token);
-    //     }else {
-    //         valueToReturn->speed = atoi(token);
-    //     }
-    //     printf(token);
-    // }
-     return valueToReturn;
+t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
+    char end[10];
+    strcpy(end, "end"); // TODO Borrar esto;
+    int fd;
+    char readbuf[80];
+    int to_end;
+    int read_bytes;
+    fd = open(fifoFileName, O_RDONLY);
+    read_bytes = read(fd, readbuf, sizeof(readbuf));
+    readbuf[read_bytes] = '\0';
+    t_dato *readedFromFifo = readString(readbuf);
+    if(readedFromFifo != NULL){
+        char *asd = (*readedFromFifo).plate;
+        char *aaaa;
+        fflush(stdout);
+        strcpy(aaaa,asd);
+        printf("%s",aaaa);
+        //fprintf(fpToTraffic,"%s %s %d km/h\n", (*readedFromFifo.plate), (*readedFromFifo).camera, readedFromFifo->speed);
+        if(isMaximumSpeedExceded(MAXIMUM_SPEED, readedFromFifo->speed) ){
+            time_t auxCurrent = time(NULL);
+            struct tm currentDate = *localtime(&auxCurrent);
+            (*readedFromFifo).hour = currentDate.tm_hour;
+            (*readedFromFifo).minutes = currentDate.tm_min;
+            acolar(cola,readedFromFifo);
+        }
+        free(readedFromFifo);
+        readedFromFifo = NULL;
+    }
+    to_end = strcmp(readbuf, end);
+    if (to_end == 0) {
+        fprintf(pf_archLog, "TERMINANDO");
+        fclose(fd);
+        fclose(pf_archLog);
+        exit(TODO_OK);
+    }
+    return readedFromFifo;
 }
 
 int main(int argc, char* argv[]) {
@@ -193,6 +224,7 @@ int main(int argc, char* argv[]) {
     // Punteros a los archivos que voy a manejar
     FILE *fpToTraffic; // TODOS
     FILE *fpToCreateTrafficTicket; // SOLO LOS QUE SUPERAN VEL MAX
+    t_dato dataFromQueue;
 
     // Variable local para manejar la logica de apertura de archivo
     int isFirstTime = TRUE;
@@ -208,53 +240,41 @@ int main(int argc, char* argv[]) {
     // createDaemonProcess();
     // createThreadDateTime();
 
-    //VAriables para el FIFO
-    int fd;
-    char readbuf[80];
-    char end[10];
-    int to_end;
-    int read_bytes;
+    //Variables para el FIFO
+
     char fifoFileName[] = "Prueba.txt";
+
     /* Create the FIFO if it does not exist */
     mknod(fifoFileName, S_IFIFO|0640, 0);
-    strcpy(end, "end");
+    t_dato *readedFromFifo = NULL;
     // INICIO DE SERVICIO
     while(TRUE) {
-        // if(didDayChange){
-        //     didDayChange = FALSE; // Pongo como que ya lo lei, para que no actualice todo
-        //     *fixedDate = *localtime(&auxFixedDate); // Actualizo la fecha de referencia
-        //     //HACER LA LOGICA DE DESACOLADO Y GENERAR ARCHIVOS.
-        // }
 
-        // if(isFirstTime) {
-        //     isFirstTime = FALSE;
-        //     char *fileName = createNameOfFile(TRAFFIC_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
-        //     if( access(  fileName , F_OK ) != -1 ) {
-        //         fpToTraffic = createFile(fileName,"a+");
-        //     } else {
-        //         fpToTraffic = createFile(fileName,"w+");
-        //     }
-        // }
-        // fclose(fpToTraffic);
+        readedFromFifo = readFromFifoFile(fifoFileName, fpToTraffic, &cola);
 
+        if(didDayChange){
+            didDayChange = FALSE; // Pongo como que ya lo lei, para que no actualice todo
+            char *fileName =createNameOfFile(DAILY_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
+            fpToCreateTrafficTicket = createFile(fileName,"w+");
+            while(!colaVacia(&cola)){
+                desacolar(&cola, &dataFromQueue);
+                fprintf(fpToCreateTrafficTicket,"%s %d:%d %d/%d/%d %d km/h $%d\n", (*readedFromFifo).plate, (*readedFromFifo).hour, (*readedFromFifo).minutes, (*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR  , (*readedFromFifo).speed, calculateAmount(AMOUNT,MAXIMUM_SPEED,(*readedFromFifo).speed));
+            }
+            fclose(fpToCreateTrafficTicket);
+            fclose(fpToTraffic);
+            *fixedDate = *localtime(&auxFixedDate); // Actualizo la fecha de referencia
+            isFirstTime = TRUE;
+        }
 
-        // LOGICA FIFO
-        printf("----->");
-        fd = open(fifoFileName, O_RDONLY);
-        read_bytes = read(fd, readbuf, sizeof(readbuf));
-        readbuf[read_bytes] = '\0';
-        printf("Received string: \"%s\" and length is %d\n", readbuf, (int)strlen(readbuf));
-        fprintf(pf_archLog,"Se Recibe: \"%s\" \n",readbuf );
-        readString(readbuf);
-        to_end = strcmp(readbuf, end);
-        if (to_end == 0) {
-            fprintf(pf_archLog, "TERMINANDO");
-            close(fd);
-            close(pf_archLog);
-            break;
+        if(isFirstTime) {
+            isFirstTime = FALSE;
+            char *fileName = createNameOfFile(TRAFFIC_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
+            if( access(  fileName , F_OK ) != -1 ) {
+                fpToTraffic = createFile(fileName,"a+");
+            } else {
+                fpToTraffic = createFile(fileName,"w+");
+            }
         }
     }
-
-
     // return 0;
 }
