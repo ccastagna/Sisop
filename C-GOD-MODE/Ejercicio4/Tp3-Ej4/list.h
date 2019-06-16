@@ -6,7 +6,7 @@
 
 #include "info.h"
 
-#define FALSO           0
+#define NOT_OK          0
 #define TODO_OK         1
 #define SIN_MEMORIA     2
 #define DUPLICADO       3

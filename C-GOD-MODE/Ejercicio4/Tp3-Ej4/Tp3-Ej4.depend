@@ -1,20 +1,20 @@
 # depslib dependency file v1.0
-1560632656 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\main.c
+1560648948 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\main.c
 	<stdio.h>
 	<stdlib.h>
 	"info.h"
 	"list.h"
 	"functions.h"
 
-1560263355 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\info.h
+1560647136 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\info.h
 
-1560632807 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\functions.h
+1560647132 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\functions.h
 	<string.h>
 	<stdlib.h>
 	"info.h"
 	"list.h"
 
-1560633020 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\list.h
+1560648966 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\list.h
 	<stdio.h>
 	<stdlib.h>
 	"info.h"
@@ -30,6 +30,6 @@
 	"info.h"
 	"list.h"
 
-1560632171 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\list.c
+1560648994 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\list.c
 	"list.h"
 

@@ -41,7 +41,7 @@ int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
         free(nae);
         return TODO_OK;
     }
-    return FALSO;
+    return NOT_OK;
 }
 
 int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a, t_cmp cmp) {
@@ -64,9 +64,9 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a, t_cmp cmp) {
 int *compararPatente (const void *d1, const void *d2) {
     t_dato *pd1 = (t_nodo *)d1;
     t_dato *pd2 = (t_nodo *)d2;
-    if (strcmp(pd1->partido, pd2->partido) = 0 && strcmp(pd1->patente, pd2->patente) == 0{
+    if (strcmp(pd1->partido, pd2->partido) == 0 && strcmp(pd1->patente, pd2->patente) == 0) {
         return TODO_OK;
     } else {
-        return NOT_OK
+        return NOT_OK;
     }
 }
