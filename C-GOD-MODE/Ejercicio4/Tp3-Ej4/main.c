@@ -16,9 +16,10 @@
 #include <stdlib.h>
 
 // Bibliotecas propias.
-#include <info.h>
-#include <funciones.h>
-#include <list.h>
+#include "info.h"
+#include "list.h"
+#include "functions.h"
+
 
 int main()
 {

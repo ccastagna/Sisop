@@ -2,7 +2,9 @@
 #define LIST_H_INCLUDED
 
 #include <stdio.h>
-#include <functions.h>
+#include <stdlib.h>
+
+#include "info.h"
 
 #define FALSO -1
 #define TODO_OK 0
@@ -18,15 +20,25 @@ typedef struct s_nodo{
     struct s_nodo *sig;
 }t_nodo;
 
-
 typedef t_nodo *t_list;
-//typedef int (*t_cmp) (const void *, const void *);
 
+typedef int (*t_cmp)(const void*, const void*);
+
+/** PRIMITIVAS */
 void crearLista(t_list *);
 int listaLlena(const t_list *);
 int listaVacia(const t_list *);
-int insertarAlFinal(t_list *, const t_dato * );
-int eliminarPorClave(t_list l, const t_dato *, int (*comparar)(const t_dato *, const t_dato *));
-int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, int );
+int insertarAlFinal(t_list *, const t_dato *);
+int eliminarPorClave(t_list *, const t_dato *, t_cmp);
+int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, int , t_cmp);
+
+/** FUNCIONES EXTRA*/
+
+/*
+    Compara las dos patentes enviadas, retorna:
+    0: si son iguales
+    !0: si no son iguales
+*/
+int *compararPatente(const void *d1, const void *d2);
 
 #endif // LIST_H_INCLUDED
