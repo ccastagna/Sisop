@@ -10,20 +10,14 @@
 #define NO_EXISTE_PATENTE   0
 #define EXISTE_PATENTE      1
 
-#define TODO_OK 0
-#define NOT_OK  1
-
-// Usado para controlar que registros debo eliminar de la base de datos.
-#define NO_CAMBIO   0
-#define CAMBIO      1
-#define ELIMINAR    2
+#define NOT_OK  0
+#define TODO_OK 1
 
 // Usado para archivos
 #define DATABASE_NAME       "infractores.txt"
 #define READ_TEXT           "rt"  //Abre un fichero de texto para lectura
 #define READ_TEXT_UPDATE    "r+t" //Abre un fichero de texto para actualización (lectura y escritura)
 #define CON_MSG             1
-
 
 int abrirArchivo(FILE **, const char*, const char*, int);
 

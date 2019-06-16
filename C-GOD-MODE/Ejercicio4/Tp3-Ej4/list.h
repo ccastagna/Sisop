@@ -6,14 +6,11 @@
 
 #include "info.h"
 
-#define FALSO -1
-#define TODO_OK 0
-#define SIN_MEMORIA 1
-#define DUPLICADO 2
-#define LISTA_VACIA 3
-
-#define ELIMINAR_O_NO   0
-#define ELIMINAR_NODO   1
+#define FALSO           0
+#define TODO_OK         1
+#define SIN_MEMORIA     2
+#define DUPLICADO       3
+#define LISTA_VACIA     4
 
 typedef struct s_nodo{
     t_dato info;

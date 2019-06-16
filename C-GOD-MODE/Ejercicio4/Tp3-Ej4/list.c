@@ -53,13 +53,10 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a, t_cmp cmp) {
     if(*p) {
         aux = *p;
         *d = aux->info;
-        if( ELIMINAR_O_NO == ELIMINAR_NODO ) {
-            *p = aux->sig;
-            free(aux);
-        }
-        return 1;
+        return TODO_OK;
     }
-    return 0;
+
+    return NOT_OK;
 }
 
 /** FUNCIONES EXTRA */
@@ -67,13 +64,9 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a, t_cmp cmp) {
 int *compararPatente (const void *d1, const void *d2) {
     t_dato *pd1 = (t_nodo *)d1;
     t_dato *pd2 = (t_nodo *)d2;
-    if (pd1->patente == pd2->patente){
-        return 0;
-    }
-    if (pd1->patente > pd2->patente){
-        return 1;
-    }
-    if (pd1->patente < pd2->patente){
-       return -1;
+    if (strcmp(pd1->partido, pd2->partido) = 0 && strcmp(pd1->patente, pd2->patente) == 0{
+        return TODO_OK;
+    } else {
+        return NOT_OK
     }
 }
