@@ -150,12 +150,9 @@ void createThreadDateTime(){
     //pthread_exit(NULL); // Cierra el Thread
 }
 
-t_dato *readString (char *fifoString) {
-    t_dato *value =(t_dato*)malloc(sizeof(t_dato));
+t_dato *readString (char *fifoString, t_dato *value) {
     (*value).plate[0]='\0';
     (*value).camera[0]='\0';
-    // strcpy((*value).plate,"\0");
-    // strcpy((*value).camera, "\0");
     (*value).speed = 0;;
 
     if(value == NULL){
@@ -177,6 +174,11 @@ t_dato *readString (char *fifoString) {
 }
 
 t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
+    t_dato *value =(t_dato*)malloc(sizeof(t_dato));
+    if(value==NULL){
+        exit(3);
+    }
+
     char end[10];
     strcpy(end, "end"); // TODO Borrar esto;
     int fd;
@@ -186,24 +188,20 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
     fd = open(fifoFileName, O_RDONLY);
     read_bytes = read(fd, readbuf, sizeof(readbuf));
     readbuf[read_bytes] = '\0';
-    t_dato *readedFromFifo = readString(readbuf);
-    if(readedFromFifo != NULL){
-        char *asd = (*readedFromFifo).plate;
-        char *aaaa;
-        fflush(stdout);
-        strcpy(aaaa,asd);
-        printf("%s",aaaa);
-        //fprintf(fpToTraffic,"%s %s %d km/h\n", (*readedFromFifo.plate), (*readedFromFifo).camera, readedFromFifo->speed);
-        if(isMaximumSpeedExceded(MAXIMUM_SPEED, readedFromFifo->speed) ){
-            time_t auxCurrent = time(NULL);
-            struct tm currentDate = *localtime(&auxCurrent);
-            (*readedFromFifo).hour = currentDate.tm_hour;
-            (*readedFromFifo).minutes = currentDate.tm_min;
-            acolar(cola,readedFromFifo);
-        }
-        free(readedFromFifo);
-        readedFromFifo = NULL;
+
+    readString(readbuf, value);
+    fprintf(fpToTraffic,"%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
+    printf("%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
+
+    if(isMaximumSpeedExceded(MAXIMUM_SPEED, (*value).speed) ){
+        printf("IF");
+        time_t auxCurrent = time(NULL);
+        struct tm currentDate = *localtime(&auxCurrent);
+        (*value).hour = currentDate.tm_hour;
+        (*value).minutes = currentDate.tm_min;
+        acolar(cola,value);
     }
+
     to_end = strcmp(readbuf, end);
     if (to_end == 0) {
         fprintf(pf_archLog, "TERMINANDO");
@@ -211,7 +209,8 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
         fclose(pf_archLog);
         exit(TODO_OK);
     }
-    return readedFromFifo;
+    didDayChange = TRUE;
+    return value;
 }
 
 int main(int argc, char* argv[]) {
@@ -220,11 +219,11 @@ int main(int argc, char* argv[]) {
     t_cola cola;
     crearCola(&cola);
     // Archivo de Log
-    pf_archLog = createFile("Log.txt","w+");
+    pf_archLog = createFile("Log.txt","a+");
+    fprintf(pf_archLog,"Inicio");
     // Punteros a los archivos que voy a manejar
     FILE *fpToTraffic; // TODOS
     FILE *fpToCreateTrafficTicket; // SOLO LOS QUE SUPERAN VEL MAX
-    t_dato dataFromQueue;
 
     // Variable local para manejar la logica de apertura de archivo
     int isFirstTime = TRUE;
@@ -246,27 +245,12 @@ int main(int argc, char* argv[]) {
 
     /* Create the FIFO if it does not exist */
     mknod(fifoFileName, S_IFIFO|0640, 0);
-    t_dato *readedFromFifo = NULL;
+    t_dato dataFromQueue;
+    //t_dato *readedFromFifo = NULL;
     // INICIO DE SERVICIO
     while(TRUE) {
-
-        readedFromFifo = readFromFifoFile(fifoFileName, fpToTraffic, &cola);
-
-        if(didDayChange){
-            didDayChange = FALSE; // Pongo como que ya lo lei, para que no actualice todo
-            char *fileName =createNameOfFile(DAILY_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
-            fpToCreateTrafficTicket = createFile(fileName,"w+");
-            while(!colaVacia(&cola)){
-                desacolar(&cola, &dataFromQueue);
-                fprintf(fpToCreateTrafficTicket,"%s %d:%d %d/%d/%d %d km/h $%d\n", (*readedFromFifo).plate, (*readedFromFifo).hour, (*readedFromFifo).minutes, (*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR  , (*readedFromFifo).speed, calculateAmount(AMOUNT,MAXIMUM_SPEED,(*readedFromFifo).speed));
-            }
-            fclose(fpToCreateTrafficTicket);
-            fclose(fpToTraffic);
-            *fixedDate = *localtime(&auxFixedDate); // Actualizo la fecha de referencia
-            isFirstTime = TRUE;
-        }
-
         if(isFirstTime) {
+            fprintf(pf_archLog,"Iniciando Archivo Trafico Diario");
             isFirstTime = FALSE;
             char *fileName = createNameOfFile(TRAFFIC_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
             if( access(  fileName , F_OK ) != -1 ) {
@@ -275,6 +259,23 @@ int main(int argc, char* argv[]) {
                 fpToTraffic = createFile(fileName,"w+");
             }
         }
+
+
+        if(didDayChange){
+            didDayChange = FALSE; // Pongo como que ya lo lei, para que no actualice todo
+            char *fileName = createNameOfFile(DAILY_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
+            fpToCreateTrafficTicket = createFile(fileName,"w+");
+            while(!colaVacia(&cola)){
+                desacolar(&cola, &dataFromQueue);
+                fprintf(fpToCreateTrafficTicket,"%s %d:%d %d/%d/%d %d km/h $%.0lf\n", dataFromQueue.plate, dataFromQueue.hour, dataFromQueue.minutes, (*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR  , dataFromQueue.speed, calculateAmount(AMOUNT,MAXIMUM_SPEED,dataFromQueue.speed));
+            }
+            fclose(fpToCreateTrafficTicket);
+            fclose(fpToTraffic);
+            *fixedDate = *localtime(&auxFixedDate); // Actualizo la fecha de referencia
+            isFirstTime = TRUE;
+        }
+
+        readFromFifoFile(fifoFileName, fpToTraffic, &cola);
     }
     // return 0;
 }
