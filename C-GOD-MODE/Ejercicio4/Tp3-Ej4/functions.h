@@ -21,7 +21,7 @@
 
 int abrirArchivo(FILE **, const char*, const char*, int);
 
-int leerArchivo(FILE **, t_list *pl, char *);
+int leerArchivo(FILE **, t_list *, char *);
 
 //escribirArchivo();
 
@@ -56,7 +56,7 @@ double buscarMontoTotal(char*, t_list*);
 /*
     Muestra el monto total a pagar de cada infractor
 */
-int verMontoTotalInfractores(t_list *);
+int verMontoTotalInfractores(t_list*, char*);
 
 
 #endif // FUNCTIONS_H_INCLUDED

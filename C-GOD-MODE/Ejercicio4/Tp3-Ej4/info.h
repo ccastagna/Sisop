@@ -6,7 +6,7 @@ typedef struct {
     char *patente;
     char *nombre_titular;
     int cantidad_multas;
-    double monto_total;
+    float monto_total;
 } t_dato;
 
 

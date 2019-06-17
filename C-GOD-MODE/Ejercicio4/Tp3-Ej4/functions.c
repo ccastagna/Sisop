@@ -13,43 +13,48 @@ int abrirArchivo(FILE **fp, const char *nombre, const char *modo, int msj) {
 }
 
 int leerArchivo(FILE **fp, t_list *pl, char *partido){
-    char  linea [500],
+    char  linea [100],
           *aux;
-    t_dato  dato;
+    linea[0] = '\0';
+    t_dato dato;
     if(!abrirArchivo(&*fp, DATABASE_NAME, READ_TEXT, CON_MSG)) {
         return NOT_OK;
     }
     while(fgets(linea, sizeof(linea) ,*fp))
     {
-        if ( ( aux = strrchr (linea, '\n') ) == NULL )
-        {
+        if ( ( aux = strrchr (linea, '\n') ) == NULL ) {
             fclose(*fp);
             fprintf(stderr,"Error leyendo base de datos.\n");
             return NOT_OK;
         }
-        /**partido**/
+        //monto_total
         *aux = '\0';
+        aux = strrchr(linea,'|');
+        sscanf(aux + 1,"%f", &dato.monto_total);
+        *aux = '\0';
+        //cantidad_multas
+        aux = strrchr(linea,'|');
+        sscanf(aux + 1,"%d", &dato.cantidad_multas);
+        *aux = '\0';
+        //nombre_titular
+        aux = strrchr(linea,'|');
+        dato.nombre_titular = malloc( sizeof(aux));
+        strcpy(dato.nombre_titular, aux + 1);
+        *aux = '\0';
+        //patente
+        aux = strrchr(linea,'|');
+        dato.patente = malloc( sizeof(aux));
+        strcpy(dato.patente, aux + 1);
+        *aux = '\0';
+        //partido
         aux = strrchr (linea, '|');
-        strcpy(&dato.partido, aux + 1);
-        *aux = '\0';
-        if (strcmp(&dato.partido, *partido) == 0){
-            /**patente**/
-            aux = strrchr(linea,'|');
-            strcpy(&dato.patente, aux + 1);
-            *aux = '\0';
-            /**nombre_titular**/
-            aux = strrchr(linea,'|');
-            strcpy(&dato.nombre_titular, aux + 1);
-            *aux = '\0';
-            /**cantidad_multas**/
-            aux = strrchr(linea,'|');
-            sscanf(linea,"%d",&dato.cantidad_multas);
-            *aux = '\0';
-            /**monto_total**/
-            aux = strrchr(linea,'|');
-            sscanf(linea,"%lf",&dato.monto_total);
+        dato.partido = malloc( sizeof(aux));
+        strcpy(dato.partido, linea);
+
+        if (strcmp(dato.partido, partido) == 0){
             insertarAlFinal(pl, &dato);
         }
+
     }
     fclose(*fp);
     return TODO_OK;
@@ -106,7 +111,10 @@ double buscarMontoTotal(char *patente, t_list *pl){
 /*
     Muestra el monto total a pagar de cada infractor
 */
-int verMontoTotalInfractores(t_list *pl){
-
-    return TODO_OK;
+int verMontoTotalInfractores(t_list *pl, char *partido){
+    if (mostrarLista(pl, partido, compararPartido) == TODO_OK){
+        return TODO_OK;
+    } else{
+        return NOT_OK;
+    }
 }

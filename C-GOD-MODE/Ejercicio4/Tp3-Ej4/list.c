@@ -19,7 +19,7 @@ int listaVacia(const t_list *pl){
 int insertarAlFinal(t_list *p, const t_dato *d) {
     t_nodo *nue = ( t_nodo *) malloc( sizeof(t_nodo) );
     if ( nue == NULL ) {
-        return 0;
+        return NOT_OK;
     }
     while ( *p ) {
         p = &(*p)->sig;
@@ -27,7 +27,7 @@ int insertarAlFinal(t_list *p, const t_dato *d) {
     nue->info = *d;
     nue->sig = NULL;
     *p = nue;
-    return 1;
+    return TODO_OK;
 }
 
 int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
@@ -44,27 +44,52 @@ int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
     return NOT_OK;
 }
 
-int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, int a, t_cmp cmp) {
-    t_nodo *aux;
+int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, char* a, t_cmp cmp) {
     while ( *p && cmp( &(*p)->info, d ) != 0 ){
         p = &(*p)->sig;
     }
 
     if(*p) {
-        aux = *p;
-        *d = aux->info;
+        *d = (*p)->info;
         return TODO_OK;
     }
 
     return NOT_OK;
 }
 
+int mostrarLista(t_list *p, char *partido, t_cmp cmp){
+    int flag = 0;
+    t_dato *d = (t_dato *) malloc (sizeof (t_dato *));
+    while (*p){
+        *d = (*p)->info;
+        if (cmp( d, partido) == TODO_OK) {
+            flag = 1;
+            printf("%s\t%.2f\n", d->patente, d->monto_total);
+        }
+        p = &(*p)->sig;
+    }
+
+    if (flag == 1){
+        return TODO_OK;
+    } else {
+        return NOT_OK;
+    }
+}
+
 /** FUNCIONES EXTRA */
 
-int *compararPatente (const void *d1, const void *d2) {
-    t_dato *pd1 = (t_nodo *)d1;
-    t_dato *pd2 = (t_nodo *)d2;
-    if (strcmp(pd1->partido, pd2->partido) == 0 && strcmp(pd1->patente, pd2->patente) == 0) {
+int *compararPatente (const t_dato *d1, const t_dato *d2) {
+    if (strcmp(d1->partido, d2->partido) == 0 &&
+        strcmp(d1->patente, d2->patente) == 0) {
+        return TODO_OK;
+    } else {
+        return NOT_OK;
+    }
+}
+
+
+int *compararPartido (const t_dato *d1, const char *d2) {
+    if (strcmp(d1->partido, d2) == 0) {
         return TODO_OK;
     } else {
         return NOT_OK;

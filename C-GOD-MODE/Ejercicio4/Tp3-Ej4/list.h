@@ -8,9 +8,6 @@
 
 #define NOT_OK          0
 #define TODO_OK         1
-#define SIN_MEMORIA     2
-#define DUPLICADO       3
-#define LISTA_VACIA     4
 
 typedef struct s_nodo{
     t_dato info;
@@ -27,7 +24,8 @@ int listaLlena(const t_list *);
 int listaVacia(const t_list *);
 int insertarAlFinal(t_list *, const t_dato *);
 int eliminarPorClave(t_list *, const t_dato *, t_cmp);
-int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, int , t_cmp);
+int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, char * , t_cmp);
+int mostrarLista(t_list *, char *, t_cmp);
 
 /** FUNCIONES EXTRA*/
 
@@ -36,6 +34,13 @@ int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, int , t_cmp);
     0: si son iguales
     !0: si no son iguales
 */
-int *compararPatente(const void *d1, const void *d2);
+int *compararPatente(const t_dato *d1, const t_dato *d2);
+
+/*
+    Compara los dos partidos enviados, retorna:
+    0: si son iguales
+    !0: si no son iguales
+*/
+int *compararPartido(const t_dato *d1, const char *d2);
 
 #endif // LIST_H_INCLUDED
