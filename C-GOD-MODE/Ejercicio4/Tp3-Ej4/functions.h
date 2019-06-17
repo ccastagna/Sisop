@@ -29,12 +29,12 @@ int leerArchivo(FILE **, t_list *, char *);
     Recibe patente y el monto de la nueva multa. Si existe suma monto al total y aumenta
     cantidad de multas, sino existe crea un nuevo registro en la base de datos.
 */
-int ingresarMulta(char*, double, t_list *);
+int ingresarMulta(char*, char*, float, t_list *);
 
 /*
     Recibe la patente y devuelve si existe o no.
 */
-int existePatente(char*, t_list *);
+int existePatente(t_dato*, t_list *);
 
 /*
     Buscar lista de registros a suspender. Los registros a suspender son aquellos
@@ -46,17 +46,17 @@ int registrosSuspender(t_list *);
 /*
     Salda la deuda de la patente recibida, es decir lo elimina de la base de datos.
 */
-int saldarMulta(char*, t_list *);
+int saldarMulta(const char*, const char*, t_list *);
 
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-double buscarMontoTotal(char*, t_list*);
+double buscarMontoTotal(const char*, t_list*);
 
 /*
     Muestra el monto total a pagar de cada infractor
 */
-int verMontoTotalInfractores(t_list*, char*);
+int verMontoTotalInfractores(t_list*, const char*);
 
 
 #endif // FUNCTIONS_H_INCLUDED

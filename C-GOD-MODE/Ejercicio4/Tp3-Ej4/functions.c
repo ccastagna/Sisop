@@ -64,8 +64,11 @@ int leerArchivo(FILE **fp, t_list *pl, char *partido){
     Recibe patente y el monto de la nueva multa. Si existe suma monto al total y aumenta
     cantidad de multas, sino existe crea un nuevo registro en la base de datos.
 */
-int ingresarMulta(char *patente, double monto, t_list *pl){
-    if (existePatente(patente, &pl)){
+int ingresarMulta(char *patente, char *partido, float monto, t_list *pl){
+    t_dato dato;
+    dato.partido = malloc(sizeof(partido));
+    dato.patente = malloc(sizeof(patente));
+    if (existePatente(&dato, &pl) == TODO_OK){
 
     } else {
 
@@ -77,9 +80,8 @@ int ingresarMulta(char *patente, double monto, t_list *pl){
 /*
     Recibe la patente y devuelve si existe o no.
 */
-int existePatente(char *patente, t_list *pl) {
-
-    return TODO_OK;
+int existePatente(t_dato *dato, t_list *pl) {
+    return buscarEnListaNoOrdenadaPorClave (pl, dato, compararPatente);
 }
 
 /*
@@ -95,15 +97,26 @@ int registrosSuspender(t_list *pl){
 /*
     Salda la deuda de la patente recibida, es decir lo elimina de la base de datos.
 */
-int saldarMulta(char *patente, t_list *pl){
+int saldarMulta(const char *patente, const char *partido, t_list *pl){
+    t_dato dato;
+    dato.patente = patente;
+    dato.partido = partido;
 
-    return TODO_OK;
+    if (existePatente(&dato, pl) == TODO_OK){
+        if(eliminarPorClave(pl, &dato, compararPatente) == TODO_OK ){
+            return TODO_OK;
+        }
+            return NOT_OK;
+    } else {
+        return NOT_OK;
+    }
+
 }
 
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-double buscarMontoTotal(char *patente, t_list *pl){
+double buscarMontoTotal(const char *patente, t_list *pl){
 
     return TODO_OK;
 }
@@ -111,7 +124,7 @@ double buscarMontoTotal(char *patente, t_list *pl){
 /*
     Muestra el monto total a pagar de cada infractor
 */
-int verMontoTotalInfractores(t_list *pl, char *partido){
+int verMontoTotalInfractores(t_list *pl, const char *partido){
     if (mostrarLista(pl, partido, compararPartido) == TODO_OK){
         return TODO_OK;
     } else{

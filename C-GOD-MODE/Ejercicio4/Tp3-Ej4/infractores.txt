@@ -1,1 +1,2 @@
 Lanus|ABC123|Pepe|5|10000
+Lanus|CDD999|Raul|2|100.50

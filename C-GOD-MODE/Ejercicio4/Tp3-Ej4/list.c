@@ -44,7 +44,7 @@ int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
     return NOT_OK;
 }
 
-int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, char* a, t_cmp cmp) {
+int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, t_cmp cmp) {
     while ( *p && cmp( &(*p)->info, d ) != 0 ){
         p = &(*p)->sig;
     }

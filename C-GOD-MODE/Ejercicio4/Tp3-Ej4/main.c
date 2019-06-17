@@ -23,10 +23,14 @@
 
 int main()
 {
-    int code = 0;
+    int code;
+
+    FILE *fp;
     t_list lista;
     char *partido = "Lanus";
-    FILE *fp;
+    char *patente = malloc (sizeof(7));
+    float monto;
+
     crearLista(&lista);
     leerArchivo(&fp, &lista, partido);
 
@@ -38,7 +42,7 @@ int main()
     printf("5. Buscar monto total a pagar de todos los infractores.\n");
     printf("6. Salir.\n");
 
-    while (code != 6) {
+    while (1) {
         printf("\n\nIndique la opcion: ");
         scanf ("%d", &code);
         while (code < 1 || code > 6){
@@ -48,10 +52,19 @@ int main()
 
         switch (code) {
             case 1:
+                printf("\nIngrese la patente: ");
+                scanf("%s", patente);
+                printf("\nIngrese monto de la multa: ");
+                scanf("%f", &monto);
+                ingresarMulta(patente, partido, monto, &lista);
                 break;
             case 2:
+                registrosSuspender(&lista);
                 break;
             case 3:
+                printf("\nIngrese la patente: ");
+                scanf("%s", patente);
+                saldarMulta(patente, partido, &lista);
                 break;
             case 4:
                 break;
