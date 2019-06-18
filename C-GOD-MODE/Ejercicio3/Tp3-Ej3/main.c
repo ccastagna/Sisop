@@ -30,6 +30,29 @@ pid_t sid = 0;
 int didDayChange = FALSE;
 struct tm *fixedDate; // ESTA FECHA SIRVE PARA REFERENCIA
 
+#define OPCION_SALIR 0
+#define PILA_FIN 16
+#define COLA_INI 1
+#define COLA_FIN 7
+#define SI 1
+#define NO 0
+void imprimirMenu(){
+    printf("********************************************************\n");
+    printf("*                       MENU TP3-EJ3                   *\n");
+    printf("********************************************************\n");
+    printf("1)Descripcion\n");
+    printf("2)Ayuda\n");
+    printf("3)Ejecutar\n");
+    printf("0)Salir\n");
+}
+int ingresarYValidar(int salida){
+    int aDev;
+    do{
+        printf("Ingrese una Opcion (entre 0 y 3)");
+    scanf("%d",&aDev);
+    }while(aDev!=salida && (aDev> 3 ||aDev<1));
+    return aDev;
+}
 /*
  * Realiza la cuenta de la velocidad maxima con la velocidad de la camara y el monto predefinido.
  */
@@ -235,14 +258,41 @@ int main(int argc, char* argv[]) {
     fixedDate = malloc(sizeof(struct tm));
     *fixedDate = *localtime(&auxFixedDate);
 
+
+    int opcion;
+    do
+    {
+        imprimirMenu();
+
+        opcion =ingresarYValidar(0);
+
+        switch(opcion)
+        {
+        case 1:
+            printf("El gobierno de la provincia de Buenos Aires coloco muchas cámaras para detectar los excesos de \n");
+            printf("velocidad. Las cámaras están colocadas en zonas de circulación de máxima 60. \n");
+            printf("Estas cámaras envían la patente y la velocidad a la que circulaba el automóvil a un sistema \n");
+            printf("centralizado, que está ejecutando como demonio, a través de una estructura FIFO. \n");
+            printf("El sistema debe mostrar por pantalla la patente, la velocidad y la cámara informó el paso de un auto. \n");
+            printf("A su vez se deben registrar el movimiento de todos los autos y guardarlos en un archivo llamado \n");
+            printf("“Transito_AAAAMMDD.txt”, el cual debe informar los datos. \n");
+            printf("Al finalizar cada día se desea guardar en un archivo “Crear_Multas_AAAAMMDD.txt” la patente de \n");
+            printf("los autos en exceso seguidos de la hora, la velocidad y el importe de la multa. Las multas se calculan\n");
+            printf("$1500 multiplicado por cada unidad de velocidad superior a la máxima. (Si un auto va a 80 y la máxima\n");
+            printf("es 60 se debe cobrar $1500*20 = $30000).\n");
+            break;
+        }
+    }while(opcion!=0);
+    return 0;
+
+
+    char fifoFileName[] = "Prueba.txt";
+
     // TODO: Descomentar cuando funcione FIFO
     // createDaemonProcess();
     // createThreadDateTime();
 
     //Variables para el FIFO
-
-    char fifoFileName[] = "Prueba.txt";
-
     /* Create the FIFO if it does not exist */
     mknod(fifoFileName, S_IFIFO|0640, 0);
     t_dato dataFromQueue;
