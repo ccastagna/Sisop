@@ -1,0 +1,48 @@
+# depslib dependency file v1.0
+1560884983 source:c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\function_coladinamica.c
+	"colaDinamica.h"
+
+1560884772 c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\coladinamica.h
+	"info.h"
+	<stdio.h>
+	<stdlib.h>
+
+1560877126 c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\info.h
+	<stdio.h>
+
+1560886709 source:c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\main.c
+	"functions.h"
+	"colaDinamica.h"
+	<time.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<pthread.h>
+	<fcntl.h>
+	<errno.h>
+	<dirent.h>
+
+1560885373 c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\functions.h
+	"listaDinamica.h"
+	"colaDinamica.h"
+
+1560872312 source:c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\files.c
+
+1560888081 c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\listadinamica.h
+	"info.h"
+	<stdio.h>
+	<stdlib.h>
+
+1560888153 source:c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\functions.c
+	"functions.h"
+	"listaDinamica.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1560888191 source:c:\users\federico piacentini\desktop\sisop\sisop\c-god-mode\ejercicio2\tp3-ej2\listadinamica.c
+	"listaDinamica.h"
+

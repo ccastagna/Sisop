@@ -1,0 +1,4 @@
+ID      DESCRIPCION                             STOCK
+AT. MAROLIO AC 170 gr               00480
+00000013ATUowsLIO AC 170 gr               00480
+00000013ATUows00026
