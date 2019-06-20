@@ -25,63 +25,80 @@
 #include <errno.h>
 #include <dirent.h>
 
-#define pathSeparator '//'
-
+#define PATH_SEPARATOR "//"
+#define MAX_THREAD_COUNT 15488 // kernel.threads-max = 15488
 
 int main(int argc, char *argv[])
 {
-    DIR *dir;
+  DIR *dir;
+  struct dirent *ent;
+  long int contArticulos = 0;
+  unsigned int *ids_array;
+  unsigned int *min_stock_array;
+  unsigned int *real_stock_array;
 
-    struct dirent *ent;
+  if (!strcmp(argv[1], "-h"))
+  {
+    printf("Proceso para calcular el stock consolidado y generar archivo de compras.\nEl proceso toma por parametro la cantidad de threads de procesamiento, el directorio \ndonde se encuentran los archivos de las sucursales y el archivo del maestro de productos; \ny genera como salida el archivo de stock consolidado (Stock_consolidado.txt) y \nel archivo de pedido de compras (Pedido_compras.txt), mas un archivo de log (process.log) \nque indica informacion de la ejecucion.\nPor ejemplo:\n\n./5 /home/files /home/files/articulos.txt\n./1 /home/files/process /home/files/articulos.txt\n./10 /home/files/stock /home/stock/articulos.txt\n\nEl directorio pasado por parametro debe contener todos los archivos de stock de sucursales.\nEl archivo maestro de articulos indica para cada uno de los articulos el stock minimo que debe\nhaber en la empresa. \nSi el stock esta por debajo de este numero, el proceso debe generar un registro \nde pedido de compra informando la cantidad necesaria a comprar para que el stock \nquede al doble del stock minimo del articulo.\nEj, Aceite, stock minimo 100, stock actual 73, entonces genera un pedido por 127.\nEl formato de los archivos de stock es de 8 posiciones para el id del articulo y \n5 posiciones para el stock.\nEn caso de que el stock real supere 99999, el mismo se informara en el log con su stock real, \npero en el archivo de stock consolidado quedara como 99999. \nTambien se informara en el archivo de log si algun articulo no se encontra en el maestro de articulos.\n");
+    return 0;
+  }
 
-    if (argc != 3)
+  if (argc != 4)
+  {
+    printf("La aplicacion espera 3 parametros la cantidad de threads a crear, \nel directorio donde se encuentran los archivos a procesar y el archivo maestro de articulos. \n");
+    printf("Por ejemplo: ./5 /home/files /home/files/articulos.txt\n");
+    printf("Para mas informacion, ejecute de la siguiente manera: ./-h \n");
+    return 0;
+  }
+
+  if (!isNumber(argv[1]) || atoi(argv[1]) <= 0 || atoi(argv[1]) > MAX_THREAD_COUNT)
+  {
+    printf("El primer parametro debe ser un numero (cantidad de threads a crear). \n");
+    return 0;
+  }
+  /* Empezaremos a leer en el directorio actual */
+  dir = opendir(argv[2]);
+
+  /* Miramos que no haya error */
+  if (dir == NULL)
+  {
+    printf("El segundo parametro debe ser un path valido. \n");
+    return 0;
+  }
+
+  char path[1024];
+  strcpy(path, argv[3]);
+  contArticulos = calcularCantRegistros(path);
+  ids_array = (int *)malloc(sizeof(int) * contArticulos);
+  min_stock_array = (int *)malloc(sizeof(int) * contArticulos);
+  real_stock_array = (int *)malloc(sizeof(int) * contArticulos);
+
+  cargoArchivoMaestro(path, ids_array, min_stock_array, real_stock_array);
+
+  while ((ent = readdir(dir)) != NULL)
+  {
+    char pathSucursal[1024];
+    strcpy(pathSucursal, argv[2]);
+    strcat(pathSucursal, PATH_SEPARATOR);
+    strcat(pathSucursal, ent->d_name);
+
+    if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..") || !strcmp(ent->d_name, "Stock_consolidado.txt") || !strcmp(ent->d_name, "process.log") || !strcmp(ent->d_name, "Pedido_compras.txt") || !strcmp(ent->d_name, "articulos.txt"))
     {
-        printf("La aplicacion espera como parametros la cantidad de threads a crear \n y el directorio donde se encuentran los archivos a procesar. \n");
-        printf("Por ejemplo: ./5 /home/files. \n");
-        return 0;
+      // do nothing (straight logic)
     }
-
-    if(!isNumber(argv[1])){
-        printf("El primer parametro debe ser un numero (cantidad de threads a crear). \n");
-        return 0;
-    }
-    /* Empezaremos a leer en el directorio actual */
-    dir = opendir(argv[2]);
-
-    /* Miramos que no haya error */
-    if (dir == NULL){
-        printf("El segundo parametro debe ser un path valido. \n");
-        return 0;
-    }
-
-    while ((ent = readdir(dir)) != NULL)
+    else
     {
-        char path[1024] ;   // or some other number
-        strcpy( path, argv[2] );
-        strcat( path, "\\" ) ; // or "\\" in Windows
-        strcat( path, ent->d_name);
-
-        if ( !strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..") || !strcmp(ent->d_name, "Stock_consolidado.txt") || !strcmp(ent->d_name, "process.log") || !strcmp(ent->d_name, "Pedido_compras.txt"))
-        {
-     // do nothing (straight logic)
-        }else if ((strcmp(ent->d_name, "articulos.txt") == 0))
-        {
-            cargoArchivoMaestro(path);
-        }
-        else
-        {
-            strcat(path, "\0");
-            cargoArchivoStock(path);
-        }
+      strcat(pathSucursal, "\0");
+      cargoArchivoStock(pathSucursal);
     }
+  }
 
-    closedir(dir);
+  closedir(dir);
 
-    char path[1024] ;   // or some other number
-    strcpy( path, argv[2] );
-    strcat( path, "\\" ) ; // or "\\" in Windows
+  strcpy(path, argv[2]);
+  strcat(path, PATH_SEPARATOR);
 
-    procesarArchivos(atoi(argv[1]), path );
+  procesarArchivos(atoi(argv[1]), path, ids_array, min_stock_array, real_stock_array, contArticulos);
 
-    return 1;
+  return 1;
 }

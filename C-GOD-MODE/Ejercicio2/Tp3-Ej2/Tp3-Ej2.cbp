@@ -11,6 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters='5 &quot;C:\Users\Federico Piacentini\Desktop\SISOP\Sisop\C-GOD-MODE\Ejercicio2\Archivos de ejemplo NO ENTREGAR&quot;' />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -31,19 +32,15 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="colaDinamica.h" />
-		<Unit filename="function_colaDinamica.c">
+		<Unit filename="colaDinamica.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="colaDinamica.h" />
 		<Unit filename="functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="functions.h" />
 		<Unit filename="info.h" />
-		<Unit filename="listaDinamica.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="listaDinamica.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
