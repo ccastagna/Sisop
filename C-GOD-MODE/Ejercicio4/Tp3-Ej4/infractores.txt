@@ -1,2 +1,7 @@
 Lanus|ABC123|Pepe|5|10000
 Lanus|CDD999|Raul|2|100.50
+Lanus|HIA333|Marcos|3|100.50
+Lanus|GGG222|Franco|2|20000
+Lanus|EEE111|Pedro|4|10000
+Lanus|BBB555|Miguel|2|25000
+Lanus|XAX636|Miguel|4|20001

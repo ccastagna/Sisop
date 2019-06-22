@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1560813489 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\main.c
+1561168929 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\main.c
 	<stdio.h>
 	<stdlib.h>
 	"info.h"
@@ -8,18 +8,18 @@
 
 1560800374 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\info.h
 
-1560812158 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\functions.h
+1561168807 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\functions.h
 	<string.h>
 	<stdlib.h>
 	"info.h"
 	"list.h"
 
-1560811502 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\list.h
+1561167862 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\list.h
 	<stdio.h>
 	<stdlib.h>
 	"info.h"
 
-1560813031 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\functions.c
+1561169215 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\functions.c
 	"functions.h"
 
 1560263355 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\info.h
@@ -30,6 +30,6 @@
 	"info.h"
 	"list.h"
 
-1560811492 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\list.c
+1561168334 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\list.c
 	"list.h"
 

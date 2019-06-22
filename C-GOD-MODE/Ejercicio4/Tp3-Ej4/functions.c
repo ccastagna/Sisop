@@ -12,7 +12,7 @@ int abrirArchivo(FILE **fp, const char *nombre, const char *modo, int msj) {
     return NOT_OK;
 }
 
-int leerArchivo(FILE **fp, t_list *pl, char *partido){
+int leerArchivo(FILE **fp, t_list *pl, const char *partido){
     char  linea [100],
           *aux;
     linea[0] = '\0';
@@ -51,12 +51,32 @@ int leerArchivo(FILE **fp, t_list *pl, char *partido){
         dato.partido = malloc( sizeof(aux));
         strcpy(dato.partido, linea);
 
-        if (strcmp(dato.partido, partido) == 0){
-            insertarAlFinal(pl, &dato);
-        }
-
+        insertarAlFinal(pl, &dato);
     }
     fclose(*fp);
+    return TODO_OK;
+}
+
+int escribirArchivo(FILE **fp, t_list *pl){
+    if(!abrirArchivo(&*fp, DATABASE_NAME, WRITE_TEXT, CON_MSG)) {
+        return NOT_OK;
+    }
+
+    t_list *aux = pl;
+    t_dato info;
+    while(aux != NULL){
+        info = (*aux)->info;
+        fprintf(*fp, "%s|%s|%s|%d|%.2f\n",  info.partido,
+                                            info.patente,
+                                            info.nombre_titular,
+                                            info.cantidad_multas,
+                                            info.monto_total
+                                            );
+        aux = (*aux)->sig;
+    }
+
+    fclose(*fp);
+
     return TODO_OK;
 }
 
@@ -64,7 +84,7 @@ int leerArchivo(FILE **fp, t_list *pl, char *partido){
     Recibe patente y el monto de la nueva multa. Si existe suma monto al total y aumenta
     cantidad de multas, sino existe crea un nuevo registro en la base de datos.
 */
-int ingresarMulta(char *patente, char *partido, float monto, t_list *pl){
+int ingresarMulta(const char *patente, const char *partido, const float monto, t_list *pl){
     t_dato dato;
     dato.partido = malloc(sizeof(partido));
     dato.patente = malloc(sizeof(patente));
@@ -80,7 +100,7 @@ int ingresarMulta(char *patente, char *partido, float monto, t_list *pl){
 /*
     Recibe la patente y devuelve si existe o no.
 */
-int existePatente(t_dato *dato, t_list *pl) {
+int existePatente(const t_dato *dato, t_list *pl) {
     return buscarEnListaNoOrdenadaPorClave (pl, dato, compararPatente);
 }
 
@@ -89,7 +109,20 @@ int existePatente(t_dato *dato, t_list *pl) {
     de las personas que deben un monto total mayor a $20.000 y/o que poseen más de 3 multas.
     Retorna una lista de ellos.
 */
-int registrosSuspender(t_list *pl){
+int registrosSuspender(t_list *pl, const char *partido){
+    t_list *aux = pl;
+    t_dato info;
+
+    while(aux != NULL){
+        info = (*aux)->info;
+        if (strcmp(info.partido, partido) == 0){
+            if (info.monto_total > 20000 ||
+                info.cantidad_multas > 3) {
+                printf("%s\n", info.patente);
+            }
+        }
+        aux = (*aux)->sig;
+    }
 
     return TODO_OK;
 }
@@ -101,24 +134,32 @@ int saldarMulta(const char *patente, const char *partido, t_list *pl){
     t_dato dato;
     dato.patente = patente;
     dato.partido = partido;
+    FILE *fp;
 
     if (existePatente(&dato, pl) == TODO_OK){
-        if(eliminarPorClave(pl, &dato, compararPatente) == TODO_OK ){
-            return TODO_OK;
+        if(eliminarPorClave(pl, &dato, compararPatente) == TODO_OK){
+            if(escribirArchivo(&fp, pl) == TODO_OK){
+                    return TODO_OK;
+            }
         }
-            return NOT_OK;
-    } else {
-        return NOT_OK;
     }
 
+    return NOT_OK;
 }
 
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-double buscarMontoTotal(const char *patente, t_list *pl){
+int buscarMontoTotal(const char *patente, const char *partido, t_list *pl){
+    t_dato dato;
+    dato.patente = patente;
+    dato.partido = partido;
+    if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
+        printf("%s\t%.2f\n", dato.patente, dato.monto_total);
+        return TODO_OK;
+    }
 
-    return TODO_OK;
+    return NOT_OK;
 }
 
 /*

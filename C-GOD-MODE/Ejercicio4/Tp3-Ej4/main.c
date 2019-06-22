@@ -46,7 +46,7 @@ int main()
         printf("\n\nIndique la opcion: ");
         scanf ("%d", &code);
         while (code < 1 || code > 6){
-            printf("\nOpcion invalida, ingrese una entre 1 y 6.");
+            printf("\nOpcion invalida, ingrese una entre 1 y 6: ");
             scanf ("%d", &code);
         }
 
@@ -59,7 +59,7 @@ int main()
                 ingresarMulta(patente, partido, monto, &lista);
                 break;
             case 2:
-                registrosSuspender(&lista);
+                registrosSuspender(&lista , partido);
                 break;
             case 3:
                 printf("\nIngrese la patente: ");
@@ -67,6 +67,9 @@ int main()
                 saldarMulta(patente, partido, &lista);
                 break;
             case 4:
+                printf("\nIngrese la patente: ");
+                scanf("%s", patente);
+                buscarMontoTotal(patente, partido, &lista);
                 break;
             case 5:
                 verMontoTotalInfractores (&lista, partido);

@@ -8,6 +8,8 @@
 
 #define NOT_OK          0
 #define TODO_OK         1
+#define LISTA_VACIA     2
+#define SIN_MEMORIA     3
 
 typedef struct s_nodo{
     t_dato info;
@@ -31,15 +33,15 @@ int mostrarLista(t_list *, char *, t_cmp);
 
 /*
     Compara las dos patentes enviadas, retorna:
-    0: si son iguales
-    !0: si no son iguales
+    0: si no son iguales
+    1: si son iguales
 */
 int *compararPatente(const t_dato *d1, const t_dato *d2);
 
 /*
     Compara los dos partidos enviados, retorna:
-    0: si son iguales
-    !0: si no son iguales
+    0: si no son iguales
+    1: si son iguales
 */
 int *compararPartido(const t_dato *d1, const char *d2);
 
