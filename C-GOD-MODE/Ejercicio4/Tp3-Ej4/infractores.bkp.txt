@@ -1,2 +1,10 @@
-Lanus|ABC123|Pepe|5|10000
-Lanus|CDD999|Raul|2|100.50
+lanus|ABC123|Pepe|5|10000.00
+lanus|CDD999|Raul|2|100.50
+lanus|HIA333|Marcos|3|100.50
+lanus|GGG222|Franco|2|20000.00
+lanus|EEE111|Pedro|4|10000.00
+lanus|BBB555|Miguel|2|25000.00
+lanus|XAX636|Miguel|4|20001.00
+lanus|PAP921|Julian|1|92.92
+la matanza|PEP111|Matos|2|100.99
+la matanza|AHI193|Patricio|1|10.11

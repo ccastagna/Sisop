@@ -65,7 +65,25 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, t_cmp cmp) {
     return NOT_OK;
 }
 
-int mostrarLista(t_list *p, char *partido, t_cmp cmp){
+int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp) {
+    if(listaVacia(p) == TODO_OK){
+        return LISTA_VACIA;
+    }
+
+    while ( *p && cmp( &(*p)->info, d ) != TODO_OK ){
+        p = &(*p)->sig;
+    }
+
+    if(*p) {
+        (*p)->info.cantidad_multas += 1;
+        (*p)->info.monto_total += monto;
+        return TODO_OK;
+    }
+
+    return NOT_OK;
+}
+
+int mostrarLista(t_list *p, const char *partido, t_cmp cmp){
      if(listaVacia(p) == TODO_OK){
         return LISTA_VACIA;
     }
@@ -79,6 +97,7 @@ int mostrarLista(t_list *p, char *partido, t_cmp cmp){
         if (cmp( d, partido) == TODO_OK) {
             flag = 1;
             printf("%s\t%.2f\n", d->patente, d->monto_total);
+            fflush(stdin);
         }
         aux = &(*aux)->sig;
     }
@@ -95,7 +114,7 @@ int mostrarLista(t_list *p, char *partido, t_cmp cmp){
 int *compararPatente (const t_dato *d1, const t_dato *d2) {
     if (strcmp(d1->partido, d2->partido) == 0 &&
         strcmp(d1->patente, d2->patente) == 0) {
-        return (int)TODO_OK;
+        return TODO_OK;
     } else {
         return NOT_OK;
     }

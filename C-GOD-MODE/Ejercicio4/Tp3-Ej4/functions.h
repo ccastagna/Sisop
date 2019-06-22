@@ -20,11 +20,15 @@
 #define WRITE_TEXT          "wt"    //Crea o pisa el contenido de un archivo.
 #define CON_MSG             1
 
+void mostrarMenu();
+
 int abrirArchivo(FILE **, const char*, const char*, int);
 
 int leerArchivo(FILE **, t_list *, const char *);
 
 int escribirArchivo(FILE **, t_list *);
+
+int normalizarCadena(unsigned char *, int);
 
 /*
     Recibe patente y el monto de la nueva multa. Si existe suma monto al total y aumenta

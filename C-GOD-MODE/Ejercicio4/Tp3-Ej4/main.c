@@ -27,60 +27,73 @@ int main()
 
     FILE *fp;
     t_list lista;
-    char *partido = "Lanus";
-    char *patente = malloc (sizeof(7));
+    char *partido = malloc(20);
+    char *patente = malloc(8);
     float monto;
 
     crearLista(&lista);
     leerArchivo(&fp, &lista, partido);
 
-    printf("Menu de Opciones: \n");
-    printf("1. Ingresar multa.\n");
-    printf("2. Mostrar registros a suspender.\n");
-    printf("3. Saldar multa.\n");
-    printf("4. Buscar monto total de un infractor.\n");
-    printf("5. Buscar monto total a pagar de todos los infractores.\n");
-    printf("6. Salir.\n");
+    printf("Ingrese el partido de su sede: ");
+    scanf("%19[^\n]s", partido);
+    normalizarCadena(partido, strlen(partido));
+
+    mostrarMenu();
 
     while (1) {
-        printf("\n\nIndique la opcion: ");
+        printf("Indique la opcion: ");
         scanf ("%d", &code);
-        while (code < 1 || code > 6){
-            printf("\nOpcion invalida, ingrese una entre 1 y 6: ");
+        while (code < 1 || code > 7){
+            printf("Opcion invalida, ingrese un numero entre 1 y 7: ");
             scanf ("%d", &code);
         }
 
         switch (code) {
             case 1:
-                printf("\nIngrese la patente: ");
-                scanf("%s", patente);
-                printf("\nIngrese monto de la multa: ");
+                printf("Ingrese la patente: ");
+                scanf("%7s", patente);
+                printf("Ingrese monto de la multa: ");
                 scanf("%f", &monto);
-                ingresarMulta(patente, partido, monto, &lista);
+                if (ingresarMulta(patente, partido, monto, &lista) == TODO_OK){
+                    printf("Se ingreso la multa exitosamente.\n");
+                } else{
+                    printf("La multa no se pudo generar, intente nuevamente.\n");
+                }
                 break;
             case 2:
-                registrosSuspender(&lista , partido);
+                if (registrosSuspender(&lista , partido) == NOT_OK){
+                    printf("No se encontraron registros a suspender.\n");
+                }
                 break;
             case 3:
-                printf("\nIngrese la patente: ");
-                scanf("%s", patente);
-                saldarMulta(patente, partido, &lista);
+                printf("Ingrese la patente: ");
+                scanf("%7s", patente);
+                if (saldarMulta(patente, partido, &lista) == NOT_OK){
+                    printf("La patente ingresada no tiene multas a saldar.\n");
+                }
                 break;
             case 4:
-                printf("\nIngrese la patente: ");
-                scanf("%s", patente);
-                buscarMontoTotal(patente, partido, &lista);
+                printf("Ingrese la patente: ");
+                scanf("%7s", patente);
+                if(buscarMontoTotal(patente, partido, &lista) == NOT_OK){
+                    printf("La patente ingresada no tiene multas pendientes.\n");
+                }
                 break;
             case 5:
-                verMontoTotalInfractores (&lista, partido);
+                if (verMontoTotalInfractores (&lista, partido) == NOT_OK){
+                    printf("No hay patentes con multas pendientes.\n");
+                }
                 break;
             case 6:
-                return 1;
+                mostrarMenu();
+                break;
+            case 7:
+                return TODO_OK;
                 break;
             default:
-                return 0;
+                return NOT_OK;
         }
     }
 
-    return 1;
+    return TODO_OK;
 }
