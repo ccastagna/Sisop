@@ -18,7 +18,6 @@ int main(int argc, char* argv[])
 {
     char opcion;
 
-//    while((opcion = getopt(argc, argv, "dhza?")) != -1)
     if((opcion = getopt(argc, argv, "dhza?")) != -1)
     {
         switch(opcion)
