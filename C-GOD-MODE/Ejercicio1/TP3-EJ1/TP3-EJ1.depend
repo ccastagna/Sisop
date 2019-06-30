@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1561069383 source:/home/hbaini/TP3/TP3-EJ1/main.c
+	"Funciones.h"
+
+1561931245 source:/home/hbaini/TP3/TP3-EJ1/Funciones.c
+	"Funciones.h"
+
+1561931505 /home/hbaini/TP3/TP3-EJ1/Funciones.h
+	<sys/wait.h>
+	<unistd.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<signal.h>
+	<stdio.h>
+	<stdlib.h>
+
