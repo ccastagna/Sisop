@@ -83,7 +83,7 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
     return NOT_OK;
 }
 
-int mostrarLista(t_list *p, const char *partido, t_cmp cmp){
+int mostrarLista(t_list *p, const char *partido, t_cmp cmp, int sockfd){
      if(listaVacia(p) == TODO_OK){
         return LISTA_VACIA;
     }
@@ -92,16 +92,24 @@ int mostrarLista(t_list *p, const char *partido, t_cmp cmp){
     t_dato *d = (t_dato *) malloc (sizeof (t_dato *));
     t_list *aux = p;
 
+    char buff[30];
+    char *aux_monto = malloc(23);
+
     while (*aux){
         *d = (*aux)->info;
         if (cmp( d, partido) == TODO_OK) {
+            bzero(buff, sizeof(buff));
+            strcat(buff, d->patente);
+            strcat(buff, "\t");
+            sprintf(aux_monto, "%f", d->monto_total);
+            strcat(buff, aux_monto);
+            write(sockfd, buff, sizeof(buff));
+
             flag = 1;
-            printf("%s\t%.2f\n", d->patente, d->monto_total);
-            fflush(stdin);
         }
         aux = &(*aux)->sig;
     }
-
+    free(aux_monto);
     if (flag == 1){
         return TODO_OK;
     } else {

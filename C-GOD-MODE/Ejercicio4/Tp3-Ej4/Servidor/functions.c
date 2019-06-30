@@ -1,15 +1,15 @@
 #include "functions.h"
 
-void mostrarMenu(){
-    printf("Menu de Opciones: \n");
-    printf("1. Ingresar multa.\n");
-    printf("2. Mostrar registros a suspender.\n");
-    printf("3. Saldar multa.\n");
-    printf("4. Buscar monto total de un infractor.\n");
-    printf("5. Buscar monto total a pagar de todos los infractores.\n");
-    printf("6. Ver menu nuevamente.\n");
-    printf("7. Salir.\n");
-    fflush(stdin);
+void mostrarMenu(int sockfd){
+    char buff[] = "Menu de Opciones: \n \
+                    1. Ingresar multa.\n \
+                    2. Mostrar registros a suspender.\n \
+                    3. Saldar multa.\n \
+                    4. Buscar monto total de un infractor.\n \
+                    5. Buscar monto total a pagar de todos los infractores.\n \
+                    6. Ver menu nuevamente.\n \
+                    7. Salir.\n\0";
+    write(sockfd, buff, sizeof(buff));
 }
 
 int abrirArchivo(FILE **fp, const char *nombre, const char *modo, int msj) {
@@ -24,7 +24,7 @@ int abrirArchivo(FILE **fp, const char *nombre, const char *modo, int msj) {
     return NOT_OK;
 }
 
-int leerArchivo(FILE **fp, t_list *pl, const char *partido){
+int leerArchivo(FILE **fp, t_list *pl){
     char  linea [100],
           *aux;
     linea[0] = '\0';
@@ -117,21 +117,16 @@ int normalizarCadena(unsigned char *buf, int len) {
     Recibe patente y el monto de la nueva multa. Si existe suma monto al total y aumenta
     cantidad de multas, sino existe crea un nuevo registro en la base de datos.
 */
-int ingresarMulta(const char *patente, const char *partido, const float monto, t_list *pl){
+int ingresarMulta(const char *patente, const char *partido, const char *nombre_titular, const float monto, t_list *pl){
     FILE *fp;
     t_dato dato;
     dato.partido = partido;
     dato.patente = patente;
+    dato.nombre_titular = nombre_titular;
 
     if (existePatente(&dato, pl) == TODO_OK){
         buscarYActualizar (pl, &dato, monto, compararPatente);
     } else {
-        dato.nombre_titular = malloc(25);
-        printf("Ingrese el nombre del titular: ");
-        fflush(stdin);
-        scanf("%24[^\n]s", dato.nombre_titular);
-        fflush(stdin);
-
         dato.cantidad_multas = 1;
         dato.monto_total = monto;
         insertarAlFinal(pl, &dato);
@@ -157,16 +152,21 @@ int existePatente(const t_dato *dato, t_list *pl) {
     de las personas que deben un monto total mayor a $20.000 y/o que poseen más de 3 multas.
     Retorna una lista de ellos.
 */
-int registrosSuspender(t_list *pl, const char *partido){
+int registrosSuspender(t_list *pl, const char *partido, int sockfd){
     t_list *aux = pl;
     t_dato info;
+
+    char buff[10];
 
     while(*aux != NULL){
         info = (*aux)->info;
         if (strcmp(info.partido, partido) == 0){
             if (info.monto_total > 20000 ||
                 info.cantidad_multas > 3) {
-                printf("%s\n", info.patente);
+
+                bzero(buff, sizeof(buff));
+                strcpy(buff, info.patente);
+                write(sockfd, buff, sizeof(buff));
                 fflush(stdin);
             }
         }
@@ -199,15 +199,24 @@ int saldarMulta(const char *patente, const char *partido, t_list *pl){
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-int buscarMontoTotal(const char *patente, const char *partido, t_list *pl){
+int buscarMontoTotal(const char *patente, const char *partido, t_list *pl, int sockfd){
     t_dato dato;
     dato.patente = patente;
     dato.partido = partido;
+
+    char buff[30];
+    char *aux = malloc(23);
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
-        printf("%s\t%.2f\n", dato.patente, dato.monto_total);
-        fflush(stdin);
+        bzero(buff, sizeof(buff));
+        strcpy(buff, dato.patente);
+        strcat(buff, "\t");
+        sprintf(aux, "%f", dato.monto_total);
+        strcat(buff, aux);
+        write(sockfd, buff, sizeof(buff));
+
         return TODO_OK;
     }
+    free(aux);
 
     return NOT_OK;
 }
@@ -215,8 +224,8 @@ int buscarMontoTotal(const char *patente, const char *partido, t_list *pl){
 /*
     Muestra el monto total a pagar de cada infractor
 */
-int verMontoTotalInfractores(t_list *pl, const char *partido){
-    if (mostrarLista(pl, partido, compararPartido) == TODO_OK){
+int verMontoTotalInfractores(t_list *pl, const char *partido, int sockfd){
+    if (mostrarLista(pl, partido, compararPartido, sockfd) == TODO_OK){
         return TODO_OK;
     } else{
         return NOT_OK;
