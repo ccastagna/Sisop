@@ -43,14 +43,14 @@ void imprimirMenu(){
     printf("1)Descripcion\n");
     printf("2)Ayuda\n");
     printf("3)Ejecutar\n");
-    printf("0)Salir\n");
+    printf("4)Salir\n");
 }
 int ingresarYValidar(int salida){
     int aDev;
     do{
-        printf("Ingrese una Opcion (entre 0 y 3): ");
+        printf("Ingrese una Opcion (entre 1 y 4): ");
     scanf("%d",&aDev);
-    }while(aDev!=salida && (aDev> 3 ||aDev<1));
+    }while(aDev!=salida && (aDev> 4 ||aDev<1));
     return aDev;
 }
 /*
@@ -217,7 +217,6 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
     printf("%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
 
     if(isMaximumSpeedExceded(MAXIMUM_SPEED, (*value).speed) ){
-        printf("IF");
         time_t auxCurrent = time(NULL);
         struct tm currentDate = *localtime(&auxCurrent);
         (*value).hour = currentDate.tm_hour;
@@ -232,7 +231,7 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
         fclose(pf_archLog);
         exit(TODO_OK);
     }
-    didDayChange = TRUE;
+    didDayChange = TRUE; // TODO: ELIMINAR
     return value;
 }
 
@@ -258,13 +257,15 @@ int main(int argc, char* argv[]) {
     fixedDate = malloc(sizeof(struct tm));
     *fixedDate = *localtime(&auxFixedDate);
 
-
+    char path[300];
+    char name[30];
+    char temp;
     int opcion;
     do
     {
         imprimirMenu();
 
-        opcion =ingresarYValidar(0);
+        opcion =ingresarYValidar(4);
 
         switch(opcion)
         {
@@ -294,11 +295,16 @@ int main(int argc, char* argv[]) {
             break;
         case 3:
             printf("Ingrese la ruta del archivo FIFO, entre comillas dobles y a continuacion apriete enter: \n");
-        break;
-        }
-    }while(opcion!=0);
-    return 0;
 
+            scanf("%c",&temp); // temp statement to clear buffer
+            scanf("%[^\n]",path);
+            printf("Selected Path: %s", path); // TODO: BORRAR
+            break;
+        case 4:
+            exit(0);
+            break;
+        }
+    }while(opcion!=3);
 
     char fifoFileName[] = "Prueba.txt";
 
@@ -312,7 +318,7 @@ int main(int argc, char* argv[]) {
     t_dato dataFromQueue;
     //t_dato *readedFromFifo = NULL;
     // INICIO DE SERVICIO
-    while(TRUE) {
+    while(FALSE) {
         if(isFirstTime) {
             fprintf(pf_archLog,"Iniciando Archivo Trafico Diario \n");
             isFirstTime = FALSE;
