@@ -240,56 +240,57 @@ int main(int argc, char* argv[]) {
     //Logica de fechas
     fixedDate = malloc(sizeof(struct tm));
     *fixedDate = *localtime(&auxFixedDate);
-
-    char temp;
-    int opcion;
-    do
-    {
-        imprimirMenu();
-
-        opcion =ingresarYValidar(4);
-
-        switch(opcion)
+    if(argc == 2){
+        strcpy(fifoPath,argv[1]);
+    } else {
+        char temp;
+        int opcion;
+        do
         {
-        case 1:
-            printf("El gobierno de la provincia de Buenos Aires coloco muchas cámaras para detectar los excesos de \n");
-            printf("velocidad. Las cámaras están colocadas en zonas de circulación de máxima 60. \n");
-            printf("Estas cámaras envían la patente, la camara y la velocidad a la que circulaba el automóvil a un sistema \n");
-            printf("centralizado, que está ejecutando como demonio, a través de una estructura FIFO. \n");
-            printf("El sistema debe mostrar por pantalla la patente, la velocidad y la cámara informó el paso de un auto. \n");
-            printf("A su vez se deben registrar el movimiento de todos los autos y guardarlos en un archivo llamado \n");
-            printf("“Transito_AAAAMMDD.txt”, el cual debe informar los datos. \n");
-            printf("Al finalizar cada día se desea guardar en un archivo “Crear_Multas_AAAAMMDD.txt” la patente de \n");
-            printf("los autos en exceso seguidos de la hora, la velocidad y el importe de la multa. Las multas se calculan\n");
-            printf("$1500 multiplicado por cada unidad de velocidad superior a la máxima. (Si un auto va a 80 y la máxima\n");
-            printf("es 60 se debe cobrar $1500*20 = $30000).\n");
-            break;
-        case 2:
-            printf("Para ejecutar el programa, debe ingresar por la opción 3,");
-            printf(" y luego ingresar la dirección del archivo FIFO, \n");
-            printf(" con el nombre del mismo, entre comillas dobles\n");
-            printf("EJ.: \"\\Desktop\\Prueba\\ArchivoFifo\" \n");
-            printf("Despues apretar ENTER, y desde otra consola, ejecutar un cliente,\n");
-            printf("Que escriba en el mismo archivo FIFO, con el formato: \n");
-            printf("Patente camara velocidad \n");
-            printf("Cada campo separado por un espacio\n");
-            printf("Ej.: AAA123 cam5 44\n");
-            break;
-        case 3:
-            printf("Ingrese la ruta del archivo FIFO y a continuacion apriete enter: \n");
+            imprimirMenu();
 
-            scanf("%c",&temp); // temp statement to clear buffer
-            scanf("%[^\n]",fifoPath);
-            break;
-        case 4:
-            exit(0);
-            break;
-        }
-    }while(opcion!=3);
+            opcion =ingresarYValidar(4);
 
+            switch(opcion)
+            {
+            case 1:
+                printf("El gobierno de la provincia de Buenos Aires coloco muchas cámaras para detectar los excesos de \n");
+                printf("velocidad. Las cámaras están colocadas en zonas de circulación de máxima 60. \n");
+                printf("Estas cámaras envían la patente, la camara y la velocidad a la que circulaba el automóvil a un sistema \n");
+                printf("centralizado, que está ejecutando como demonio, a través de una estructura FIFO. \n");
+                printf("El sistema debe mostrar por pantalla la patente, la velocidad y la cámara informó el paso de un auto. \n");
+                printf("A su vez se deben registrar el movimiento de todos los autos y guardarlos en un archivo llamado \n");
+                printf("“Transito_AAAAMMDD.txt”, el cual debe informar los datos. \n");
+                printf("Al finalizar cada día se desea guardar en un archivo “Crear_Multas_AAAAMMDD.txt” la patente de \n");
+                printf("los autos en exceso seguidos de la hora, la velocidad y el importe de la multa. Las multas se calculan\n");
+                printf("$1500 multiplicado por cada unidad de velocidad superior a la máxima. (Si un auto va a 80 y la máxima\n");
+                printf("es 60 se debe cobrar $1500*20 = $30000).\n");
+                break;
+            case 2:
+                printf("Para ejecutar el programa, debe ingresar por la opción 3,");
+                printf(" y luego ingresar la dirección del archivo FIFO, \n");
+                printf(" con el nombre del mismo, entre comillas dobles\n");
+                printf("EJ.: \"\\Desktop\\Prueba\\ArchivoFifo\" \n");
+                printf("Despues apretar ENTER, y desde otra consola, ejecutar un cliente,\n");
+                printf("Que escriba en el mismo archivo FIFO, con el formato: \n");
+                printf("Patente camara velocidad \n");
+                printf("Cada campo separado por un espacio\n");
+                printf("Ej.: AAA123 cam5 44\n");
+                break;
+            case 3:
+                printf("Ingrese la ruta del archivo FIFO y a continuacion apriete enter: \n");
+
+                scanf("%c",&temp); // temp statement to clear buffer
+                scanf("%[^\n]",fifoPath);
+                break;
+            case 4:
+                exit(0);
+                break;
+            }
+        }while(opcion!=3);
+    }
     // TODO: Descomentar
-    createDaemonProcess();
-    system("x-terminal-emulator -e \"/home/salman/find_location/start_yarp.sh\"");
+    //createDaemonProcess();
     //Variables para el FIFO
     /* Create the FIFO if it does not exist */
     mknod(fifoPath, S_IFIFO|0640, 0);
