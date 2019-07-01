@@ -1,6 +1,6 @@
 // Script Tp3-Ej2
 
-// Trabajo pr�ctico 3
+// Trabajo practico 3
 // Ejercicio 2
 // Entrega
 

@@ -1,3 +1,16 @@
+// Script Tp3-Ej2
+
+// Trabajo practico 3
+// Ejercicio 2
+// Entrega
+
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
+
 #ifndef COLADINAMICA_H_INCLUDED
 #define COLADINAMICA_H_INCLUDED
 
