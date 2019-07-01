@@ -54,9 +54,19 @@ int cargoArchivoMaestro(char *fname, unsigned int *ids_array, unsigned int *min_
 
   fMaster = fopen(fname, "r");
 
+  if (fMaster == NULL){
+    char path[1024];
+    strcpy(path, ".");
+    strcpy(path, fname);
+    fMaster = fopen(fname, "r");
+    if (fMaster == NULL){
+      printf("No se pudo abrir el archivo maestro de articulos.\n");
+      return 0;
+    }
+  }
+
   while (fgets(str, MAESTRO_REGISTRY_SIZE + 1, fMaster) != NULL)
   {
-
     id = substring(str, 1, 8);
     minStock = substring(str, 49, 5);
 
@@ -144,6 +154,7 @@ int createOutputFiles(FILE **compras, FILE **stock, FILE **log, char *path)
 
 void* threadRoutine(void *arg)
 {
+
   pthread_mutex_t mutexCola = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_t mutexLog1 = PTHREAD_MUTEX_INITIALIZER;
   pthread_mutex_t mutexLog2 = PTHREAD_MUTEX_INITIALIZER;
@@ -184,7 +195,6 @@ void* threadRoutine(void *arg)
         int found = 0;
         while (pos < thread->max_position && found == 0)
         {
-
           if (atoi(idStr) == thread->ids_array[pos])
           {
             found++;
@@ -272,24 +282,25 @@ int procesarArchivos(int cantThreads, char *path, unsigned int *ids_array, unsig
       }
   }
 
+  vaciarCola(&cola);
+
   int pos = 0;
   while (pos < max_position)
   {
-    itoa(ids_array[pos], idStr, 10);
+    sprintf(idStr, "%d", ids_array[pos]);
     if(real_stock_array[pos] > 99999){
-//        printf("ARTICULO: %08d, EXCEDE LIMITE. STOCK REAL: %d\n", ids_array[pos] , real_stock_array[pos]);
         fprintf(log,  "ARTICULO: %08d, EXCEDE LIMITE. STOCK REAL: %d\n", ids_array[pos] , real_stock_array[pos]);
         strcpy(stockStr, "99999");
     }else{
-       itoa(real_stock_array[pos], stockStr, 10);
+       sprintf(stockStr, "%05d", real_stock_array[pos]);
     }
 
     if (min_stock_array[pos] > real_stock_array[pos])
     {
-      itoa(min_stock_array[pos] + min_stock_array[pos] - real_stock_array[pos], stockCompraStr, 10);
-      fprintf(compras, "%08s%05s\n", idStr, stockCompraStr);
+      sprintf(stockCompraStr, "%05d", min_stock_array[pos] + min_stock_array[pos] - real_stock_array[pos]);
+      fprintf(compras, "%08d%5s\n", ids_array[pos], stockCompraStr );
     }
-    fprintf(stock, "%08s%05s\n", idStr, stockStr);
+    fprintf(stock, "%08d%5s\n", ids_array[pos], stockStr);
     pos++;
   }
 
