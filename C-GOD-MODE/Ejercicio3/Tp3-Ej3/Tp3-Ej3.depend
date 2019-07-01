@@ -1,9 +1,0 @@
-# depslib dependency file v1.0
-1560025000 source:/home/miguel/Desktop/Sisop/C-GOD-MODE/Ejercicio3/Tp3-Ej3/main.c
-	<stdio.h>
-	<stdlib.h>
-	<unistd.h>
-	<sys/types.h>
-	<sys/stat.h>
-	<string.h>
-
