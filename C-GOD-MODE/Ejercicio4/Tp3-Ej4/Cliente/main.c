@@ -18,16 +18,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <signal.h>
 
-#define MAX 800
-#define PORT 8080
-#define SA struct sockaddr
+#define MAX         800
+//#define SERVER_IP   127.0.0.1
+#define PORT        8181
+#define SA          struct sockaddr
 
-#define NOT_OK 0
-#define TODO_OK 1
+#define NOT_OK      0
+#define TODO_OK     1
 
-void operar(int sockfd)
-{
+int sockfd;
+
+void SignalInterruptHandler(int n_signal) {
+     write(sockfd, "7");
+}
+
+void operar(int sockfd) {
     // opcion del menu
     int code;
 
@@ -39,41 +46,48 @@ void operar(int sockfd)
 
     int n;
 
-    bzero(buff, sizeof(buff));
+    memset(buff, 0, MAX);
     read(sockfd, buff, sizeof(buff));
     printf("%s", buff);
+    fflush(stdin);
 
-    bzero(buff, sizeof(buff));
+    memset(buff, 0, MAX);
     read(sockfd, buff, sizeof(buff));
     printf("%s", buff);
+    fflush(stdin);
 
-    bzero(buff, sizeof(buff));
+    // Ingreso partido
+    memset(buff, 0, MAX);
     n = 0;
     while ((buff[n++] = getchar()) != '\n');
+    buff[n-1] = '\0';
     write(sockfd, buff, sizeof(buff));
 
-    bzero(buff, sizeof(buff));
+    // Leo el menu
+    memset(buff, 0, MAX);
     read(sockfd, buff, sizeof(buff));
     printf("%s", buff);
     fflush(stdin);
     while (1) {
-        bzero(buff, sizeof(buff));
+        // El servidor me pide la opcion
+        memset(buff, 0, MAX);
         read(sockfd, buff, sizeof(buff));
         printf("%s", buff);
+        fflush(stdin);
 
-        bzero(buff, sizeof(buff));
+        // Ingreso la opcion y se la envio al servidor
+        memset(buff, 0, MAX);
         n = 0;
         while ((buff[n++] = getchar()) != '\n');
         write(sockfd, buff, sizeof(buff));
-
         code = atoi(buff);
 
         while (code < 1 || code > 7){
-            bzero(buff, sizeof(buff));
+            memset(buff, 0, MAX);
             read(sockfd, buff, sizeof(buff));
             printf("%s", buff);
 
-            bzero(buff, sizeof(buff));
+            memset(buff, 0, MAX);
             n = 0;
             while ((buff[n++] = getchar()) != '\n');
             write(sockfd, buff, sizeof(buff));
@@ -82,98 +96,130 @@ void operar(int sockfd)
 
         switch (code) {
             case 1:
-                bzero(buff, sizeof(buff));
+                // Informo codigo 1 al server (ingresarMulta)
+                write(sockfd, "1", sizeof(1));
+
+                // Server me solicita patente
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
 
-                bzero(buff, sizeof(buff));
+                // Envio patente al server
+                memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
                 write(sockfd, buff, sizeof(buff));
 
-                bzero(buff, sizeof(buff));
+                // Server solicita monto
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
 
-                bzero(buff, sizeof(buff));
+                // Envio monto al server
+                memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
                 write(sockfd, buff, sizeof(buff));
 
-                bzero(buff, sizeof(buff));
+                // Server solicita nombre de titular
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
 
-                bzero(buff, sizeof(buff));
+                // Envio nombre de titular
+                memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
                 write(sockfd, buff, sizeof(buff));
 
-                bzero(buff, sizeof(buff));
+                // Leo resultado de alta de multa
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
                 fflush(stdin);
                 break;
             case 2:
-                bzero(buff, sizeof(buff));
+                // Envio opcion 2 al server (registrosASuspender)
+                write(sockfd, "2", sizeof(1));
+
+                // Leo los registros a suspender enviados por server
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
                 fflush(stdin);
                 break;
             case 3:
-                bzero(buff, sizeof(buff));
+                // Envio opcion 3 al server (saldarMulta)
+                write(sockfd, "3", sizeof(1));
+
+                // Server me solicita patente
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
 
-                bzero(buff, sizeof(buff));
+                // Envio patente al server
+                memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
                 write(sockfd, buff, sizeof(buff));
 
-                bzero(buff, sizeof(buff));
+                // Leo resultado del server
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
 
                 break;
             case 4:
-                bzero(buff, sizeof(buff));
+                // Envio opcion 4 al server (Buscar monto de un infractor)
+                write(sockfd, "4", sizeof(1));
+
+                // Server solicita patente
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
 
-                bzero(buff, sizeof(buff));
+                // Envio patente al server
+                memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
                 write(sockfd, buff, sizeof(buff));
 
-                bzero(buff, sizeof(buff));
+                // Leo respuesta del server
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
                 fflush(stdin);
 
                 break;
             case 5:
-                bzero(buff, sizeof(buff));
+                // Envio opcion 5 al server (buscar todos los infractores y monto)
+                write(sockfd, "5", sizeof(1));
+
+                // Leo el resultado del server
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
                 fflush(stdin);
                 break;
             case 6:
-                bzero(buff, sizeof(buff));
+                // Envio opcion 6 al server (mostrar menu)
+                write(sockfd, "6", sizeof(1));
+
+                // Leo el resultado del server
+                memset(buff, 0, MAX);
                 read(sockfd, buff, sizeof(buff));
                 printf("%s", buff);
                 fflush(stdin);
                 break;
             case 7:
-                bzero(buff, sizeof(buff));
-                read(sockfd, buff, sizeof(buff));
-                printf("%s", buff);
+                // Envio opcion 7 al server (salir)
+                write(sockfd, "7", sizeof(1));
+                printf("La sesion ha finalizado exitosamente.\n");
+
                 return;
-                break;
             default:
-                bzero(buff, sizeof(buff));
-                n = 0;
-                while ((buff[n++] = getchar()) != '\n');
-                write(sockfd, buff, sizeof(buff));
+                // Envio opcion 7 al server (salir)
+                write(sockfd, "7", sizeof(1));
                 printf("Ocurrio un error inesperado y debio ser cerrada la conexion.\n");
                 return;
         }
@@ -181,8 +227,10 @@ void operar(int sockfd)
 }
 
 int main() {
-    int sockfd, connfd;
+    int connfd;
     struct sockaddr_in servaddr, cli;
+
+    signal(SIGINT, &SignalInterruptHandler);
 
     // socket create and varification
     sockfd = socket(AF_INET, SOCK_STREAM, 0);

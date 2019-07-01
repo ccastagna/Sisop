@@ -1,30 +1,38 @@
 # depslib dependency file v1.0
-1561863504 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\functions.c
+1561944900 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\functions.c
 	"functions.h"
 
-1561863403 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\functions.h
+1561944675 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\functions.h
 	<string.h>
 	<stdlib.h>
+	<netdb.h>
+	<netinet/in.h>
 	"info.h"
 	"list.h"
 
 1560800374 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\info.h
 
-1561862944 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\list.h
+1561943404 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\list.h
 	<stdio.h>
 	<stdlib.h>
+	<netdb.h>
+	<netinet/in.h>
 	"info.h"
 
-1561863126 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\list.c
+1561943376 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\list.c
 	"list.h"
 
-1561863717 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\main.c
+1561944343 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\main.c
 	<netdb.h>
 	<netinet/in.h>
 	<stdlib.h>
 	<string.h>
 	<sys/socket.h>
 	<sys/types.h>
+	<arpa/inet.h>
+	<signal.h>
+	<stdio.h>
+	<unistd.h>
 	"info.h"
 	"list.h"
 	"functions.h"

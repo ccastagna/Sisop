@@ -16,12 +16,12 @@ int abrirArchivo(FILE **fp, const char *nombre, const char *modo, int msj) {
     *fp = fopen(nombre, modo);
 
     if(*fp){
-        return TODO_OK;
+        return (int)TODO_OK;
     }
     if(msj){
         printf("Error al abrir el archivo \"%s\" en el modo \"%s\".\n",nombre,modo);
     }
-    return NOT_OK;
+    return (int)NOT_OK;
 }
 
 int leerArchivo(FILE **fp, t_list *pl){
@@ -30,14 +30,14 @@ int leerArchivo(FILE **fp, t_list *pl){
     linea[0] = '\0';
     t_dato dato;
     if(!abrirArchivo(&*fp, DATABASE_NAME, READ_TEXT, CON_MSG)) {
-        return NOT_OK;
+        return (int)NOT_OK;
     }
     while(fgets(linea, sizeof(linea) ,*fp))
     {
         if ( ( aux = strrchr (linea, '\n') ) == NULL ) {
             fclose(*fp);
             fprintf(stderr,"Error leyendo base de datos.\n");
-            return NOT_OK;
+            return (int)NOT_OK;
         }
         //monto_total
         *aux = '\0';
@@ -66,12 +66,12 @@ int leerArchivo(FILE **fp, t_list *pl){
         insertarAlFinal(pl, &dato);
     }
     fclose(*fp);
-    return TODO_OK;
+    return (int)TODO_OK;
 }
 
 int escribirArchivo(FILE **fp, t_list *pl){
     if(!abrirArchivo(&*fp, DATABASE_NAME, WRITE_TEXT, CON_MSG)) {
-        return NOT_OK;
+        return (int)NOT_OK;
     }
 
     t_list *aux = pl;
@@ -90,10 +90,10 @@ int escribirArchivo(FILE **fp, t_list *pl){
 
     fclose(*fp);
 
-    return TODO_OK;
+    return (int)TODO_OK;
 }
 
-int normalizarCadena(unsigned char *buf, int len) {
+int normalizarCadena(char *buf, int len) {
     int i, j;
 
     for(j=i=0 ;i < len; ++i){
@@ -102,22 +102,23 @@ int normalizarCadena(unsigned char *buf, int len) {
             continue ;
         }
         if(isspace(buf[i])){
-            if(!j || j && buf[j-1] != ' ')
+            if(!j || (j && buf[j-1] != ' ')) {
                 buf[j++]=' ';
+            }
             continue ;
         }
         buf[j++] = buf[i];
     }
-    buf[j+1] = '\0';
+    //buf[j+1] = '\0';
 
-    return j;
+    return (int)TODO_OK;
 }
 
 /*
     Recibe patente y el monto de la nueva multa. Si existe suma monto al total y aumenta
     cantidad de multas, sino existe crea un nuevo registro en la base de datos.
 */
-int ingresarMulta(const char *patente, const char *partido, const char *nombre_titular, const float monto, t_list *pl){
+int ingresarMulta(char *patente, char *partido, char *nombre_titular, const float monto, t_list *pl){
     FILE *fp;
     t_dato dato;
     dato.partido = partido;
@@ -133,9 +134,9 @@ int ingresarMulta(const char *patente, const char *partido, const char *nombre_t
     }
 
     if(escribirArchivo(&fp, pl) == TODO_OK){
-        return TODO_OK;
+        return (int)TODO_OK;
     } else{
-        return NOT_OK;
+        return (int)NOT_OK;
     }
 
 }
@@ -152,28 +153,26 @@ int existePatente(const t_dato *dato, t_list *pl) {
     de las personas que deben un monto total mayor a $20.000 y/o que poseen más de 3 multas.
     Retorna una lista de ellos.
 */
-int registrosSuspender(t_list *pl, const char *partido, int sockfd){
+char *registrosSuspender(t_list *pl, const char *partido){
     t_list *aux = pl;
     t_dato info;
 
     char buff[10];
-
+    char *response = malloc(sizeof(8));
     while(*aux != NULL){
         info = (*aux)->info;
         if (strcmp(info.partido, partido) == 0){
             if (info.monto_total > 20000 ||
                 info.cantidad_multas > 3) {
-
-                bzero(buff, sizeof(buff));
-                strcpy(buff, info.patente);
-                write(sockfd, buff, sizeof(buff));
-                fflush(stdin);
+                realloc(response, sizeof(info.patente) + sizeof(*response) + 1);
+                strcat(response, info.patente);
+                strcat(response, "\n");
             }
         }
         aux = &(*aux)->sig;
     }
 
-    return TODO_OK;
+    return response;
 }
 
 /*
@@ -188,46 +187,69 @@ int saldarMulta(const char *patente, const char *partido, t_list *pl){
     if (existePatente(&dato, pl) == TODO_OK){
         if(eliminarPorClave(pl, &dato, compararPatente) == TODO_OK){
             if(escribirArchivo(&fp, pl) == TODO_OK){
-                    return TODO_OK;
+                    return (int)TODO_OK;
             }
         }
     }
 
-    return NOT_OK;
+    return (int)NOT_OK;
 }
 
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-int buscarMontoTotal(const char *patente, const char *partido, t_list *pl, int sockfd){
+char *buscarMontoTotal(const char *patente, const char *partido, t_list *pl){
     t_dato dato;
     dato.patente = patente;
     dato.partido = partido;
 
     char buff[30];
-    char *aux = malloc(23);
-    if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
-        bzero(buff, sizeof(buff));
-        strcpy(buff, dato.patente);
-        strcat(buff, "\t");
-        sprintf(aux, "%f", dato.monto_total);
-        strcat(buff, aux);
-        write(sockfd, buff, sizeof(buff));
+    char *aux = malloc(12);
+    char *response = malloc(23);
 
-        return TODO_OK;
+    if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
+        realloc(response, sizeof(23) + sizeof(*response));
+        strcat(response, dato.patente);
+        strcat(response, "\t");
+        sprintf(aux, "%f", dato.monto_total);
+        strcat(response, aux);
+        strcat(response, "\n");
+
+        return response;
     }
     free(aux);
 
-    return NOT_OK;
+    return "No se encontro la patente ingresada.";
 }
 
 /*
     Muestra el monto total a pagar de cada infractor
 */
-int verMontoTotalInfractores(t_list *pl, const char *partido, int sockfd){
-    if (mostrarLista(pl, partido, compararPartido, sockfd) == TODO_OK){
-        return TODO_OK;
-    } else{
-        return NOT_OK;
+
+
+char *verMontoTotalInfractores(t_list *pl, const char *partido) {
+
+    t_list *aux = pl;
+    t_dato info;
+    int tamanio = 10;
+
+    char buff[10];
+    char *response = malloc(tamanio);
+    //char *monto_string = malloc (10);
+    while(*aux != NULL){
+        info = (*aux)->info;
+        if (strcmp(info.partido, partido) == 0){
+                tamanio += 10;
+                realloc(response, tamanio);
+                strcat(response, info.patente);
+                //strcat(response, " ");
+                //gcvt(info.monto_total, 10, monto_string);
+                //sprintf(monto_string, "%f", info.monto_total);
+                //strcat(response, monto_string);
+                strcat(response, "\n");
+        }
+        aux = &(*aux)->sig;
     }
+
+    return response;
 }

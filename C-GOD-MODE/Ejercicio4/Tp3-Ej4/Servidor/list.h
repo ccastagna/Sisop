@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <netdb.h>
+#include <netinet/in.h>
 
 #include "info.h"
 
@@ -28,7 +30,7 @@ int insertarAlFinal(t_list *, const t_dato *);
 int eliminarPorClave(t_list *, const t_dato *, t_cmp);
 int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, t_cmp);
 int buscarYActualizar(t_list *, const t_dato *, const float , t_cmp);
-int mostrarLista(t_list *, const char *, t_cmp, int);
+int mostrarLista(t_list *, const char *, t_cmp, char*);
 
 /** FUNCIONES EXTRA*/
 
