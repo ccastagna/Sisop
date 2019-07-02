@@ -48,7 +48,7 @@ int existePatente(const t_dato*, t_list *);
     de las personas que deben un monto total mayor a $20.000 y/o que poseen más de 3 multas.
     Retorna una lista de ellos.
 */
-char *registrosSuspender(t_list *, const char*);
+int registrosSuspender(t_list *, const char*, char*);
 
 /*
     Salda la deuda de la patente recibida, es decir lo elimina de la base de datos.
@@ -58,11 +58,11 @@ int saldarMulta(const char*, const char*, t_list *);
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-char *buscarMontoTotal(const char*, const char*, t_list*);
+int buscarMontoTotal(const char*, const char*, t_list*, char*);
 
 /*
     Muestra el monto total a pagar de cada infractor
 */
-char *verMontoTotalInfractores(t_list*, const char*);
+int verMontoTotalInfractores(t_list*, const char*, char*);
 
 #endif // FUNCTIONS_H_INCLUDED

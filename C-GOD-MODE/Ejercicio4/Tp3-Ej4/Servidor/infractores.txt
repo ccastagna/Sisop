@@ -1,4 +1,4 @@
-lanus|ABC123|Pepe|5|10000.00
+lanus|ABC123||5|10000.00
 lanus|CDD999|Raul|2|100.50
 lanus|HIA333|Marcos|3|100.50
 lanus|GGG222|Franco|2|20000.00

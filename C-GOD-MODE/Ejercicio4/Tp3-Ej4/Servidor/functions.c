@@ -9,7 +9,7 @@ void mostrarMenu(int sockfd){
                     5. Buscar monto total a pagar de todos los infractores.\n \
                     6. Ver menu nuevamente.\n \
                     7. Salir.\n\0";
-    write(sockfd, buff, sizeof(buff));
+    send(sockfd, buff, sizeof(buff), 0);
 }
 
 int abrirArchivo(FILE **fp, const char *nombre, const char *modo, int msj) {
@@ -153,26 +153,29 @@ int existePatente(const t_dato *dato, t_list *pl) {
     de las personas que deben un monto total mayor a $20.000 y/o que poseen más de 3 multas.
     Retorna una lista de ellos.
 */
-char *registrosSuspender(t_list *pl, const char *partido){
+int registrosSuspender(t_list *pl, const char *partido, char *buff){
     t_list *aux = pl;
     t_dato info;
+    int flag = 0;
 
-    char buff[10];
-    char *response = malloc(sizeof(8));
     while(*aux != NULL){
         info = (*aux)->info;
         if (strcmp(info.partido, partido) == 0){
             if (info.monto_total > 20000 ||
                 info.cantidad_multas > 3) {
-                realloc(response, sizeof(info.patente) + sizeof(*response) + 1);
-                strcat(response, info.patente);
-                strcat(response, "\n");
+                strcat(buff, info.patente);
+                strcat(buff, "\n");
+                flag = 1;
             }
         }
         aux = &(*aux)->sig;
     }
 
-    return response;
+    if (flag == 1){
+        return (int)TODO_OK;
+    } else {
+        return (int)NOT_OK;
+    }
 }
 
 /*
@@ -198,28 +201,25 @@ int saldarMulta(const char *patente, const char *partido, t_list *pl){
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-char *buscarMontoTotal(const char *patente, const char *partido, t_list *pl){
+int buscarMontoTotal(const char *patente, const char *partido, t_list *pl, char *buff){
     t_dato dato;
     dato.patente = patente;
     dato.partido = partido;
 
-    char buff[30];
     char *aux = malloc(12);
-    char *response = malloc(23);
+
 
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
-        realloc(response, sizeof(23) + sizeof(*response));
-        strcat(response, dato.patente);
-        strcat(response, "\t");
+        strcat(buff, dato.patente);
+        strcat(buff, "\t");
         sprintf(aux, "%f", dato.monto_total);
-        strcat(response, aux);
-        strcat(response, "\n");
-
-        return response;
+        strcat(buff, aux);
+        strcat(buff, "\n");
+        free(aux);
+        return (int)TODO_OK;
     }
-    free(aux);
 
-    return "No se encontro la patente ingresada.";
+    return (int)NOT_OK;
 }
 
 /*
@@ -227,29 +227,31 @@ char *buscarMontoTotal(const char *patente, const char *partido, t_list *pl){
 */
 
 
-char *verMontoTotalInfractores(t_list *pl, const char *partido) {
+int verMontoTotalInfractores(t_list *pl, const char *partido, char *buff) {
 
     t_list *aux = pl;
     t_dato info;
-    int tamanio = 10;
+    int flag = 0;
 
-    char buff[10];
-    char *response = malloc(tamanio);
-    //char *monto_string = malloc (10);
+    char *monto_string = malloc (12);
+
     while(*aux != NULL){
         info = (*aux)->info;
         if (strcmp(info.partido, partido) == 0){
-                tamanio += 10;
-                realloc(response, tamanio);
-                strcat(response, info.patente);
-                //strcat(response, " ");
+                strcat(buff, info.patente);
+                strcat(buff, " ");
                 //gcvt(info.monto_total, 10, monto_string);
-                //sprintf(monto_string, "%f", info.monto_total);
-                //strcat(response, monto_string);
-                strcat(response, "\n");
+                sprintf(monto_string, "%.2f", info.monto_total);
+                strcat(buff, monto_string);
+                strcat(buff, "\n");
+                flag = 1;
         }
         aux = &(*aux)->sig;
     }
 
-    return response;
+    if (flag == 1){
+        return (int)TODO_OK;
+    } else {
+        return (int)NOT_OK;
+    }
 }
