@@ -1,0 +1,10 @@
+Tp3-Ej3 : main.o func_ColaGenerica.o 
+	gcc -o Tp3-Ej2 main.o func_ColaGenerica.o -pthread
+
+main.o : main.c functions.h
+	gcc -c main.c -L pthread
+func_ColaGenerica.o : func_ColaGenerica.c colaDinamica.h info.h
+	gcc -c func_ColaGenerica.c
+clean :
+	rm *.o
+	rm Tp3-Ej3
