@@ -270,12 +270,14 @@ int main(int argc, char* argv[]) {
                 printf("Para ejecutar el programa, debe ingresar por la opción 3,");
                 printf(" y luego ingresar la dirección del archivo FIFO, \n");
                 printf(" con el nombre del mismo, entre comillas dobles\n");
-                printf("EJ.: \"\\Desktop\\Prueba\\ArchivoFifo\" \n");
+                printf("EJ.: \"Desktop/Prueba/ArchivoFifo\" \n");
                 printf("Despues apretar ENTER, y desde otra consola, ejecutar un cliente,\n");
                 printf("Que escriba en el mismo archivo FIFO, con el formato: \n");
                 printf("Patente camara velocidad \n");
                 printf("Cada campo separado por un espacio\n");
                 printf("Ej.: AAA123 cam5 44\n");
+                printf("O bien ejecutar y pasar la url del fifo desde el primer parametro con comilla simple.\n");
+                printf("Ej.: ./Tp3 'Desktop/Prueba/ArchivoFifo' \n");
                 break;
             case 3:
                 printf("Ingrese la ruta del archivo FIFO y a continuacion apriete enter: \n");
