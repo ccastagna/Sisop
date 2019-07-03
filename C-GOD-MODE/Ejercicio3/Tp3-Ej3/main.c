@@ -10,8 +10,6 @@
 #include <pthread.h>
 #include <fcntl.h>
 #include <errno.h>
-
-
 // typedef struct{
 //     char plate[7];
 //     char camera[4];
@@ -125,8 +123,10 @@ void *validateEndOfDay(void *fixedDate) {
         if(mustChange){
             didDayChange = TRUE;
             fprintf(pf_archLog,"Cambio de dia \n");
+            printf("CAMBIO DE DIA");
         }
-        //fflush(stdout); // es para imprimir por consola si no ponemos el \n
+        fflush(stdout); // es para imprimir por consola si no ponemos el \n
+        printf("%d:%d:%d \n", currentDate.tm_hour, currentDate.tm_min,currentDate.tm_sec );
         sleep(1);
     }
 }
@@ -231,7 +231,7 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
         fclose(pf_archLog);
         exit(TODO_OK);
     }
-    didDayChange = TRUE; // TODO: ELIMINAR
+    //didDayChange = TRUE; // TODO: ELIMINAR
     return value;
 }
 
@@ -257,8 +257,7 @@ int main(int argc, char* argv[]) {
     fixedDate = malloc(sizeof(struct tm));
     *fixedDate = *localtime(&auxFixedDate);
 
-    char path[300];
-    char name[30];
+    char fifoPath[300];
     char temp;
     int opcion;
     do
@@ -294,11 +293,11 @@ int main(int argc, char* argv[]) {
             printf("Ej.: AAA123 cam5 44\n");
             break;
         case 3:
-            printf("Ingrese la ruta del archivo FIFO, entre comillas dobles y a continuacion apriete enter: \n");
+            printf("Ingrese la ruta del archivo FIFO y a continuacion apriete enter: \n");
 
             scanf("%c",&temp); // temp statement to clear buffer
-            scanf("%[^\n]",path);
-            printf("Selected Path: %s", path); // TODO: BORRAR
+            scanf("%[^\n]",fifoPath);
+            printf("Selected Path: %s", fifoPath); // TODO: BORRAR
             break;
         case 4:
             exit(0);
@@ -306,19 +305,19 @@ int main(int argc, char* argv[]) {
         }
     }while(opcion!=3);
 
-    char fifoFileName[] = "Prueba.txt";
+    //char fifoFileName[] = "Prueba.txt"; // TODO: BORRAR
 
     // TODO: Descomentar cuando funcione FIFO
     // createDaemonProcess();
-    // createThreadDateTime();
+    createThreadDateTime();
 
     //Variables para el FIFO
     /* Create the FIFO if it does not exist */
-    mknod(fifoFileName, S_IFIFO|0640, 0);
+    mknod(fifoPath, S_IFIFO|0640, 0);
     t_dato dataFromQueue;
     //t_dato *readedFromFifo = NULL;
     // INICIO DE SERVICIO
-    while(FALSE) {
+    while(TRUE) {
         if(isFirstTime) {
             fprintf(pf_archLog,"Iniciando Archivo Trafico Diario \n");
             isFirstTime = FALSE;
@@ -345,7 +344,7 @@ int main(int argc, char* argv[]) {
             isFirstTime = TRUE;
         }
 
-        readFromFifoFile(fifoFileName, fpToTraffic, &cola);
+        readFromFifoFile(fifoPath, fpToTraffic, &cola);
     }
     // return 0;
 }
