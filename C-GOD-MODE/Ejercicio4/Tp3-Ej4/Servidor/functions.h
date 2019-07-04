@@ -3,8 +3,9 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <netdb.h>
-#include <netinet/in.h>
+#include <string.h>
+#include <unistd.h>
+#include <ctype.h>
 
 #include "info.h"
 #include "list.h"
@@ -41,7 +42,7 @@ int ingresarMulta(char*, char*, char*, const float, t_list *);
 /*
     Recibe la patente y devuelve si existe o no.
 */
-int existePatente(const t_dato*, t_list *);
+int existePatente(t_dato*, t_list *);
 
 /*
     Buscar lista de registros a suspender. Los registros a suspender son aquellos
@@ -53,16 +54,16 @@ int registrosSuspender(t_list *, const char*, char*);
 /*
     Salda la deuda de la patente recibida, es decir lo elimina de la base de datos.
 */
-int saldarMulta(const char*, const char*, t_list *);
+int saldarMulta(char*, char*, t_list *);
 
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-int buscarMontoTotal(const char*, const char*, t_list*, char*);
+int buscarMontoTotal(char*, char*, t_list*, char*);
 
 /*
     Muestra el monto total a pagar de cada infractor
 */
-int verMontoTotalInfractores(t_list*, const char*, char*);
+int verMontoTotalInfractores(t_list*, char*, char*);
 
 #endif // FUNCTIONS_H_INCLUDED

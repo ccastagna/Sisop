@@ -29,7 +29,7 @@
 #include "functions.h"
 
 
-#define PORT                        8181
+#define PORT                        8182
 #define MAX                         1025
 #define SA                          struct sockaddr
 #define MAX_PENDING_CONNECTIONS     3
@@ -39,17 +39,16 @@
 t_list lista;
 
 // Mensajes a clientes
-char welcome[] = "Bienvenido al sistema de infracciones de transito del gobierno.\n";
-char being_started[] = "Para comenzar ingrese el nombre del partido en el que opera: ";
-char indicate_option[] = "\nIndique la opcion: ";
-char invalid_option[] = "\nOpcion invalida, ingrese un numero entre 1 y 7: ";
-char ask_patente[] = "Ingrese patente: ";
-char ask_amount[] = "Ingrese monto de la multa: ";
-char ask_titular_name[] = "Ingrese nombre del titular: ";
-char fee_succesfull[] = "Se ingreso la multa exitosamente.\n";
-char fee_unsuccesfull[] = "La multa no se pudo generar, intente nuevamente.\n";
-char not_pending_fee[] = "La patente ingresada no tiene multas a saldar.\n";
-char common_not_found_message[] = "No se encontraron infractores.\n";
+char welcome[] = "Bienvenido al sistema de infracciones de transito del gobierno.\n\0";
+char indicate_option[] = "\nIndique la opcion: \0";
+char invalid_option[] = "\nOpcion invalida, ingrese un numero entre 1 y 7: \0";
+char ask_patente[] = "\nIngrese patente: \0";
+char ask_amount[] = "\nIngrese monto de la multa: \0";
+char ask_titular_name[] = "\nIngrese nombre del titular: \0";
+char fee_succesfull[] = "\nSe ingreso la multa exitosamente.\n\0";
+char fee_unsuccesfull[] = "\nLa multa no se pudo generar, intente nuevamente.\n\0";
+char not_pending_fee[] = "\nLa patente ingresada no tiene multas a saldar.\n\0";
+char common_not_found_message[] = "\nNo se encontraron infractores.\n\0";
 
 void INThandler(int);
 void operar(int, char*);
@@ -162,74 +161,60 @@ void operar(int sockfd, char *partido) {
     //variables para operar
     char *patente = malloc(8);
     char *nombre_titular = malloc(25);
-    char *aux;
-    int wrong_option = 0;
     float monto;
 
-    // buffer usado para dar las respuestas al client
+    // buffer usado para dar las respuestas al cliente
     char buff[MAX];
 
     // Le envio menu al cliente
     mostrarMenu(sockfd);
     fflush(stdout);
     while (1) {
-
+        sleep(1);
         // Le pido a cliente que ingrese una opcion
         memset(buff, 0, MAX);
-        send(sockfd, indicate_option, sizeof(indicate_option), 0);
-        fflush(stdout);
+        write(sockfd, indicate_option, sizeof(indicate_option));
+        //fflush(stdout);
 
         // Leo opcion ingresada por el cliente
         memset(buff, 0, MAX);
-        recv(sockfd, buff, sizeof(buff), 0);
+        read(sockfd, buff, sizeof(buff));
         code = atoi(buff);
 
-        printf("El cliente %d selecciono la opcion %d.\n", sockfd, code);
-
-        while (code < 1 || code > 7){
-            send(sockfd, invalid_option, sizeof(invalid_option), 0);
-
-            memset(buff, 0, MAX);
-            recv(sockfd, buff, sizeof(buff), 0);
-            code = atoi(buff);
-
-            if (code == 0){
-                wrong_option++;
-            } else {
-                wrong_option = 0;
-            }
-            if (wrong_option == 3){
-                code = 7;
-            }
-            printf("El cliente %d selecciono la opcion %d.\n", sockfd, code);
+        // Si el codigo es 0 es porque el cliente salio de la consola con una señal no tenida en cuenta.
+        // Asigno codigo 7 para entrar en flujo de cierre de conexion.
+        if (code == 0){
+            code = 7;
         }
+
+        printf("El cliente %d selecciono la opcion %d.\n", sockfd, code);
 
         fflush(stdout);
 
         switch (code) {
             case 1:
                 // Le pido al usuario que ingrese la patente
-                send(sockfd, ask_patente, sizeof(ask_patente), 0);
+                write(sockfd, ask_patente, sizeof(ask_patente));
                 memset(buff, 0, MAX);
-                recv(sockfd, buff, sizeof(buff), 0);
+                read(sockfd, buff, sizeof(buff));
                 strcpy(patente, buff);
 
                 // Le pido al usuario que ingrese el monto de la multa
-                send(sockfd, ask_amount, sizeof(ask_amount), 0);
+                write(sockfd, ask_amount, sizeof(ask_amount));
                 memset(buff, 0, MAX);
-                recv(sockfd, buff, sizeof(buff), 0);
+                read(sockfd, buff, sizeof(buff));
                 monto = atof(buff);
 
                 // Le pido al usuario que ingrese el nombre del titular
-                send(sockfd, ask_titular_name, sizeof(ask_titular_name), 0);
+                write(sockfd, ask_titular_name, sizeof(ask_titular_name));
                 memset(buff, 0, MAX);
-                recv(sockfd, buff, sizeof(buff), 0);
+                read(sockfd, buff, sizeof(buff));
                 strcpy(nombre_titular, buff);
 
                 if (ingresarMulta(patente, partido, nombre_titular, monto, &lista) == TODO_OK){
-                    send(sockfd, fee_succesfull, sizeof(fee_succesfull), 0);
+                    write(sockfd, fee_succesfull, sizeof(fee_succesfull));
                 } else{
-                    send(sockfd, fee_unsuccesfull, sizeof(fee_unsuccesfull), 0);
+                    write(sockfd, fee_unsuccesfull, sizeof(fee_unsuccesfull));
                 }
                 fflush(stdout);
                 break;
@@ -237,50 +222,54 @@ void operar(int sockfd, char *partido) {
                 memset(buff, 0, MAX);
 
                 if (registrosSuspender(&lista ,partido, buff) == TODO_OK) {
-                    send(sockfd, buff, sizeof(buff), 0);
+                    write(sockfd, buff, sizeof(buff));
                 } else{
-                    send(sockfd, common_not_found_message, sizeof(common_not_found_message), 0);
+                    write(sockfd, common_not_found_message, sizeof(common_not_found_message));
                 }
 
                 fflush(stdout);
                 break;
             case 3:
-                send(sockfd, ask_patente, sizeof(ask_patente), 0);
+                write(sockfd, ask_patente, sizeof(ask_patente));
 
                 memset(buff, 0, MAX);
-                recv(sockfd, buff, sizeof(buff), 0);
+                read(sockfd, buff, sizeof(buff));
                 strcpy(patente, buff);
 
                 if (saldarMulta(patente, partido, &lista) == NOT_OK){
-                    send(sockfd, not_pending_fee, sizeof(not_pending_fee), 0);
+                    write(sockfd, not_pending_fee, sizeof(not_pending_fee));
                 }
                 fflush(stdout);
                 break;
             case 4:
-                send(sockfd, ask_patente, sizeof(ask_patente), 0);
+                // Le pido al cliente que ingrese patente
+                write(sockfd, ask_patente, sizeof(ask_patente));
 
+                // Leo la patente enviada por el cliente
                 memset(buff, 0, MAX);
-                recv(sockfd, buff, sizeof(buff), 0);
+                read(sockfd, buff, sizeof(buff));
                 strcpy(patente, buff);
 
                 memset(buff, 0, MAX);
-
                 printf("El cliente %d busca infractor con patente %s.\n", sockfd, patente);
 
+                // Le indico al usuario lo que debe la patente o le indico que no existe.
                 if (buscarMontoTotal(patente, partido, &lista, buff) == TODO_OK) {
-                    send(sockfd, buff, sizeof(buff), 0);
+                    write(sockfd, buff, sizeof(buff));
                 } else{
-                    send(sockfd, common_not_found_message, sizeof(common_not_found_message), 0);
+                    write(sockfd, common_not_found_message, sizeof(common_not_found_message));
                 }
 
                 fflush(stdout);
                 break;
             case 5:
                 memset(buff, 0, MAX);
+
+                // Si hay infractores para el partido los muestro, sino indico que no hay.
                 if (verMontoTotalInfractores (&lista, partido, buff) == TODO_OK){
-                    send(sockfd, buff, sizeof(buff), 0);
+                    write(sockfd, buff, sizeof(buff));
                 } else{
-                    send(sockfd, common_not_found_message, sizeof(common_not_found_message), 0);
+                    write(sockfd, common_not_found_message, sizeof(common_not_found_message));
                 }
 
                 fflush(stdout);

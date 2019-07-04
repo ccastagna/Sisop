@@ -83,39 +83,44 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
     return (int)NOT_OK;
 }
 
-int mostrarLista(t_list *p, const char *partido, t_cmp cmp, char *response){
+int mostrarLista(t_list *p, char *partido, t_cmp cmp, char *response){
      if(listaVacia(p) == TODO_OK){
         return (int)LISTA_VACIA;
     }
 
     int flag = 0;
-    t_dato *d = (t_dato *) malloc (sizeof (t_dato *));
+    t_dato dato;
+    t_dato dato_original;
+    dato_original.partido = partido;
     t_list *aux = p;
 
-    char buff[30];
-    char *aux_monto = malloc(23);
-    response = malloc(sizeof(15));
-    while (*aux){
-        *d = (*aux)->info;
-        if (cmp( d, partido) == TODO_OK) {
-            realloc(response, sizeof(15) + sizeof(*response) + 1);
-            strcat(response, d->patente);
-            strcat(response, "\t");
-            sprintf(aux_monto, "%f", d->monto_total);
-            strcat(response, aux_monto);
-            strcat(response, "\n");
-            flag = 1;
+    char *aux_monto = malloc(15);
+
+    while(*aux != NULL){
+        dato = (*aux)->info;
+        if (strcmp(dato.partido, dato_original.partido) == 0){
+                strcat(response, dato.patente);
+                strcat(response, " ");
+                sprintf(aux_monto, "%.2f", dato.monto_total);
+                strcat(response, aux_monto);
+                strcat(response, "\n");
+                flag = 1;
         }
         aux = &(*aux)->sig;
     }
     free(aux_monto);
+    strcat(response, "\0");
 
-    return response;
+    if (flag == 1){
+        return (int)TODO_OK;
+    } else{
+        return (int)NOT_OK;
+    }
 }
 
 /** FUNCIONES EXTRA */
 
-int *compararPatente (const t_dato *d1, const t_dato *d2) {
+int compararPatente (const t_dato *d1, const t_dato *d2) {
     if (strcmp(d1->partido, d2->partido) == 0 &&
         strcmp(d1->patente, d2->patente) == 0) {
         return (int)TODO_OK;
@@ -125,8 +130,8 @@ int *compararPatente (const t_dato *d1, const t_dato *d2) {
 }
 
 
-int *compararPartido (const t_dato *d1, const char *d2) {
-    if (strcmp(d1->partido, d2) == 0) {
+int compararPartido (const t_dato *d1, const t_dato *d2) {
+    if (strcmp(d1->partido, d2->partido) == 0) {
         return (int)TODO_OK;
     } else {
         return (int)NOT_OK;

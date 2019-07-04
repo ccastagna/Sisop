@@ -9,5 +9,6 @@ typedef struct {
     float monto_total;
 } t_dato;
 
+typedef int (t_cmp)(const t_dato*, const t_dato*);
 
 #endif // INFO_H_INCLUDED

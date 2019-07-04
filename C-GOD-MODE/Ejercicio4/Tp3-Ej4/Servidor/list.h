@@ -3,8 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <netdb.h>
-#include <netinet/in.h>
+#include <string.h>
 
 #include "info.h"
 
@@ -20,8 +19,6 @@ typedef struct s_nodo{
 
 typedef t_nodo *t_list;
 
-typedef int (*t_cmp)(const void*, const void*);
-
 /** PRIMITIVAS */
 void crearLista(t_list *);
 int listaLlena(const t_list *);
@@ -30,7 +27,7 @@ int insertarAlFinal(t_list *, const t_dato *);
 int eliminarPorClave(t_list *, const t_dato *, t_cmp);
 int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, t_cmp);
 int buscarYActualizar(t_list *, const t_dato *, const float , t_cmp);
-int mostrarLista(t_list *, const char *, t_cmp, char*);
+int mostrarLista(t_list *, char *, t_cmp, char*);
 
 /** FUNCIONES EXTRA*/
 
@@ -39,13 +36,13 @@ int mostrarLista(t_list *, const char *, t_cmp, char*);
     0: si no son iguales
     1: si son iguales
 */
-int *compararPatente(const t_dato *d1, const t_dato *d2);
+int compararPatente(const t_dato *d1, const t_dato *d2);
 
 /*
     Compara los dos partidos enviados, retorna:
     0: si no son iguales
     1: si son iguales
 */
-int *compararPartido(const t_dato *d1, const char *d2);
+int compararPartido(const t_dato *d1, const t_dato *d2);
 
 #endif // LIST_H_INCLUDED

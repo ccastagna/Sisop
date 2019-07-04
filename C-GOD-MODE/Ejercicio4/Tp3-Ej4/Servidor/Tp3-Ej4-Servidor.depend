@@ -1,28 +1,28 @@
 # depslib dependency file v1.0
-1562035978 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\functions.c
+1562183081 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\functions.c
 	"functions.h"
 
-1562018124 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\functions.h
+1562179798 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\functions.h
 	<string.h>
 	<stdlib.h>
-	<netdb.h>
-	<netinet/in.h>
+	<string.h>
+	<unistd.h>
+	<ctype.h>
 	"info.h"
 	"list.h"
 
-1560800374 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\info.h
+1562178498 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\info.h
 
-1561943404 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\list.h
+1562178654 f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\list.h
 	<stdio.h>
 	<stdlib.h>
-	<netdb.h>
-	<netinet/in.h>
+	<string.h>
 	"info.h"
 
-1561943376 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\list.c
+1562183077 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\list.c
 	"list.h"
 
-1562035734 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\main.c
+1562181580 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio4\tp3-ej4\servidor\main.c
 	<netdb.h>
 	<netinet/in.h>
 	<stdlib.h>

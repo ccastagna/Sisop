@@ -9,7 +9,7 @@ void mostrarMenu(int sockfd){
                     5. Buscar monto total a pagar de todos los infractores.\n \
                     6. Ver menu nuevamente.\n \
                     7. Salir.\n\0";
-    send(sockfd, buff, sizeof(buff), 0);
+    write(sockfd, buff, sizeof(buff));
 }
 
 int abrirArchivo(FILE **fp, const char *nombre, const char *modo, int msj) {
@@ -144,7 +144,7 @@ int ingresarMulta(char *patente, char *partido, char *nombre_titular, const floa
 /*
     Recibe la patente y devuelve si existe o no.
 */
-int existePatente(const t_dato *dato, t_list *pl) {
+int existePatente(t_dato *dato, t_list *pl) {
     return buscarEnListaNoOrdenadaPorClave (pl, dato, compararPatente);
 }
 
@@ -181,7 +181,7 @@ int registrosSuspender(t_list *pl, const char *partido, char *buff){
 /*
     Salda la deuda de la patente recibida, es decir lo elimina de la base de datos.
 */
-int saldarMulta(const char *patente, const char *partido, t_list *pl){
+int saldarMulta(char *patente, char *partido, t_list *pl){
     t_dato dato;
     dato.patente = patente;
     dato.partido = partido;
@@ -201,23 +201,24 @@ int saldarMulta(const char *patente, const char *partido, t_list *pl){
 /*
     Busca el monto total a pagar de la patente recibida.
 */
-int buscarMontoTotal(const char *patente, const char *partido, t_list *pl, char *buff){
+int buscarMontoTotal(char *patente, char *partido, t_list *pl, char *buff){
     t_dato dato;
     dato.patente = patente;
     dato.partido = partido;
 
-    char *aux = malloc(12);
+    char *aux_monto = malloc(12);
 
 
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
         strcat(buff, dato.patente);
         strcat(buff, "\t");
-        sprintf(aux, "%f", dato.monto_total);
-        strcat(buff, aux);
-        strcat(buff, "\n");
-        free(aux);
+        sprintf(aux_monto, "%.2f", dato.monto_total);
+        strcat(buff, aux_monto);
+        strcat(buff, "\0");
+        free(aux_monto);
         return (int)TODO_OK;
     }
+    free(aux_monto);
 
     return (int)NOT_OK;
 }
@@ -227,29 +228,8 @@ int buscarMontoTotal(const char *patente, const char *partido, t_list *pl, char 
 */
 
 
-int verMontoTotalInfractores(t_list *pl, const char *partido, char *buff) {
-
-    t_list *aux = pl;
-    t_dato info;
-    int flag = 0;
-
-    char *monto_string = malloc (12);
-
-    while(*aux != NULL){
-        info = (*aux)->info;
-        if (strcmp(info.partido, partido) == 0){
-                strcat(buff, info.patente);
-                strcat(buff, " ");
-                //gcvt(info.monto_total, 10, monto_string);
-                sprintf(monto_string, "%.2f", info.monto_total);
-                strcat(buff, monto_string);
-                strcat(buff, "\n");
-                flag = 1;
-        }
-        aux = &(*aux)->sig;
-    }
-
-    if (flag == 1){
+int verMontoTotalInfractores(t_list *pl, char *partido, char *buff) {
+    if (mostrarLista(pl, partido, compararPartido, buff) == (int)TODO_OK){
         return (int)TODO_OK;
     } else {
         return (int)NOT_OK;
