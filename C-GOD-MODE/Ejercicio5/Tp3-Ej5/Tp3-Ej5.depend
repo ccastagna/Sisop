@@ -1,0 +1,54 @@
+# depslib dependency file v1.0
+1561231801 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio5\tp3-ej5\main.c
+	<stdio.h>
+	<stdlib.h>
+	"info.h"
+	"list.h"
+	"functions.h"
+
+1560800374 f:\eclipse-workspace\sisop\c-god-mode\ejercicio5\tp3-ej5\info.h
+
+1561231210 f:\eclipse-workspace\sisop\c-god-mode\ejercicio5\tp3-ej5\functions.h
+	<string.h>
+	<stdlib.h>
+	"info.h"
+	"list.h"
+
+1561228843 f:\eclipse-workspace\sisop\c-god-mode\ejercicio5\tp3-ej5\list.h
+	<stdio.h>
+	<stdlib.h>
+	"info.h"
+
+1561232195 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio5\tp3-ej5\functions.c
+	"functions.h"
+
+1560263355 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio5\tp3-ej5\info.h
+
+1560631648 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio5\tp3-ej5\functions.h
+	<string.h>
+	<stdlib.h>
+	"info.h"
+	"list.h"
+
+1561232292 source:f:\eclipse-workspace\sisop\c-god-mode\ejercicio5\tp3-ej5\list.c
+	"list.h"
+
+1561241669 source:c:\users\crist\onedrive\documentos\sisop\c-god-mode\ejercicio5\tp3-ej5\functions.c
+	"functions.h"
+
+1561241669 c:\users\crist\onedrive\documentos\sisop\c-god-mode\ejercicio5\tp3-ej5\functions.h
+	<string.h>
+	<stdlib.h>
+	"info.h"
+	"list.h"
+
+1560803677 c:\users\crist\onedrive\documentos\sisop\c-god-mode\ejercicio5\tp3-ej5\info.h
+
+1561241669 c:\users\crist\onedrive\documentos\sisop\c-god-mode\ejercicio5\tp3-ej5\list.h
+	<stdio.h>
+	<stdlib.h>
+	"info.h"
+
+1561241669 source:c:\users\crist\onedrive\documentos\sisop\c-god-mode\ejercicio5\tp3-ej5\list.c
+	"list.h"
+
