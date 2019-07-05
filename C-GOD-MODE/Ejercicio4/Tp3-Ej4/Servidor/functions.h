@@ -69,7 +69,7 @@ int existePatente(t_dato*, t_list *);
     de las personas que deben un monto total mayor a $20.000 y/o que poseen más de 3 multas.
     Retorna una lista de ellos.
 */
-int registrosSuspender(t_list *, const char*, char*);
+int registrosSuspender(t_list *, char*, char*);
 
 /*
     Salda la deuda de la patente recibida, es decir lo elimina de la base de datos.

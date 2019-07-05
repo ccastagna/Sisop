@@ -153,7 +153,7 @@ int existePatente(t_dato *dato, t_list *pl) {
     de las personas que deben un monto total mayor a $20.000 y/o que poseen más de 3 multas.
     Retorna una lista de ellos.
 */
-int registrosSuspender(t_list *pl, const char *partido, char *buff){
+int registrosSuspender(t_list *pl, char *partido, char *buff){
     t_dato dato;
     dato.partido = partido;
     dato.cantidad_multas = 3;
@@ -225,7 +225,7 @@ int verMontoTotalInfractores(t_list *pl, char *partido, char *buff) {
     dato.partido = partido;
     dato.cantidad_multas = 0;
 
-    if (mostrarLista(pl, partido, compararPartido, buff) == (int)TODO_OK){
+    if (mostrarLista(pl, &dato, compararPartido, buff) == (int)TODO_OK){
         return (int)TODO_OK;
     } else {
         return (int)NOT_OK;
