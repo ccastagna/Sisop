@@ -29,7 +29,6 @@
 #include "functions.h"
 
 
-#define PORT                        8181
 #define MAX                         1025
 #define SA                          struct sockaddr
 #define MAX_PENDING_CONNECTIONS     3
@@ -53,20 +52,30 @@ char common_not_found_message[] = "\nNo se encontraron infractores.\n\0";
 void INThandler(int);
 void operar(int, char*);
 
-int main() {
+int main(int argc, char *argv[]) {
     // Puntero a archivo de la BD
     FILE *fp;
+
+    // Declarcion de variables
     char *partido = malloc(25);
     *partido = '\0';
+    int sockfd, connfd, len, portno;
+    struct sockaddr_in servaddr, cli;
 
     // Controlar seniales enviadas como Ctrl+C
     signal(SIGINT, INThandler);
+
+    if (argc < 2){
+	fprintf(stderr, "Uso %s <puerto_servidor>\n", argv[0]);
+	exit(NOT_OK);
+    }
+    
+    // mapeo a variables los parametros recibidos
+    portno = atoi(argv[1]);
+
     // Creo la lista que estará compartida para todos los sockets
     crearLista(&lista);
     leerArchivo(&fp, &lista);
-
-    int sockfd, connfd, len;
-    struct sockaddr_in servaddr, cli;
 
     // socket create and verification
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -82,7 +91,7 @@ int main() {
     // assign IP, PORT
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    servaddr.sin_port = htons(PORT);
+    servaddr.sin_port = htons(portno);
 
     // Binding newly created socket to given IP and verification
     if ((bind(sockfd, (SA*)&servaddr, sizeof(servaddr))) != 0) {
@@ -99,7 +108,7 @@ int main() {
         exit(NOT_OK);
     }
     else {
-        printf("Server listening on port..\n");
+        printf("Server listening on port %d..\n", portno);
     }
     len = sizeof(cli);
 

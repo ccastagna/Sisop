@@ -17,7 +17,7 @@
 #define TODO_OK 1
 
 // Usado para archivos
-#define DATABASE_NAME       "infractores.txt"
+#define DATABASE_NAME	    "infractores.txt" // nombre de la base de datos.
 #define READ_TEXT           "rt"    //Abre un fichero de texto para lectura.
 #define READ_TEXT_UPDATE    "r+t"   //Abre un fichero de texto para actualización (lectura y escritura).
 #define WRITE_TEXT          "wt"    //Crea o pisa el contenido de un archivo.
