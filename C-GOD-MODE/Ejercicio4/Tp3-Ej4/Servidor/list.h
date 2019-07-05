@@ -27,7 +27,7 @@ int insertarAlFinal(t_list *, const t_dato *);
 int eliminarPorClave(t_list *, const t_dato *, t_cmp);
 int buscarEnListaNoOrdenadaPorClave(t_list *, t_dato *, t_cmp);
 int buscarYActualizar(t_list *, const t_dato *, const float , t_cmp);
-int mostrarLista(t_list *, char *, t_cmp, char*);
+int mostrarLista(t_list *, t_dato *, t_cmp, char*);
 
 /** FUNCIONES EXTRA*/
 
@@ -36,13 +36,21 @@ int mostrarLista(t_list *, char *, t_cmp, char*);
     0: si no son iguales
     1: si son iguales
 */
-int compararPatente(const t_dato *d1, const t_dato *d2);
+int compararPatente(const t_dato *, const t_dato *);
 
 /*
     Compara los dos partidos enviados, retorna:
     0: si no son iguales
     1: si son iguales
 */
-int compararPartido(const t_dato *d1, const t_dato *d2);
+int compararPartido(const t_dato *, const t_dato *);
+
+/*
+ * Usado para la comparacion de registrosASuspender.
+ * Monto total > 20000
+ * Cantidad multas > 3
+ */
+int compararSuspender(const t_dato *, const t_dato *);
+
 
 #endif // LIST_H_INCLUDED

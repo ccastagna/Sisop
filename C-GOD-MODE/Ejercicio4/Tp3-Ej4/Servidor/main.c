@@ -2,7 +2,7 @@
 
 // Trabajo práctico 3
 // Ejercicio 4
-// Entrega
+// Primera-Reentrega
 
 // Integrantes del Equipo
 // Franco Dario Scarpello 37842567
@@ -29,7 +29,7 @@
 #include "functions.h"
 
 
-#define PORT                        8182
+#define PORT                        8181
 #define MAX                         1025
 #define SA                          struct sockaddr
 #define MAX_PENDING_CONNECTIONS     3
@@ -57,13 +57,13 @@ int main() {
     // Puntero a archivo de la BD
     FILE *fp;
     char *partido = malloc(25);
+    *partido = '\0';
 
     // Controlar seniales enviadas como Ctrl+C
     signal(SIGINT, INThandler);
     // Creo la lista que estará compartida para todos los sockets
     crearLista(&lista);
     leerArchivo(&fp, &lista);
-
 
     int sockfd, connfd, len;
     struct sockaddr_in servaddr, cli;
@@ -99,7 +99,7 @@ int main() {
         exit(NOT_OK);
     }
     else {
-        printf("Server listening..\n");
+        printf("Server listening on port..\n");
     }
     len = sizeof(cli);
 
@@ -116,11 +116,11 @@ int main() {
 
         // cliente opera
         // Muestro mensaje de bienvenida
-        send(connfd, welcome, sizeof(welcome), 0);
+        write(connfd, welcome, sizeof(welcome));
 
         // Leo partido del cliente
         memset(partido, 0, MAX);
-        recv(connfd, partido, sizeof(partido), 0);
+        read(connfd, partido, sizeof(partido));
 
         // Normalizo nombre del partido
         normalizarCadena(partido, strlen(partido));
@@ -128,14 +128,14 @@ int main() {
         printf("El cliente %d es del partido %s.\n", connfd, partido);
         // Funcion para que opere el cliente
         operar(connfd, partido);
-       // Cierro cliente cuando finaliza de operar
+        // Cierro cliente cuando finaliza de operar
         close(connfd);
     }
 
     // Cierro el socket de escucha cuando el servidor finaliza
     close(sockfd);
 
-    return TODO_OK;
+    return (int)TODO_OK;
 }
 
 
@@ -160,7 +160,9 @@ void operar(int sockfd, char *partido) {
 
     //variables para operar
     char *patente = malloc(8);
+    *patente = '\0';
     char *nombre_titular = malloc(25);
+    *nombre_titular = '\0';
     float monto;
 
     // buffer usado para dar las respuestas al cliente

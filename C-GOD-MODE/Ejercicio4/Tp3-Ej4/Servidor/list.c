@@ -83,32 +83,33 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
     return (int)NOT_OK;
 }
 
-int mostrarLista(t_list *p, char *partido, t_cmp cmp, char *response){
+int mostrarLista(t_list *p, t_dato *busqueda, t_cmp cmp, char *response){
      if(listaVacia(p) == TODO_OK){
         return (int)LISTA_VACIA;
     }
 
     int flag = 0;
     t_dato dato;
-    t_dato dato_original;
-    dato_original.partido = partido;
     t_list *aux = p;
 
     char *aux_monto = malloc(15);
+    *aux_monto = '\0';
 
     while(*aux != NULL){
         dato = (*aux)->info;
-        if (strcmp(dato.partido, dato_original.partido) == 0){
+        if (strcmp(dato.partido, busqueda.partido) == 0){
                 strcat(response, dato.patente);
-                strcat(response, " ");
-                sprintf(aux_monto, "%.2f", dato.monto_total);
-                strcat(response, aux_monto);
+		if(dato.cantidad_multas == 0){
+                	strcat(response, " ");
+                	sprintf(aux_monto, "%.2f", dato.monto_total);
+                	strcat(response, aux_monto);
+		}
                 strcat(response, "\n");
                 flag = 1;
         }
         aux = &(*aux)->sig;
     }
-    free(aux_monto);
+    free(aux_monto);    
     strcat(response, "\0");
 
     if (flag == 1){
@@ -137,3 +138,16 @@ int compararPartido (const t_dato *d1, const t_dato *d2) {
         return (int)NOT_OK;
     }
 }
+
+int compararSuspender(const t_dato *d1, const t_dato *d2){
+	if(strcmp(d1->partido, d2->partido) == 0
+		&& (d2->monto_total > 20000 || d2->cantidad_multas > 3)){
+		return (int)TODO_OK;
+		}
+	else {
+		return (int)NOT_OK;
+	}
+}
+
+
+

@@ -109,7 +109,7 @@ int normalizarCadena(char *buf, int len) {
         }
         buf[j++] = buf[i];
     }
-    //buf[j+1] = '\0';
+    buf[j+1] = '\0';
 
     return (int)TODO_OK;
 }
@@ -154,24 +154,12 @@ int existePatente(t_dato *dato, t_list *pl) {
     Retorna una lista de ellos.
 */
 int registrosSuspender(t_list *pl, const char *partido, char *buff){
-    t_list *aux = pl;
-    t_dato info;
-    int flag = 0;
+    t_dato dato;
+    dato.partido = partido;
+    dato.cantidad_multas = 3;
+    dato.monto_total= 20000;
 
-    while(*aux != NULL){
-        info = (*aux)->info;
-        if (strcmp(info.partido, partido) == 0){
-            if (info.monto_total > 20000 ||
-                info.cantidad_multas > 3) {
-                strcat(buff, info.patente);
-                strcat(buff, "\n");
-                flag = 1;
-            }
-        }
-        aux = &(*aux)->sig;
-    }
-
-    if (flag == 1){
+    if (mostrarLista(pl, &dato, compararSuspender, buff) == (int)TODO_OK){
         return (int)TODO_OK;
     } else {
         return (int)NOT_OK;
@@ -206,21 +194,25 @@ int buscarMontoTotal(char *patente, char *partido, t_list *pl, char *buff){
     dato.patente = patente;
     dato.partido = partido;
 
+    int flag = 0;
     char *aux_monto = malloc(12);
-
-
+    *aux_monto = '\0';
+	
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
+	flag = 1;
         strcat(buff, dato.patente);
         strcat(buff, "\t");
         sprintf(aux_monto, "%.2f", dato.monto_total);
         strcat(buff, aux_monto);
-        strcat(buff, "\0");
-        free(aux_monto);
-        return (int)TODO_OK;
+        strcat(buff, "\n\0");
     }
     free(aux_monto);
-
-    return (int)NOT_OK;
+    
+    if(flag == 1){
+	    return (int)TODO_OK;
+    } else{
+	    return (int)NOT_OK;
+    }
 }
 
 /*
@@ -229,6 +221,10 @@ int buscarMontoTotal(char *patente, char *partido, t_list *pl, char *buff){
 
 
 int verMontoTotalInfractores(t_list *pl, char *partido, char *buff) {
+    t_dato dato;
+    dato.partido = partido;
+    dato.cantidad_multas = 0;
+
     if (mostrarLista(pl, partido, compararPartido, buff) == (int)TODO_OK){
         return (int)TODO_OK;
     } else {

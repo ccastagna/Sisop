@@ -23,14 +23,34 @@
 #define WRITE_TEXT          "wt"    //Crea o pisa el contenido de un archivo.
 #define CON_MSG             1
 
+/*
+ * Recibe el id del thread y le muestra el menu de opciones.
+ */
 void mostrarMenu(int);
 
+
+/*
+ * Recibe puntero a archivo, el nombre del archivo, el modo,
+ * y si usa o no mensaje
+ */
 int abrirArchivo(FILE **, const char*, const char*, int);
 
+/*
+ * Recibe el puntero a archivo y puntero a lista.
+ * Lee el archivo y lo pasa a la lista, que sera compartida para todos los clientes.
+ */
 int leerArchivo(FILE **, t_list *);
 
+/*
+ * Recibe el puntero a archivo y puntero a lista.
+ * Sobreescribe el archivo con la información que hay en la lista.
+ */
 int escribirArchivo(FILE **, t_list *);
 
+/*
+ * Recibe la cadena a normalizar y el tamaño.
+ * Elimina espacios de mas y pasa todo a minusculas.
+ */
 int normalizarCadena(char *, int);
 
 /*
