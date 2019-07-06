@@ -136,7 +136,7 @@ static void createDaemonProcess(){
 
     if (pid > 0)// its the parent process
     {
-       printf("pid of child process %d \n", pid);
+        printf("PID para detener demonio: %d \n", pid);
         exit(0); //terminate the parent process succesfully
     }
 
@@ -149,22 +149,8 @@ static void createDaemonProcess(){
     }
 
     close(STDIN_FILENO);
-    close(STDOUT_FILENO);
     close(STDERR_FILENO);
 }
-
-// void createThreadDateTime(struct DateAndEndOfDay *pointer){
-//     int thread;
-//     pthread_t threads[NUM_THREADS];
-//     //thread = pthread_create(&threads[0], NULL, validateEndOfDay, (void *) fixedDate);
-//     thread = pthread_create(&threads[0], NULL, validateEndOfDay, &threads[0]);
-
-//     if (thread) {
-//         printf("Error:unable to create thread, %d\n", thread);
-//         exit(-1);
-//     }
-//     //pthread_exit(NULL); // Cierra el Thread
-// }
 
 t_dato *readString (char *fifoString, t_dato *value) {
     (*value).plate[0]='\0';
@@ -234,20 +220,18 @@ void imprimirDescripcion(){
 }
 
 void imprimirAyuda(char *nombrePrograma){
-        printf("Para ejecutar el programa,  debe ingresar por la opción 3,  y  luego ingresar\n");
-        printf("la dirección del archivo FIFO, con el nombre del mismo, entre comillas dobles\n");
-        printf("EJ.: \"Desktop/Prueba/ArchivoFifo\" \n");
-        printf("Despues apretar ENTER, y desde otra consola, ejecutar un cliente, que escriba\n");
-        printf("en el mismo archivo FIFO, con el formato: \n");
-        printf("Patente camara velocidad, cada campo separado por un espacio\n");
-        printf("Ej.: AAA123 cam5 44\n");
-        printf("O bien ejecutar y pasar la url del fifo desde el primer parametro con comilla\n");
-        printf("simple.\n");
-        printf("Ej.: %s 'Desktop/Prueba/ArchivoFifo' \n", nombrePrograma);
+    printf("Para ejecutar el programa,  debe ingresar por la opción 3,  y  luego ingresar\n");
+    printf("la dirección del archivo FIFO, con el nombre del mismo, entre comillas dobles\n");
+    printf("EJ.: \"Desktop/Prueba/ArchivoFifo\" \n");
+    printf("Despues apretar ENTER, y desde otra consola, ejecutar un cliente, que escriba\n");
+    printf("en el mismo archivo FIFO, con el formato: \n");
+    printf("Patente camara velocidad, cada campo separado por un espacio\n");
+    printf("Ej.: AAA123 cam5 44\n");
+    printf("O bien ejecutar y pasar la url del fifo desde el primer parametro con comilla\n");
+    printf("simple.\n");
+    printf("Ej.: %s 'Desktop/Prueba/ArchivoFifo' \n", nombrePrograma);
 }
 int empiezaConGuion(char *array){
-    char firstLetter;
-    firstLetter = array[0];
     if(array[0] == '-'){
         return TRUE;
     }else{
@@ -273,7 +257,6 @@ int main(int argc, char* argv[]) {
     *fixedDate = *localtime(&auxFixedDate);
     if(argc == 2){
         if(empiezaConGuion(argv[1])){
-
             if(!strcmp(argv[1],"-H") || !strcmp(argv[1],"-h") || !strcmp(argv[1],"-?")){
                 imprimirAyuda(argv[0]);
                 exit(0);
@@ -315,8 +298,11 @@ int main(int argc, char* argv[]) {
             }
         }while(opcion!=3);
     }
-    // TODO: Descomentar
-    //createDaemonProcess();
+    createDaemonProcess();
+    printf("Esperando entradas en: %s \n", fifoPath);
+    printf("En una nueva consola, escriba en el archivo anterior: \n");
+    printf("Patente Camara Velocidad \n");
+    printf("Cada campo separado por un espacio, ej: AAA123 Cam1 120\n");
     //Variables para el FIFO
     /* Create the FIFO if it does not exist */
     mknod(fifoPath, S_IFIFO|0640, 0);
