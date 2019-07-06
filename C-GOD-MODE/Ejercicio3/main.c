@@ -32,9 +32,9 @@ struct DateAndEndOfDay *DateAndEndOfDayPointer;
 #define SI 1
 #define NO 0
 void imprimirMenu(){
-    printf("********************************************************\n");
-    printf("*                       MENU TP3-EJ3                   *\n");
-    printf("********************************************************\n");
+    printf("**************************************************************************\n");
+    printf("*                                MENU TP3-EJ3                            *\n");
+    printf("**************************************************************************\n");
     printf("1)Descripcion\n");
     printf("2)Ayuda\n");
     printf("3)Ejecutar\n");
@@ -223,6 +223,37 @@ void *pruebaThread(){
         readFromFifoFile(fifoPath, fpToTraffic, &cola);
     }
 }
+void imprimirDescripcion(){
+    printf("Sistema que recibe en un archivo una patente, una camara y una velocidad. \n");
+    printf("Se muestra por pantalla dichos datos y de la misma forma se guardan en un \n");
+    printf("denominado: “Transito_AAAAMMDD.txt”.\n");
+    printf("Al finalizar cada dia, se guarda en un archivo “Crear_Multas_AAAAMMDD.txt”\n");
+    printf("la patente de los autos en exceso seguidos de la hora, la velocidad y  el \n");
+    printf("importe de la multa. Dicho importe se calcula con la diferencia de veloci \n");
+    printf("dad real y la velocidad permitida multiplicado por una constante.\n");
+}
+
+void imprimirAyuda(char *nombrePrograma){
+        printf("Para ejecutar el programa,  debe ingresar por la opción 3,  y  luego ingresar\n");
+        printf("la dirección del archivo FIFO, con el nombre del mismo, entre comillas dobles\n");
+        printf("EJ.: \"Desktop/Prueba/ArchivoFifo\" \n");
+        printf("Despues apretar ENTER, y desde otra consola, ejecutar un cliente, que escriba\n");
+        printf("en el mismo archivo FIFO, con el formato: \n");
+        printf("Patente camara velocidad, cada campo separado por un espacio\n");
+        printf("Ej.: AAA123 cam5 44\n");
+        printf("O bien ejecutar y pasar la url del fifo desde el primer parametro con comilla\n");
+        printf("simple.\n");
+        printf("Ej.: %s 'Desktop/Prueba/ArchivoFifo' \n", nombrePrograma);
+}
+int empiezaConGuion(char *array){
+    char firstLetter;
+    firstLetter = array[0];
+    if(array[0] == '-'){
+        return TRUE;
+    }else{
+        return FALSE;
+    }
+}
 int main(int argc, char* argv[]) {
 
     // Cola para menejar el procesamiento del archivo
@@ -241,38 +272,37 @@ int main(int argc, char* argv[]) {
     fixedDate = malloc(sizeof(struct tm));
     *fixedDate = *localtime(&auxFixedDate);
     if(argc == 2){
-        strcpy(fifoPath,argv[1]);
+        if(empiezaConGuion(argv[1])){
+
+            if(!strcmp(argv[1],"-H") || !strcmp(argv[1],"-h") || !strcmp(argv[1],"-?")){
+                imprimirAyuda(argv[0]);
+                exit(0);
+            }else if(!strcmp(argv[1],"-d") || !strcmp(argv[1],"-D")){
+                imprimirDescripcion();
+                exit(0);
+            }else{
+                printf("Opcion incorrecta: \n");
+                printf("Utilice -H o -h o -? para ayuda\n");
+                printf("Utilice -D o -d para la descripcion del programa\n");
+                exit(0);
+            }
+        }else{
+            strcpy(fifoPath,argv[1]);
+        }
     } else {
         char temp;
         int opcion;
         do
         {
             imprimirMenu();
-
-            opcion =ingresarYValidar(4);
-
+            opcion = ingresarYValidar(4);
             switch(opcion)
             {
             case 1:
-                printf("Sistema que recibe en un archivo una patente, una camara y una velocidad. \n");
-                printf("Se muestra por pantalla dichos datos y de la misma forma se guardan en un \n");
-                printf("denominado: “Transito_AAAAMMDD.txt”.\n");
-                printf("Al finalizar cada dia, se guarda en un archivo “Crear_Multas_AAAAMMDD.txt”\n");
-                printf("la patente de los autos en exceso seguidos de la hora, la velocidad y  el \n");
-                printf("importe de la multa. Dicho importe se calcula con la diferencia de veloci \n");
-                printf("dad real y la velocidad permitida multiplicado por una constante.\n");
+                imprimirDescripcion();
                 break;
             case 2:
-                printf("Para ejecutar el programa,  debe ingresar por la opción 3,  y  luego ingresar\n");
-                printf("la dirección del archivo FIFO, con el nombre del mismo, entre comillas dobles\n");
-                printf("EJ.: \"Desktop/Prueba/ArchivoFifo\" \n");
-                printf("Despues apretar ENTER, y desde otra consola, ejecutar un cliente, que escriba\n");
-                printf("en el mismo archivo FIFO, con el formato: \n");
-                printf("Patente camara velocidad, cada campo separado por un espacio\n");
-                printf("Ej.: AAA123 cam5 44\n");
-                printf("O bien ejecutar y pasar la url del fifo desde el primer parametro con comilla\n");
-                printf("simple.\n");
-                printf("Ej.: %s 'Desktop/Prueba/ArchivoFifo' \n", argv[0]);
+                imprimirAyuda(argv[0]);
                 break;
             case 3:
                 printf("Ingrese la ruta del archivo FIFO y a continuacion apriete enter: \n");
