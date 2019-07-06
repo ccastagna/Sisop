@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
         write(connfd, welcome, sizeof(welcome));
 
         // Leo partido del cliente
-        memset(partido, 0, MAX);
+        memset(partido, 0, sizeof(partido));
         read(connfd, partido, sizeof(partido));
 
         // Normalizo nombre del partido
@@ -185,7 +185,7 @@ void operar(int sockfd, char *partido) {
         // Le pido a cliente que ingrese una opcion
         memset(buff, 0, MAX);
         write(sockfd, indicate_option, sizeof(indicate_option));
-        //fflush(stdout);
+        fflush(stdout);
 
         // Leo opcion ingresada por el cliente
         memset(buff, 0, MAX);

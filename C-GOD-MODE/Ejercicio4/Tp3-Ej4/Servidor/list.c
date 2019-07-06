@@ -99,7 +99,7 @@ int mostrarLista(t_list *p, t_dato *busqueda, t_cmp cmp, char *response){
         dato = (*aux)->info;
         if (cmp(&dato, busqueda) == 0){
                 strcat(response, dato.patente);
-		if(dato.cantidad_multas == 0){
+		if(busqueda->cantidad_multas == 0){
                 	strcat(response, " ");
                 	sprintf(aux_monto, "%.2f", dato.monto_total);
                 	strcat(response, aux_monto);
@@ -140,13 +140,12 @@ int compararPartido (const t_dato *d1, const t_dato *d2) {
 }
 
 int compararSuspender(const t_dato *d1, const t_dato *d2){
-	if(strcmp(d1->partido, d2->partido) == 0
-		&& (d2->monto_total > 20000 || d2->cantidad_multas > 3)){
-		return (int)TODO_OK;
+	if(strcmp(d1->partido, d2->partido) == 0){
+		if (d2->monto_total > 20000 || d2->cantidad_multas > 3){
+			return (int)TODO_OK;
 		}
-	else {
-		return (int)NOT_OK;
 	}
+	return (int)NOT_OK;
 }
 
 
