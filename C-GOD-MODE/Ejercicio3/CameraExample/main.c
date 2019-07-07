@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#define FIFO_FILE "FifoFile"
+#define FIFO_FILE "../Prueba Dir/FifoFile"
 
 char fifoPath[300];
 int main(int argc, char* argv[]) {
