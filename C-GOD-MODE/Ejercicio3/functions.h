@@ -23,5 +23,4 @@ FILE *createFile(char fileName[], char mode[]);
 char *createNameOfFile(char *string, int day, int month, int year);
 int isEndOfTheDay(struct tm fixedDate, struct tm currentDate);
 static void createDaemonProcess();
-//void createThreadDateTime(struct DateAndEndOfDay *pointer);
 t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola);
