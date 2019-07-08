@@ -12,6 +12,12 @@
 // Bibliotecas propias
 #include "info.h"
 
+
+/*
+ * Muestra la ayuda para ejecutar el cliente.
+ */
+void mostrarAyuda(char *);
+
 /*
  * Funcion utilizada para escribir mensajes al cliente.
  * Primero se le envia una cabecera indicandole que tipo de mensaje le sera enviado.

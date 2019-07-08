@@ -28,8 +28,8 @@
 #define MAX         1024
 #define SA          struct sockaddr
 
-#define NOT_OK      0
-#define TODO_OK     1
+#define NOT_OK      -1
+#define TODO_OK     0
 
 int sockfd;
 char invalid_option[] = "Opcion invalida, ingrese un numero entre 1 y 7: ";
@@ -44,10 +44,20 @@ int main(int argc, char *argv[]) {
     char buff[60];
     int identificador;
     signal(SIGINT, &SignalInterruptHandler);
+    if(argc == 2) {
+	printf("%d\t", argc);
+	printf("%s\t", argv[0]);
+	printf("%s\t", argv[1]);
+	printf("%s\n\n", argv[2]);
+	if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "-H") || !strcmp(argv[1], "-?")) {
+		mostrarAyuda(argv[0]);
+		exit(TODO_OK);
+    	}
+    }
 
     if (argc < 4) {
-        fprintf(stderr,"Uso %s <ip_servidor> <puerto_servidor> <partido>\n", argv[0]);
-        exit(NOT_OK);
+        fprintf(stderr,"\nIngrese %s -h para obtener ayuda.\n\n", argv[0]);
+        exit(TODO_OK);
     }
 
     portno = atoi(argv[2]);

@@ -1,6 +1,18 @@
 #include "functions.h"
 
 /*
+ * Muestra la ayuda para el cliente.
+ */
+void mostrarAyuda(char *nombre) {
+   printf("\nSistema utilizado para conectarse al servidor central de infracciones de La Plata.\n\n");
+   printf("Para iniciar el cliente ejecute lo siguiente:\n");
+   printf("\t%s <ip_servidor> <puerto_servidor> <partido>\n\n", nombre);
+   printf("Ejemplo:\n");
+   printf("\t%s localhost 8181 Lanus\n\n", nombre);
+}
+
+
+/*
  * Funcion utilizada para escribir mensajes al cliente.
  * Primero se le envia una cabecera indicandole que tipo de mensaje le sera enviado.
  * Luego le envia el cuerpo del mensaje al cliente.
