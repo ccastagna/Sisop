@@ -1,0 +1,37 @@
+# depslib dependency file v1.0
+1562542563 source:/home/fede/Sisop/C-GOD-MODE/Ejercicio2/Tp3-Ej2/colaDinamica.c
+	"colaDinamica.h"
+
+1562542563 /home/fede/Sisop/C-GOD-MODE/Ejercicio2/Tp3-Ej2/colaDinamica.h
+	"info.h"
+	<stdio.h>
+	<stdlib.h>
+
+1562542563 /home/fede/Sisop/C-GOD-MODE/Ejercicio2/Tp3-Ej2/info.h
+	<stdio.h>
+	<pthread.h>
+
+1562595885 source:/home/fede/Sisop/C-GOD-MODE/Ejercicio2/Tp3-Ej2/functions.c
+	"functions.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1562542563 /home/fede/Sisop/C-GOD-MODE/Ejercicio2/Tp3-Ej2/functions.h
+	"colaDinamica.h"
+
+1562544693 source:/home/fede/Sisop/C-GOD-MODE/Ejercicio2/Tp3-Ej2/main.c
+	"functions.h"
+	"colaDinamica.h"
+	<time.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<string.h>
+	<pthread.h>
+	<fcntl.h>
+	<errno.h>
+	<dirent.h>
+
