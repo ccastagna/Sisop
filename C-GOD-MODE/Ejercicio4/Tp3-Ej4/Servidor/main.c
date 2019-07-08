@@ -52,7 +52,7 @@ char ask_amount[] = "Ingrese monto de la multa: \0";
 char ask_titular_name[] = "Ingrese nombre del titular: \0";
 char fee_succesfull[] = "Se ingreso la multa exitosamente.\n\0";
 char fee_unsuccesfull[] = "La multa no se pudo generar, intente nuevamente.\n\0";
-char paid_pending_fee[] = "Se saldaron las multas de la patentes %s";
+char paid_pending_fee[] = "Se saldaron las multas de la patente ingresada.\n\0";
 char not_pending_fee[] = "La patente ingresada no tiene multas a saldar.\n\0";
 char common_not_found_message[] = "No se encontraron infractores.\n\0";
 
