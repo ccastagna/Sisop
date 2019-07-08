@@ -215,7 +215,7 @@ void *operar(void *arg) {
         sleep(1);
         // Le pido a cliente que ingrese una opcion
         memset(buff, 0, MAX);
-	escribirMensaje(sockfd, id_indicate_option, indicate_option, sizeof(indicate_option));
+	escribirMensaje(sockfd, id_indicate_option, indicate_option, strlen(indicate_option));
         fflush(stdout);
 
         // Leo opcion ingresada por el cliente
@@ -289,7 +289,7 @@ void *operar(void *arg) {
 		    escribirMensaje(sockfd, id_registros_suspender, buff, strlen(buff));
                 } else{
 		    printf("El cliente %d no pudo obtener los registros a suspender para el partido %s.\n",sockfd, partido);	
-		    escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, sizeof(common_not_found_message));
+		    escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, strlen(common_not_found_message));
                 }
 		pthread_mutex_unlock(&mutex);
 

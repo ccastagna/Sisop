@@ -141,8 +141,6 @@ void operar(int sockfd) {
 
 
         while (code < 1 || code > 7){
-            //memset(buff, 0, MAX);
-            //read(sockfd, buff, sizeof(buff));
             printf("%s", invalid_option);
 
             memset(buff, 0, MAX);
