@@ -97,7 +97,7 @@ int mostrarLista(t_list *p, t_dato *busqueda, t_cmp cmp, char *response){
 
     while(*aux != NULL){
         dato = (*aux)->info;
-        if (cmp(&dato, busqueda) == 0){
+        if (cmp(&dato, busqueda) == TODO_OK){
                 strcat(response, dato.patente);
 		if(busqueda->cantidad_multas == 0){
                 	strcat(response, " ");

@@ -1,19 +1,10 @@
 #ifndef INFO_H_INCLUDED
 #define INFO_H_INCLUDED
 
-typedef struct {
-    char *partido;
-    char *patente;
-    char *nombre_titular;
-    int cantidad_multas;
-    float monto_total;
-} t_dato;
-
-
 typedef struct t_cabecera {
     int identificador;
     int longitud;
-} t_cabecera;
+} t_cabecera; 
 
 typedef enum {
     // Tipo de mensajes que enviara el cliente
@@ -37,9 +28,7 @@ typedef enum {
     id_menu,
     id_registros_suspender,
     id_buscar_infractor,
-    id_monto_total_infractores,
+    id_monto_total_infractores
 } Identificadores;
 
-
-
-#endif // INFO_H_INCLUDED
+#endif

@@ -1,15 +1,14 @@
 #include "functions.h"
 
-void mostrarMenu(int sockfd){
-    char buff[] = "Menu de Opciones: \n \
-                    1. Ingresar multa.\n \
-                    2. Mostrar registros a suspender.\n \
-                    3. Saldar multa.\n \
-                    4. Buscar monto total de un infractor.\n \
-                    5. Buscar monto total a pagar de todos los infractores.\n \
-                    6. Ver menu nuevamente.\n \
-                    7. Salir.\n\0";
-    write(sockfd, buff, sizeof(buff));
+void mostrarMenu(char *response){
+     strcpy(response,  "Menu de Opciones: \n \
+                 1. Ingresar multa.\n \
+                 2. Mostrar registros a suspender.\n \
+                 3. Saldar multa.\n \
+                 4. Buscar monto total de un infractor.\n \
+                 5. Buscar monto total a pagar de todos los infractores.\n \
+                 6. Ver menu nuevamente.\n \
+                 7. Salir.\n\0");
 }
 
 int abrirArchivo(FILE **fp, const char *nombre, const char *modo, int msj) {
@@ -218,8 +217,6 @@ int buscarMontoTotal(char *patente, char *partido, t_list *pl, char *buff){
 /*
     Muestra el monto total a pagar de cada infractor
 */
-
-
 int verMontoTotalInfractores(t_list *pl, char *partido, char *buff) {
     t_dato dato;
     dato.partido = partido;
@@ -231,3 +228,47 @@ int verMontoTotalInfractores(t_list *pl, char *partido, char *buff) {
         return (int)NOT_OK;
     }
 }
+
+
+/*
+ * Funcion utilizada para escribir mensajes al cliente.
+ * Primero se le envia una cabecera indicandole que tipo de mensaje le sera enviado.
+ * Luego le envia el cuerpo del mensaje al cliente.
+ */
+void escribirMensaje (int socket, int idMensaje, char *mensaje, int tamanho) {
+    // Se declara y rellena la cabecera
+    t_cabecera cabecera;
+    cabecera.identificador = idMensaje;
+    cabecera.longitud = tamanho;
+
+    // Se envía la cabecera
+    write (socket, &cabecera, sizeof(cabecera));
+
+    // Si el mensaje no tiene cuerpo, hemos terminado
+    if ((mensaje == NULL) || (tamanho == 0)){
+	    printf("No hay mensaje a enviar a cliente %d...\n", socket);
+    }
+
+    // Se envía el cuerpo
+    write (socket, mensaje, tamanho);
+}
+
+
+/*
+ * Funcion utilizada para leer los mensajes recibidos.
+ */
+void leerMensaje (int socket, int *id_mensaje, char *mensaje) {
+    t_cabecera cabecera;
+
+    read (socket, &cabecera, sizeof(cabecera)); // Se lee la cabecera
+
+    // Rellenamos el identificador para devolverlo
+    *id_mensaje = cabecera.identificador;
+
+    // Si hay que leer una estructura detrás
+    if (cabecera.longitud > 0) {
+        while(read(socket, mensaje, cabecera.longitud) < cabecera.longitud - 1);
+    }
+}
+
+

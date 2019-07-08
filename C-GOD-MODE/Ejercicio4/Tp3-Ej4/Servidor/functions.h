@@ -24,10 +24,9 @@
 #define CON_MSG             1
 
 /*
- * Recibe el id del thread y le muestra el menu de opciones.
+ * Recibe un buffer donde guardar el menu.
  */
-void mostrarMenu(int);
-
+void mostrarMenu(char *);
 
 /*
  * Recibe puntero a archivo, el nombre del archivo, el modo,
@@ -82,8 +81,21 @@ int saldarMulta(char*, char*, t_list *);
 int buscarMontoTotal(char*, char*, t_list*, char*);
 
 /*
-    Muestra el monto total a pagar de cada infractor
+    Muestra el monto total a pagar de cada infractor.
 */
 int verMontoTotalInfractores(t_list*, char*, char*);
+
+/*
+ * Funcion utilizada para escribir mensajes al cliente.
+ * Primero se le envia una cabecera indicandole que tipo de mensaje le sera enviado.
+ * Luego le envia el cuerpo del mensaje al cliente.
+ */
+void escribirMensaje (int, int, char *, int);
+
+/*
+ * Funcion utilizada para leer los mensajes recibidos.
+ */
+void leerMensaje (int , int *, char *);
+
 
 #endif // FUNCTIONS_H_INCLUDED

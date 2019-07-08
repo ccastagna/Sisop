@@ -2,7 +2,7 @@
 
 // Trabajo práctico 3
 // Ejercicio 4
-// Entrega
+// Primera Reentrega
 
 // Integrantes del Equipo
 // Franco Dario Scarpello 37842567
@@ -21,7 +21,11 @@
 #include <signal.h>
 #include <unistd.h>
 
-#define MAX         1025
+// Bibliotecas del usuario.
+#include "info.h"
+#include "functions.h"
+
+#define MAX         1024
 #define SA          struct sockaddr
 
 #define NOT_OK      0
@@ -38,7 +42,7 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in servaddr;
     struct hostent *server;
     char buff[60];
-
+    int identificador;
     signal(SIGINT, &SignalInterruptHandler);
 
     if (argc < 4) {
@@ -49,7 +53,7 @@ int main(int argc, char *argv[]) {
     portno = atoi(argv[2]);
 
     // partido al que pertenece el cliente
-    char partido[sizeof(argv[3] + 1)];
+    char partido[sizeof(argv[3] + 2)];
     strcpy(partido, argv[3]);
     strcat(partido, "\0");
 
@@ -78,29 +82,32 @@ int main(int argc, char *argv[]) {
 
     // Leo bienvenida del servidor
     memset(buff, 0, MAX);
-    read(sockfd, buff, sizeof(buff));
+    leerMensaje(sockfd, &identificador, buff);
     printf("%s", buff);
     fflush(stdin);
 
     // Le informo al servidor de que partido soy
-    write(sockfd, partido, sizeof(partido));
+    escribirMensaje(sockfd, id_partido, partido, strlen(partido));
 
     // funcion para operar
     operar(sockfd);
 
     // close the socket
-    close(sockfd);
+    // close(sockfd);
 
-    return TODO_OK;
+    return (int)TODO_OK;
 }
 
 void SignalInterruptHandler(int n_signal) {
-     write(sockfd, "7", 1);
+     escribirMensaje(sockfd, id_opcion, "7\0", 2);
 }
 
 void operar(int sockfd) {
     // opcion del menu
     int code;
+
+    // identificador para recibir cabecera del mensaje
+    int identificador;
 
     // buffer para comunicacion
     char buff[MAX];
@@ -110,13 +117,13 @@ void operar(int sockfd) {
 
     // Leo el menu
     memset(buff, 0, MAX);
-    read(sockfd, buff, sizeof(buff));
+    leerMensaje(sockfd, &identificador, buff);
     printf("%s", buff);
     fflush(stdin);
     while (1) {
         // El servidor me pide la opcion
         memset(buff, 0, MAX);
-        read(sockfd, buff, sizeof(buff));
+        leerMensaje(sockfd, &identificador, buff);
         printf("%s", buff);
         fflush(stdin);
 
@@ -140,82 +147,81 @@ void operar(int sockfd) {
 
         // Informo codigo al server
         buff[n-1] = '\0';
-        write(sockfd, buff, sizeof(1));
+	escribirMensaje(sockfd, id_opcion, buff, strlen(buff));
 
         switch (code) {
             case 1: // (ingresarMulta)
-
                 // Server me solicita patente
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
 
                 // Envio patente al server
                 memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
-                write(sockfd, buff, sizeof(buff));
+		buff[n-1] = '\0';
+		escribirMensaje(sockfd, id_patente, buff, strlen(buff));
 
                 // Server solicita monto
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
 
                 // Envio monto al server
                 memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
-                write(sockfd, buff, sizeof(buff));
+                buff[n-1] = '\0';
+		escribirMensaje(sockfd, id_monto, buff, strlen(buff));
 
                 // Server solicita nombre de titular
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
 
                 // Envio nombre de titular
                 memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
-                write(sockfd, buff, sizeof(buff));
+		buff[n-1] = '\0';
+                escribirMensaje(sockfd, id_nombre_titular, buff, strlen(buff));
 
                 // Leo resultado de alta de multa
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
                 fflush(stdin);
                 break;
             case 2: // (registrosASuspender)
-
                 // Leo los registros a suspender enviados por server
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
                 fflush(stdin);
                 break;
             case 3: // (saldarMulta)
-
                 // Server me solicita patente
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
 
                 // Envio patente al server
                 memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
-                write(sockfd, buff, sizeof(buff));
+		buff[n-1] = '\0';
+                escribirMensaje(sockfd, id_patente, buff, strlen(buff));
 
                 // Leo resultado del server
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
-
                 break;
             case 4: // (Buscar monto de un infractor)
-
                 // Server solicita patente
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
 
                 // Envio patente al server
@@ -223,37 +229,34 @@ void operar(int sockfd) {
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
                 buff[n-1] = '\0';
-                write(sockfd, buff, sizeof(buff));
+                escribirMensaje(sockfd, id_patente, buff, strlen(buff));
 
                 // Leo respuesta del server
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
                 fflush(stdin);
-
                 break;
             case 5: // (buscar todos los infractores y monto)
-
                 // Leo el resultado del server
                 memset(buff, 0, MAX);
-                read(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
                 fflush(stdin);
                 break;
             case 6: // (mostrar menu)
-
                 // Leo el resultado del server
                 memset(buff, 0, MAX);
-                write(sockfd, buff, sizeof(buff));
+                leerMensaje(sockfd, &identificador, buff);
                 printf("%s", buff);
                 fflush(stdin);
                 break;
             case 7: // (salir)
-
+                escribirMensaje(sockfd, id_opcion, "7\0", 2);
                 printf("La sesion ha finalizado exitosamente.\n");
                 return;
             default: // (salir)
-                write(sockfd, "7", sizeof(1));
+                escribirMensaje(sockfd, id_opcion, "7\0", 2);
                 printf("Ocurrio un error inesperado y debio ser cerrada la conexion.\n");
                 return;
         }

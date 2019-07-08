@@ -19,6 +19,8 @@ typedef struct s_nodo{
 
 typedef t_nodo *t_list;
 
+typedef int (t_cmp)(const t_dato*, const t_dato*);
+
 /** PRIMITIVAS */
 void crearLista(t_list *);
 int listaLlena(const t_list *);
