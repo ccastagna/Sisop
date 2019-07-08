@@ -24,6 +24,11 @@
 #define CON_MSG             1
 
 /*
+ * Funcion para mostrar la ayuda del servidor.
+ */
+void mostrarAyuda(char *);
+
+/*
  * Recibe un buffer donde guardar el menu.
  */
 void mostrarMenu(char *);

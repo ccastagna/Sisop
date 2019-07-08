@@ -45,10 +45,6 @@ int main(int argc, char *argv[]) {
     int identificador;
     signal(SIGINT, &SignalInterruptHandler);
     if(argc == 2) {
-	printf("%d\t", argc);
-	printf("%s\t", argv[0]);
-	printf("%s\t", argv[1]);
-	printf("%s\n\n", argv[2]);
 	if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "-H") || !strcmp(argv[1], "-?")) {
 		mostrarAyuda(argv[0]);
 		exit(TODO_OK);

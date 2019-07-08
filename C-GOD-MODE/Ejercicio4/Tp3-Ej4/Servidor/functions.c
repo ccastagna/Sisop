@@ -1,5 +1,17 @@
 #include "functions.h"
 
+/*
+ * Funcion para mostrar ayuda del servidor.
+ */
+void mostrarAyuda(char *nombre) {
+   printf("\nSistema utilizado para levantar el servidor central de infracciones de La Plata.\n\n");
+   printf("Para iniciar el servidor ejecute lo siguiente:\n");
+   printf("\t%s <puerto_servidor>\n\n", nombre);
+   printf("Ejemplo:\n");
+   printf("\t%s 8181\n\n", nombre);
+}
+
+
 void mostrarMenu(char *response){
      strcpy(response,  "Menu de Opciones: \n \
                  1. Ingresar multa.\n \

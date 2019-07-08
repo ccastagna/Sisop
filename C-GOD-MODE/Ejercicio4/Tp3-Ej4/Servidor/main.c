@@ -73,11 +73,17 @@ int main(int argc, char *argv[]) {
     // Controlar seniales enviadas como Ctrl+C
     signal(SIGINT, INThandler);
 
-    if (argc < 2){
-	fprintf(stderr, "Uso %s <puerto_servidor>\n", argv[0]);
-	exit(NOT_OK);
+
+    if(argc == 2) {
+        if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "-H") || !strcmp(argv[1], "-?")) {
+                mostrarAyuda(argv[0]);
+                exit(TODO_OK);
+        }
+    } else {
+	fprintf(stderr,"\nIngrese %s -h para obtener ayuda.\n\n", argv[0]);
+        exit(TODO_OK);
     }
-    
+ 
     // mapeo a variables los parametros recibidos
     portno = atoi(argv[1]);
 
