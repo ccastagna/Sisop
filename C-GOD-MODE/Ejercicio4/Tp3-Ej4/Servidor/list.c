@@ -141,7 +141,7 @@ int compararPartido (const t_dato *d1, const t_dato *d2) {
 
 int compararSuspender(const t_dato *d1, const t_dato *d2){
 	if(strcmp(d1->partido, d2->partido) == 0){
-		if (d2->monto_total > 20000 || d2->cantidad_multas > 3){
+		if (d1->monto_total > 20000 || d1->cantidad_multas > 3){
 			return (int)TODO_OK;
 		}
 	}

@@ -6,9 +6,12 @@
 void mostrarAyuda(char *nombre) {
    printf("\nSistema utilizado para levantar el servidor central de infracciones de La Plata.\n\n");
    printf("Para iniciar el servidor ejecute lo siguiente:\n");
-   printf("\t%s <puerto_servidor>\n\n", nombre);
+   printf("\t%s <puerto_servidor> <cantidad_clientes>\n\n", nombre);
+   printf("Parametros:\n");
+   printf("\t<puerto_servidor>: puerto en el cual sera hosteado el servidor.\n");
+   printf("\t<cantidad_clientes>: cantidad de clientes que pueden operar en simultaneo.\n\n");
    printf("Ejemplo:\n");
-   printf("\t%s 8181\n\n", nombre);
+   printf("\t%s 8181 10\n\n", nombre);
 }
 
 
@@ -208,16 +211,23 @@ int buscarMontoTotal(char *patente, char *partido, t_list *pl, char *buff){
     int flag = 0;
     char *aux_monto = malloc(12);
     *aux_monto = '\0';
-	
+    char *aux_cantidad_multas = malloc(5);
+    *aux_cantidad_multas = '\0';	
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
 	flag = 1;
         strcat(buff, dato.patente);
-        strcat(buff, "\t");
-        sprintf(aux_monto, "%.2f", dato.monto_total);
+        strcat(buff, " ");
+        strcat(buff, dato.nombre_titular);
+	strcat(buff, " ");
+	sprintf(aux_monto, "%.2f", dato.monto_total);
         strcat(buff, aux_monto);
+	strcat(buff, " ");
+	sprintf(aux_cantidad_multas, "%d", dato.cantidad_multas);
+	strcat(buff, aux_cantidad_multas);
         strcat(buff, "\n\0");
     }
     free(aux_monto);
+    free(aux_cantidad_multas);
     
     if(flag == 1){
 	    return (int)TODO_OK;

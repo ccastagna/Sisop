@@ -13,9 +13,6 @@
 #define NO_EXISTE_PATENTE   0
 #define EXISTE_PATENTE      1
 
-#define NOT_OK  0
-#define TODO_OK 1
-
 // Usado para archivos
 #define DATABASE_NAME	    "infractores" // nombre de la base de datos.
 #define READ_TEXT           "rt"    //Abre un fichero de texto para lectura.

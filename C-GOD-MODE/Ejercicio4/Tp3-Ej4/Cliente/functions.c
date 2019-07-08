@@ -7,6 +7,10 @@ void mostrarAyuda(char *nombre) {
    printf("\nSistema utilizado para conectarse al servidor central de infracciones de La Plata.\n\n");
    printf("Para iniciar el cliente ejecute lo siguiente:\n");
    printf("\t%s <ip_servidor> <puerto_servidor> <partido>\n\n", nombre);
+   printf("Parametros:\n");
+   printf("\t<ip_servidor>: IP o nombre del equipo del servidor al que se desea conectar.\n");
+   printf("\t<puerto_servidor>: puerto del servidor al que se desea conectar.\n");
+   printf("\t<partido>: partido desde el que se desea operar.\n\n");
    printf("Ejemplo:\n");
    printf("\t%s localhost 8181 Lanus\n\n", nombre);
 }
