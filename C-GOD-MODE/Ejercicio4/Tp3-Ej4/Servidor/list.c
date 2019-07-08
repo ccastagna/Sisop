@@ -79,6 +79,7 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, t_cmp cmp) {
 }
 
 int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp) {
+    
     if(listaVacia(p) == TODO_OK){
         return (int)LISTA_VACIA;
     }
@@ -88,6 +89,7 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
     }
 
     if(*p) {
+	(*p)->info.nombre_titular =  d->nombre_titular;
         (*p)->info.cantidad_multas += 1;
         (*p)->info.monto_total += monto;
         return (int)TODO_OK;

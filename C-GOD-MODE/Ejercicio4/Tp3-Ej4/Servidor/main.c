@@ -191,6 +191,8 @@ void *operar(void *arg) {
     // Identificador de cabecera
     int identificador;
 
+    printf("Server accepted client %d...\n", sockfd);
+
     // Muestro mensaje de bienvenida
     escribirMensaje(sockfd, id_welcome, welcome, strlen(welcome));
 
@@ -206,6 +208,7 @@ void *operar(void *arg) {
     // Le envio menu al cliente
     memset(buff, 0, MAX);
     mostrarMenu(buff);
+    printf("El cliente %d obtuvo el menu de opciones.\n", sockfd);
     escribirMensaje(sockfd, id_menu, buff, strlen(buff));
     
     while (1) {
@@ -263,12 +266,15 @@ void *operar(void *arg) {
 		if(strlen(patente) > 2 && strlen(nombre_titular) > 2 && monto > 0) {
 			pthread_mutex_lock(&mutex);
                 	if (ingresarMulta(patente, partido, nombre_titular, monto, &lista) == TODO_OK){
+				printf("El cliente %d ingreso multa exitosamente para la patente %s en partido %s.\n",sockfd, patente, partido);
 				escribirMensaje(sockfd, id_fee_succesfull, fee_succesfull, strlen(fee_succesfull));
 	                } else {
+				printf("El cliente %d no pudo ingresar multa para la patente %s en partido %s.\n",sockfd, patente, partido);
 				escribirMensaje(sockfd, id_fee_unsuccesfull, fee_unsuccesfull, strlen(fee_unsuccesfull));
                 	}
 			pthread_mutex_unlock(&mutex);
 		} else {
+			printf("El cliente %d no pudo ingresar multa para la patente %s en partido %s.\n",sockfd, patente, partido);
 			escribirMensaje(sockfd, id_fee_unsuccesfull, fee_unsuccesfull, strlen(fee_unsuccesfull));
                 }
 
@@ -279,8 +285,10 @@ void *operar(void *arg) {
 
 		pthread_mutex_lock(&mutex);
                 if (registrosSuspender(&lista ,partido, buff) == TODO_OK) {
-		   escribirMensaje(sockfd, id_registros_suspender, buff, strlen(buff));
+		    printf("El cliente %d obtuvo los registros a suspender para el partido %s.\n",sockfd, partido);
+		    escribirMensaje(sockfd, id_registros_suspender, buff, strlen(buff));
                 } else{
+		    printf("El cliente %d no pudo obtener los registros a suspender para el partido %s.\n",sockfd, partido);	
 		    escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, sizeof(common_not_found_message));
                 }
 		pthread_mutex_unlock(&mutex);
@@ -299,8 +307,10 @@ void *operar(void *arg) {
 		
 		pthread_mutex_lock(&mutex);
                 if (saldarMulta(patente, partido, &lista) == TODO_OK){
+			printf("El cliente %d saldo las multas de la patente %s para el partido %s.\n",sockfd, patente, partido);
 		    	escribirMensaje(sockfd, id_paid_pending_fee, paid_pending_fee, strlen(paid_pending_fee));
                 } else {
+			printf("El cliente %d no pudo saldar las multas de la patente %s para el partido %s.\n",sockfd, patente, partido);
 			escribirMensaje(sockfd, id_not_pending_fee, not_pending_fee, strlen(not_pending_fee));
 		}
 		pthread_mutex_unlock(&mutex);
@@ -321,8 +331,10 @@ void *operar(void *arg) {
 		pthread_mutex_lock(&mutex);
                 // Le indico al usuario lo que debe la patente o le indico que no existe.
                 if (buscarMontoTotal(patente, partido, &lista, buff) == TODO_OK) {
+			printf("El cliente %d encontro los datos de la patente %s para el partido %s.\n", sockfd, patente, partido);
          		escribirMensaje(sockfd, id_buscar_infractor, buff, strlen(buff));
                 } else {
+			printf("El cliente %d no encontro los datos de la patente %s para el partido %s.\n", sockfd, patente, partido);
 			escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, strlen(common_not_found_message));
                 }
 		pthread_mutex_unlock(&mutex);
@@ -335,8 +347,10 @@ void *operar(void *arg) {
 		pthread_mutex_lock(&mutex);
                 // Si hay infractores para el partido los muestro, sino indico que no hay.
 		if(verMontoTotalInfractores (&lista, partido, buff) == TODO_OK) {
+			printf("El cliente %d encontro los infractores para el partido %s.\n", sockfd, partido);
 			escribirMensaje(sockfd, id_monto_total_infractores, buff, strlen(buff));
                 } else{
+			printf("El cliente %d no encontro infractores para el partido %s.\n", sockfd, partido);
 			escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, strlen(common_not_found_message));
                 }
 		pthread_mutex_unlock(&mutex);
@@ -346,6 +360,7 @@ void *operar(void *arg) {
             case 6: // Mostrar menu.
 		memset(buff, 0, MAX);
                 mostrarMenu(buff);
+		printf("El cliente %d obtuvo el menu de opciones.\n", sockfd);
 		escribirMensaje(sockfd, id_menu, buff, strlen(buff));
                 fflush(stdout);
                 break;
