@@ -25,7 +25,6 @@
 #include <errno.h>
 #include <dirent.h>
 
-#define PATH_SEPARATOR '/'
 #define MAX_THREAD_COUNT 15488 // kernel.threads-max = 15488
 
 int main(int argc, char *argv[])
@@ -34,20 +33,29 @@ int main(int argc, char *argv[])
   DIR *dir;
   struct dirent *ent;
   long int contArticulos = 0;
+  char pathSucursal[1024];
+  char path[1024];
   unsigned int *ids_array;
   unsigned int *min_stock_array;
   unsigned int *real_stock_array;
 
+
   if (!strcmp(argv[1], "-h"))
   {
-    printf("Proceso para calcular el stock consolidado y generar archivo de compras.\nEl proceso toma por parametro la cantidad de threads de procesamiento, el directorio \ndonde se encuentran los archivos de las sucursales y el archivo del maestro de productos; \ny genera como salida el archivo de stock consolidado (Stock_consolidado.txt) y \nel archivo de pedido de compras (Pedido_compras.txt), mas un archivo de log (process.log) \nque indica informacion de la ejecucion.\nPor ejemplo:\n\n./5 /home/files /home/files/articulos.txt\n./1 ./files/process ./files/articulos.txt\n./10 /home/files/stock /home/stock/articulos.txt\n\nEl directorio pasado por parametro debe contener todos los archivos de stock de sucursales.\nEl archivo maestro de articulos indica para cada uno de los articulos el stock minimo que debe\nhaber en la empresa. \nSi el stock esta por debajo de este numero, el proceso debe generar un registro \nde pedido de compra informando la cantidad necesaria a comprar para que el stock \nquede al doble del stock minimo del articulo.\nEj, Aceite, stock minimo 100, stock actual 73, entonces genera un pedido por 127.\nEl formato de los archivos de stock es de 8 posiciones para el id del articulo y \n5 posiciones para el stock.\nEn caso de que el stock real supere 99999, el mismo se informara en el log con su stock real, \npero en el archivo de stock consolidado quedara como 99999. \nTambien se informara en el archivo de log si algun articulo no se encontra en el maestro de articulos.\n");
+    printf("Proceso para calcular el stock consolidado y generar archivo de compras.\nEl proceso toma por parametro la cantidad de threads de procesamiento, el directorio \n");
+    printf("donde se encuentran los archivos de las sucursales y el archivo del maestro de productos; \ny genera como salida el archivo de stock consolidado (Stock_consolidado.txt) y \n");
+    printf("el archivo de pedido de compras (Pedido_compras.txt), mas un archivo de log (process.log) \nque indica informacion de la ejecucion.\n");
+    printf("\nPrimer parametro:\tcantidad de hilos a utilizar durante el procesamiento.\n");
+    printf("Segundo parametro:\tpath del directorio donde se encuentran los archivos de stock.\n");
+    printf("Tercer parametro:\tpath del archivo de articulos.\n\n");
+    printf("Por ejemplo:\n\n\t./Tp3-Ej2 7 ../TP3_Ej2 ../TP3_Ej2/articulos.txt\n\t./Tp3-Ej2 5 /home/files /home/files/articulos.txt\n\t./Tp3-Ej2 1 ../files/process ../files/articulos.txt\n\t./Tp3-Ej2 10 /home/files/stock /home/stock/articulos.txt\n\nEl directorio pasado por parametro debe contener todos los archivos de stock de sucursales.\nEl archivo maestro de articulos indica para cada uno de los articulos el stock minimo que debe\nhaber en la empresa. \nSi el stock esta por debajo de este numero, el proceso debe generar un registro \nde pedido de compra informando la cantidad necesaria a comprar para que el stock \nquede al doble del stock minimo del articulo.\nEj, Aceite, stock minimo 100, stock actual 73, entonces genera un pedido por 127.\nEl formato de los archivos de stock es de 8 posiciones para el id del articulo y \n5 posiciones para el stock.\nEn caso de que el stock real supere 99999, el mismo se informara en el log con su stock real, \npero en el archivo de stock consolidado quedara como 99999. \nTambien se informara en el archivo de log si algun articulo no se encuentra en el maestro de articulos.\n");
     return 0;
   }
 
   if (argc != 4)
   {
     printf("La aplicacion espera 3 parametros la cantidad de threads a crear, \nel directorio donde se encuentran los archivos a procesar y el archivo maestro de articulos. \n");
-    printf("Por ejemplo: ./5 /home/files /home/files/articulos.txt\n");
+    printf("Por ejemplo: ./Tp3-Ej2 5 ../files ../files/articulos.txt\n");
     printf("Para mas informacion, ejecute de la siguiente manera: ./-h \n");
     return 0;
   }
@@ -61,27 +69,22 @@ int main(int argc, char *argv[])
   dir = opendir(argv[2]);
   if (dir == NULL)
   {
-    char pathStock[1024];
-    strcpy(pathStock, ".");
-    strcat(pathStock, argv[2]);
-    dir = opendir(pathStock);
-    if(dir == NULL){
-      printf("El segundo parametro debe ser un path valido. \n");
-      return 0;
-    }
+    printf("El segundo parametro debe ser un path valido. \n");
+    return 0;
   }
-  char path[1024];
+
   strcpy(path, argv[3]);
   contArticulos = calcularCantRegistros(path);
-  ids_array = (int *)malloc(sizeof(int) * contArticulos);
-  min_stock_array = (int *)malloc(sizeof(int) * contArticulos);
-  real_stock_array = (int *)malloc(sizeof(int) * contArticulos);
+
+  ids_array = (unsigned int *)malloc(sizeof(int) * contArticulos);
+  min_stock_array = (unsigned int *)malloc(sizeof(int) * contArticulos);
+  real_stock_array = (unsigned int *)malloc(sizeof(int) * contArticulos);
 
   cargoArchivoMaestro(path, ids_array, min_stock_array, real_stock_array);
 
+
   while ((ent = readdir(dir)) != NULL)
   {
-    char pathSucursal[1024];
     strcpy(pathSucursal, argv[2]);
     strcat(pathSucursal, pathSeparator);
     strcat(pathSucursal, ent->d_name);

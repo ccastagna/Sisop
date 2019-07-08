@@ -63,33 +63,33 @@ int cargoArchivoMaestro(char *fname, unsigned int *ids_array, unsigned int *min_
   char *id;
   char *minStock;
 
-  str = malloc(MAESTRO_REGISTRY_SIZE + 1);
+  str = malloc(MAESTRO_REGISTRY_SIZE + 2);
+  id = malloc(10);
+  minStock = malloc(10);
 
   fMaster = fopen(fname, "r");
 
   if (fMaster == NULL){
-    char path[1024];
-    strcpy(path, ".");
-    strcpy(path, fname);
-    fMaster = fopen(fname, "r");
-    if (fMaster == NULL){
       printf("No se pudo abrir el archivo maestro de articulos.\n");
       return 0;
-    }
   }
 
-  while (fgets(str, MAESTRO_REGISTRY_SIZE + 1, fMaster) != NULL)
+  while (fgets(str, MAESTRO_REGISTRY_SIZE + 2, fMaster) != NULL)
   {
+
     id = substring(str, 1, 8);
     minStock = substring(str, 49, 5);
 
     ids_array[pos] = atoi(id);
     min_stock_array[pos] = atoi(minStock);
     real_stock_array[pos] = 0;
+
     pos++;
+
   }
 
   fclose(fMaster);
+
   return 1;
 }
 
@@ -119,6 +119,10 @@ int calcularCantRegistros(char *fname)
   long int fileSize = 0;
 
   fp = fopen(fname, "r");
+  if(fp == NULL){
+     printf("Error al abrir el archivo \"%s\" en el modo \"%s\".\n", fname, "r");
+     return 0;
+  }
   fseek(fp, 0, SEEK_END);
   fileSize = ftell(fp);
   fclose(fp);
@@ -197,9 +201,10 @@ void* threadRoutine(void *arg)
     {
       pthread_mutex_lock( &mutexLog1 );
       fprintf(thread->log, "THREAD: %d PROCESA ARCHIVO: \"%s\"\n", thread->threadNum, sucursalFile->filename );
+      printf("THREAD: %d PROCESA ARCHIVO: \"%s\"\n", thread->threadNum, sucursalFile->filename );
       pthread_mutex_unlock( &mutexLog1 );
 
-      while (fgets(str, STOCK_REGISTRY_SIZE + 1, sucursal) != NULL)
+      while (fgets(str, STOCK_REGISTRY_SIZE + 2, sucursal) != NULL)
       {
         idStr = substring(str, 1, 8);
         stockStr = substring(str, 9, 5);
@@ -300,7 +305,7 @@ int procesarArchivos(int cantThreads, char *path, unsigned int *ids_array, unsig
   int pos = 0;
   while (pos < max_position)
   {
-    sprintf(idStr, "%d", ids_array[pos]);
+    sprintf(idStr, "%08d", ids_array[pos]);
     if(real_stock_array[pos] > 99999){
         fprintf(log,  "ARTICULO: %08d, EXCEDE LIMITE. STOCK REAL: %d\n", ids_array[pos] , real_stock_array[pos]);
         strcpy(stockStr, "99999");
@@ -314,15 +319,17 @@ int procesarArchivos(int cantThreads, char *path, unsigned int *ids_array, unsig
       fprintf(compras, "%08d%5s\n", ids_array[pos], stockCompraStr );
     }
     fprintf(stock, "%08d%5s\n", ids_array[pos], stockStr);
+
     pos++;
   }
 
+  fprintf(log, "Proceso finalizado.\n");
+
+  printf("Proceso finalizado.\n");
+
+  fclose(log);
   fclose(compras);
   fclose(stock);
-  fclose(log);
-
-  fprintf(log, "Proceso finalizado.\n");
-  printf("Proceso finalizado.\n");
 
   return 1;
 }
