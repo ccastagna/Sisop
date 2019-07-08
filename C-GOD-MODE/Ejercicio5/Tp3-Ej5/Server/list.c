@@ -83,7 +83,7 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
     return NOT_OK;
 }
 
-int mostrarLista(t_list *p, const char *partido, t_cmp cmp){
+int mostrarLista(t_buffer *buffer, t_list *p, const char *partido, t_cmp cmp){
      if(listaVacia(p) == TODO_OK){
         return LISTA_VACIA;
     }
@@ -96,6 +96,10 @@ int mostrarLista(t_list *p, const char *partido, t_cmp cmp){
         *d = (*aux)->info;
         if (cmp( d, partido) == TODO_OK) {
             flag = 1;
+            buffer->multas[buffer->cantMultas].patente = d->patente;
+            buffer->multas[buffer->cantMultas].monto_total = d->monto_total;
+            buffer->cantMultas++;
+            
             printf("%s\t%.2f\n", d->patente, d->monto_total);
             fflush(stdin);
         }

@@ -9,5 +9,12 @@ typedef struct {
     float monto_total;
 } t_dato;
 
+typedef struct{
+    t_dato multas[2000];
+    int cantMultas;
+    char *msg;
+    int opcion;
+}t_buffer;
+
 
 #endif // INFO_H_INCLUDED
