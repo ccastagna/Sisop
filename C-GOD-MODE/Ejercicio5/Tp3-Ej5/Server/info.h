@@ -22,7 +22,7 @@ typedef struct {
 typedef struct{
     t_dato_buffer multas[MAX_BUFFER_MULTAS];
     int cantMultas;
-    char *msg;
+    char msg[200];
     int opcion;
 }t_buffer;
 
