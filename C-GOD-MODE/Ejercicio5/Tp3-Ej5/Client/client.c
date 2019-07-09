@@ -26,9 +26,7 @@ int main()
     int code;
 
     //t_list lista;
-    char *partido = malloc(20);
-    char *patente = malloc(8);
-    char *nombre_titular = malloc(25);
+    char *partido = malloc(20), *patente, *nombre_titular;
     float monto;
 
     key_t          ShmKEY;
@@ -62,25 +60,28 @@ int main()
 
     buffer = (t_buffer *) shmat(ShmID, NULL, 0);
     printf("buffer by shmat %p \n", buffer);  
-    buffer = NULL;
+
+    printf("Ingrese el partido de su sede: \n");
+    scanf("%19[^\n]s", partido);
+
     while (1) {
         printf("pido Cliente\n");
-        //fflush(stdin);
-       // pedirSemaforo(clientSem);
+        
+        pedirSemaforo(clientSem);
 
-        printf("limpiandoBuffer");
-        limpiarBuffer(buffer);
+        printf("limpiandoBuffer\n");
+        
 
-        printf("Ingrese el partido de su sede: ");
-        scanf("%19[^\n]s", buffer->multas[0].partido);
+        buffer->multas[0].partido = partido;
+
         normalizarCadena(buffer->multas[0].partido, strlen(buffer->multas[0].partido));
 
         mostrarMenu();
 
-        printf("Indique la opcion: ");
+        printf("Indique la opcion: \n");
         scanf ("%d", &code);
         while (code < 1 || code > 7){
-            printf("Opcion invalida, ingrese un numero entre 1 y 7: ");
+            printf("Opcion invalida, ingrese un numero entre 1 y 7: \n");
             scanf ("%d", &code);
         }
 
@@ -88,21 +89,32 @@ int main()
 
         switch (code) {
             case 1:
+                patente = malloc(8);
+                printf("Ingrese la patente: \n");
+                fflush(stdin);
+                scanf("%7s", patente);
+                fflush(stdin);
+                buffer->multas[0].patente = patente;
 
-                printf("Ingrese la patente: ");
-                scanf("%7s", buffer->multas[0].patente);
-                printf("Ingrese monto de la multa: ");
+
+                printf("Ingrese monto de la multa: \n");
+                fflush(stdin);
                 scanf("%lf", buffer->multas[0].monto_total);
-                printf("Ingrese el nombre del titular: ");
                 fflush(stdin);
-                scanf("%24[^\n]s", buffer->multas[0].nombre_titular);
+
+                nombre_titular = malloc(25);
+                printf("Ingrese el nombre del titular: \n");
                 fflush(stdin);
+                scanf("%24[^\n]s", nombre_titular);
+                fflush(stdin);
+                buffer->multas[0].nombre_titular = nombre_titular;
 
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
 
                 printf("%s",buffer->msg);
-               
+
+                limpiarBuffer(buffer);
                 devolverSemaforo(clientSem);
                 break;
             case 2:
@@ -116,6 +128,7 @@ int main()
 
                 printf("%s",buffer->msg);
 
+                limpiarBuffer(buffer);
                 devolverSemaforo(clientSem);
                 break;
             case 3:
@@ -128,6 +141,7 @@ int main()
 
                 printf("%s",buffer->msg);
                
+                limpiarBuffer(buffer);
                 devolverSemaforo(clientSem);
                 break;
             case 4:
@@ -140,7 +154,8 @@ int main()
 
                 printf("%s\t%.2f\n", buffer->multas[0].patente, buffer->multas[0].monto_total);
                 printf("%s",buffer->msg);
-               
+
+                limpiarBuffer(buffer);
                 devolverSemaforo(clientSem);
                 break;
             case 5:
@@ -152,13 +167,15 @@ int main()
                     printf("%s\t%.2f\n", buffer->multas[0].patente, buffer->multas[0].monto_total);
                 }
                 printf("%s",buffer->msg);
-
+                
+                limpiarBuffer(buffer);
                 devolverSemaforo(clientSem);
                 break;
             case 6:
                 mostrarMenu();
                 break;
             case 7:
+                free(partido);
                 shmdt((void *) buffer);
                 devolverSemaforo(clientSem);
                 exit(0);

@@ -40,14 +40,14 @@ int normalizarCadena(unsigned char *buf, int len) {
 
 void limpiarBuffer( t_buffer *buffer){
     buffer->opcion = 0;
-    buffer->msg = "\0";
+    free(buffer->msg);
     buffer->cantMultas = 0;
     for(int i=0 ; i < MAX_BUFFER_MULTAS; i++){
         buffer->multas[i].cantidad_multas = 0;
         buffer->multas[i].monto_total = 0;
-        buffer->multas[i].nombre_titular = '\0';
         buffer->multas[i].partido = '\0';
-        buffer->multas[i].patente = '\0';
+        free(buffer->multas[i].patente);
+        free(buffer->multas[i].nombre_titular);
     }
 }
 
@@ -59,12 +59,12 @@ int obtenerSemaforo(key_t claveSEM) {
 }
 
 void pedirSemaforo(int idSemaforo) {
-    printf("pidiendo Semaforo");
-    // struct sembuf opSem;
-    // opSem.sem_num = 0;
-    // opSem.sem_op = -1;
-    // opSem.sem_flg = 0;
-    // semop(idSemaforo,&opSem,1);
+    printf("pidiendo Semaforo\n");
+    struct sembuf opSem;
+    opSem.sem_num = 0;
+    opSem.sem_op = -1;
+    opSem.sem_flg = 0;
+    semop(idSemaforo,&opSem,1);
 }
 
 void devolverSemaforo(int idSemaforo) {

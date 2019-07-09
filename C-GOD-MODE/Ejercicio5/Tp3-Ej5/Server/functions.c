@@ -194,6 +194,7 @@ int verMontoTotalInfractores(t_buffer *buffer, t_list *pl, char *partido){
     }
 }
 
+
 int obtenerSemaforo(key_t claveSEM, int valor) {
     int idSemaforo;
     union semun ctlSem;
