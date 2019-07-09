@@ -3,6 +3,9 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h> 
 
 #include "info.h"
 #include "list.h"
@@ -59,5 +62,12 @@ int buscarMontoTotal(t_buffer *, char*, char*, t_list*);
 */
 int verMontoTotalInfractores(t_buffer *, t_list*, char*);
 
+int obtenerSemaforo(key_t , int);
+
+void pedirSemaforo(int );
+
+void devolverSemaforo(int );
+
+void eliminarSemaforo(int );
 
 #endif // FUNCTIONS_H_INCLUDED

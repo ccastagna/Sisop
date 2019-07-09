@@ -193,3 +193,34 @@ int verMontoTotalInfractores(t_buffer *buffer, t_list *pl, char *partido){
         return NOT_OK;
     }
 }
+
+int obtenerSemaforo(key_t claveSEM, int valor) {
+    int idSemaforo;
+    union semun ctlSem;
+   
+    idSemaforo = semget(claveSEM,1,IPC_CREAT| 0600);
+    ctlSem.val = valor;
+    semctl(idSemaforo,0,SETVAL,ctlSem);
+
+    return idSemaforo;
+}
+
+void pedirSemaforo(int idSemaforo) {
+    struct sembuf opSem;
+    opSem.sem_num = 0;
+    opSem.sem_op = -1;
+    opSem.sem_flg = 0;
+    semop(idSemaforo,&opSem,1);
+}
+
+void devolverSemaforo(int idSemaforo) {
+    struct sembuf opSem;
+    opSem.sem_num = 0;
+    opSem.sem_op = 1;
+    opSem.sem_flg = 0;
+    semop(idSemaforo,&opSem,1);
+}
+
+void eliminarSemaforo(int idSemaforo) {
+    semctl(idSemaforo,0,IPC_RMID);
+}

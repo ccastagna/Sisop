@@ -16,6 +16,13 @@ void mostrarMenu();
 
 int normalizarCadena(unsigned char *, int);
 
-void limpiarBuffer(struct t_buffer *);
+void limpiarBuffer(t_buffer *);
+
+int obtenerSemaforo(key_t );
+
+void pedirSemaforo(int);
+
+void devolverSemaforo(int );
+
 
 #endif // FUNCTIONS_H_INCLUDED

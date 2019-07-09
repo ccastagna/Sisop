@@ -16,9 +16,6 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <semaphore.h>
 #include <signal.h>
 
 // Bibliotecas propias.
@@ -27,17 +24,17 @@
 #include "functions.h"
 
 t_buffer  *buffer;
-sem_t *clientSem, *requestSem, *responseSem;
+int clientSem, requestSem, responseSem, ShmID;
 
 void cerrarServer(int signum){
-    printf("terminando server...");
+    printf("terminando server...\n");
     shmdt((void *) buffer);
     printf("Server has detached its shared memory...\n");
-    shmctl(buffer, IPC_RMID, NULL);
+    shmctl(ShmID, IPC_RMID, NULL);
     printf("Server has removed its shared memory...\n");
-    sem_destroy(clientSem);
-    sem_destroy(requestSem);
-    sem_destroy(responseSem);
+    eliminarSemaforo(clientSem);
+    eliminarSemaforo(requestSem);
+    eliminarSemaforo(responseSem);
     exit(0);
 }
 
@@ -49,7 +46,6 @@ int main()
     t_list lista;
 
     key_t          ShmKEY;
-    int            ShmID;
 
     ShmKEY = ftok(".", 'x');
     ShmID = shmget(ShmKEY, sizeof(t_buffer), IPC_CREAT | 0666);
@@ -61,22 +57,51 @@ int main()
     
     buffer = (t_buffer *) shmat(ShmID, NULL, 0);
     
-    printf("ShmPTR by shmat %p \n", buffer);  
+    printf("buffer by shmat %p \n", buffer);  
     
     printf("Server has attached the shared memory...\n");
-    
-    clientSem = sem_open("Client",O_CREAT, O_RDWR, 1);
-    printf("semaforo cliente");
-    requestSem = sem_open("Request",O_CREAT, O_RDWR, 0);
-    responseSem = sem_open("Response",O_CREAT, O_RDWR, 0);
+
+    key_t clientSemTok = ftok(".",1000);
+    key_t requestSemTok = ftok(".",1001);
+    key_t responseSemTok = ftok(".",1002);
+
+    clientSem = obtenerSemaforo(clientSemTok,1);
+    printf("\nIdentificador del semaforo de cliente: %d\n",clientSem);
+    requestSem = obtenerSemaforo(requestSemTok,0);
+    printf("\nIdentificador del semaforo de consulta al servidor : %d\n",requestSem);
+    responseSem = obtenerSemaforo(responseSemTok,0);
+    printf("\nIdentificador del semaforo de respuesta de servidor: %d\n",responseSem);
 
     crearLista(&lista);
     leerArchivo(&fp, &lista);
 
-    signal(SIGQUIT, cerrarServer);
+    if (signal(SIGQUIT, cerrarServer) < 0) {
+        printf("\nError al asociar la signal SIGQUIT con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGKILL, cerrarServer) < 0) {
+        printf("\nError al asociar la signal SIGKILL con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGSTOP, cerrarServer) < 0) {
+        printf("\nError al asociar la signal SIGSTOP con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGINT, cerrarServer) < 0) {
+        printf("\nError al asociar la signal SIGINT con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGTERM, cerrarServer) < 0) {
+        printf("\nError al asociar la signal SIGTERM con el handler.");
+        return -1;
+    }
 
     while (1) {
-        sem_wait(requestSem);
+        pedirSemaforo(requestSem);
 
         switch (buffer->opcion) {
             case 1:
@@ -88,13 +113,14 @@ int main()
                     buffer->msg = "La multa no se pudo generar, intente nuevamente.\n";
                 }
 
-                sem_post(responseSem);
+                devolverSemaforo(responseSem);
                 break;
             case 2:
                 if (registrosSuspender(buffer, &lista , buffer->multas[0].partido) == NOT_OK){
                     printf("No se encontraron registros a suspender.\n");
                     buffer->msg = "No se encontraron registros a suspender.\n";
                 }
+                devolverSemaforo(responseSem);
                 break;
             case 3:
                 if (saldarMulta(buffer->multas[0].patente, buffer->multas[0].partido, &lista) == NOT_OK){
@@ -102,7 +128,7 @@ int main()
                     buffer->msg = "La patente ingresada no tiene multas a saldar.\n";
                 }
 
-                sem_post(responseSem);
+                devolverSemaforo(responseSem);
                 break;
             case 4:
                 if(buscarMontoTotal(buffer, buffer->multas[0].patente, buffer->multas[0].partido, &lista) == NOT_OK){
@@ -110,7 +136,7 @@ int main()
                     buffer->msg = "La patente ingresada no tiene multas pendientes.\n";
                 }
 
-                sem_post(responseSem);
+                devolverSemaforo(responseSem);
                 break;
             case 5:
                 if (verMontoTotalInfractores (buffer, &lista, buffer->multas[0].partido) == NOT_OK){
@@ -118,7 +144,7 @@ int main()
                     buffer->msg = "No hay patentes con multas pendientes.\n";
                 }
 
-                sem_post(responseSem);
+                devolverSemaforo(responseSem);
                 break;
             default:
                 return NOT_OK;

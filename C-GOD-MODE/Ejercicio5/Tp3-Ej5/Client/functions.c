@@ -1,3 +1,8 @@
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h> 
+#include <stdio.h>
+#include <stdlib.h>
 #include "functions.h"
 
 void mostrarMenu(){
@@ -33,15 +38,39 @@ int normalizarCadena(unsigned char *buf, int len) {
 }
 
 
-void limpiarBuffer(struct t_buffer *buffer){
+void limpiarBuffer( t_buffer *buffer){
     buffer->opcion = 0;
     buffer->msg = "\0";
     buffer->cantMultas = 0;
-    for(int i=0 ; i < multas.length ; i++){
+    for(int i=0 ; i < MAX_BUFFER_MULTAS; i++){
         buffer->multas[i].cantidad_multas = 0;
         buffer->multas[i].monto_total = 0;
         buffer->multas[i].nombre_titular = '\0';
         buffer->multas[i].partido = '\0';
         buffer->multas[i].patente = '\0';
     }
+}
+
+int obtenerSemaforo(key_t claveSEM) {
+    int idSemaforo;
+   
+    idSemaforo = semget(claveSEM,1,0600);
+    return idSemaforo;
+}
+
+void pedirSemaforo(int idSemaforo) {
+    printf("pidiendo Semaforo");
+    // struct sembuf opSem;
+    // opSem.sem_num = 0;
+    // opSem.sem_op = -1;
+    // opSem.sem_flg = 0;
+    // semop(idSemaforo,&opSem,1);
+}
+
+void devolverSemaforo(int idSemaforo) {
+    struct sembuf opSem;
+    opSem.sem_num = 0;
+    opSem.sem_op = 1;
+    opSem.sem_flg = 0;
+    semop(idSemaforo,&opSem,1);
 }

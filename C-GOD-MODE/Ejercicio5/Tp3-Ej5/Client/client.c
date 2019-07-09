@@ -16,9 +16,6 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <semaphore.h>
 
 // Bibliotecas propias.
 #include "functions.h"
@@ -37,26 +34,41 @@ int main()
     key_t          ShmKEY;
     int            ShmID;
     t_buffer  *buffer;
+    int clientSem, requestSem, responseSem;
     
     ShmKEY = ftok("../Server/", 'x');
-    ShmID = shmget(ShmKEY, sizeof(t_buffer), IPC_EXCL | 0666);
+    ShmID = shmget(ShmKEY, sizeof(t_buffer), 0666);
     if (ShmID < 0) {
         printf("*** shmget error (client) ***\n");
         exit(1);
-    }
-    printf("   Client has received a shared memory of four integers...\n");
-    
-    sem_t *clientSem = sem_open("Client",O_EXCL);
-    sem_t *requestSem = sem_open("Request",O_EXCL);
-    sem_t *responseSem = sem_open("Response",O_EXCL);
+    }    
 
+    key_t clientSemTok = ftok("../Server/",1000);
+    key_t requestSemTok = ftok("../Server/",1001);
+    key_t responseSemTok = ftok("../Server/",1002);
+
+    clientSem = obtenerSemaforo(clientSemTok);
+    printf("\nIdentificador del semaforo de cliente: %d\n",clientSem);
+    requestSem = obtenerSemaforo(requestSemTok);
+    printf("\nIdentificador del semaforo de consultas al servidor : %d\n",requestSem);
+    responseSem = obtenerSemaforo(responseSemTok);
+    printf("\nIdentificador del semaforo de respuesta de servidor: %d\n",responseSem);
+    
+    if(clientSem < 0 || requestSem < 0 || responseSem < 0){
+        printf("\nERROR DE CONEXION...\n");
+        printf("PRIMERO SE DEBE EJECUTAR EL SERVIDOR.\n\n");
+        exit(2);
+    }
 
     buffer = (t_buffer *) shmat(ShmID, NULL, 0);
     printf("buffer by shmat %p \n", buffer);  
-
+    buffer = NULL;
     while (1) {
-        sem_wait(clientSem);
+        printf("pido Cliente\n");
+        //fflush(stdin);
+       // pedirSemaforo(clientSem);
 
+        printf("limpiandoBuffer");
         limpiarBuffer(buffer);
 
         printf("Ingrese el partido de su sede: ");
@@ -86,17 +98,17 @@ int main()
                 scanf("%24[^\n]s", buffer->multas[0].nombre_titular);
                 fflush(stdin);
 
-                sem_post(requestSem);
-                sem_wait(responseSem);
+                devolverSemaforo(requestSem);
+                pedirSemaforo(responseSem);
 
                 printf("%s",buffer->msg);
                
-                sem_post(clientSem);
+                devolverSemaforo(clientSem);
                 break;
             case 2:
 
-                sem_post(requestSem);
-                sem_wait(responseSem);
+                devolverSemaforo(requestSem);
+                pedirSemaforo(responseSem);
 
                 for(int i=0; i <= buffer->cantMultas ; i++ ){
                     printf("%s\n", buffer->multas[i].patente);
@@ -104,51 +116,51 @@ int main()
 
                 printf("%s",buffer->msg);
 
-                sem_post(clientSem);
+                devolverSemaforo(clientSem);
                 break;
             case 3:
 
                 printf("Ingrese la patente: ");
                 scanf("%7s", buffer->multas[0].patente);
                 
-                sem_post(requestSem);
-                sem_wait(responseSem);
+                devolverSemaforo(requestSem);
+                pedirSemaforo(responseSem);
 
                 printf("%s",buffer->msg);
                
-                sem_post(clientSem);
+                devolverSemaforo(clientSem);
                 break;
             case 4:
 
                 printf("Ingrese la patente: ");
                 scanf("%7s", buffer->multas[0].patente);
                 
-                sem_post(requestSem);
-                sem_wait(responseSem);
+                devolverSemaforo(requestSem);
+                pedirSemaforo(responseSem);
 
                 printf("%s\t%.2f\n", buffer->multas[0].patente, buffer->multas[0].monto_total);
                 printf("%s",buffer->msg);
                
-                sem_post(clientSem);
+                devolverSemaforo(clientSem);
                 break;
             case 5:
                 
-                sem_post(requestSem);
-                sem_wait(responseSem);
+                devolverSemaforo(requestSem);
+                pedirSemaforo(responseSem);
 
                 for(int i=0; i <= buffer->cantMultas ; i++ ){
                     printf("%s\t%.2f\n", buffer->multas[0].patente, buffer->multas[0].monto_total);
                 }
                 printf("%s",buffer->msg);
 
-                sem_post(clientSem);
+                devolverSemaforo(clientSem);
                 break;
             case 6:
                 mostrarMenu();
                 break;
             case 7:
                 shmdt((void *) buffer);
-                sem_post(clientSem);
+                devolverSemaforo(clientSem);
                 exit(0);
                 break;
             default:
