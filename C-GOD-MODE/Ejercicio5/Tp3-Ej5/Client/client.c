@@ -36,7 +36,7 @@ int main()
 
     key_t          ShmKEY;
     int            ShmID;
-    struct t_buffer  *buffer;
+    t_buffer  *buffer;
     
     ShmKEY = ftok("../Server/", 'x');
     ShmID = shmget(ShmKEY, sizeof(t_buffer), IPC_EXCL | 0666);
@@ -51,7 +51,7 @@ int main()
     sem_t *responseSem = sem_open("Response",O_EXCL);
 
 
-    buffer = (struct t_buffer *) shmat(ShmID, NULL, 0);
+    buffer = (t_buffer *) shmat(ShmID, NULL, 0);
     printf("buffer by shmat %p \n", buffer);  
 
     while (1) {
@@ -80,7 +80,7 @@ int main()
                 printf("Ingrese la patente: ");
                 scanf("%7s", buffer->multas[0].patente);
                 printf("Ingrese monto de la multa: ");
-                scanf("%f", buffer->multas[0].monto_total);
+                scanf("%lf", buffer->multas[0].monto_total);
                 printf("Ingrese el nombre del titular: ");
                 fflush(stdin);
                 scanf("%24[^\n]s", buffer->multas[0].nombre_titular);
@@ -99,7 +99,7 @@ int main()
                 sem_wait(responseSem);
 
                 for(int i=0; i <= buffer->cantMultas ; i++ ){
-                    printf("%s\n", *(buffer->multas[i].patente));
+                    printf("%s\n", buffer->multas[i].patente);
                 }
 
                 printf("%s",buffer->msg);

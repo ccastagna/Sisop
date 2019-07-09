@@ -26,7 +26,7 @@
 #include "list.h"
 #include "functions.h"
 
-struct t_buffer  *buffer;
+t_buffer  *buffer;
 sem_t *clientSem, *requestSem, *responseSem;
 
 void cerrarServer(int signum){
@@ -66,6 +66,7 @@ int main()
     printf("Server has attached the shared memory...\n");
     
     clientSem = sem_open("Client",O_CREAT, O_RDWR, 1);
+    printf("semaforo cliente");
     requestSem = sem_open("Request",O_CREAT, O_RDWR, 0);
     responseSem = sem_open("Response",O_CREAT, O_RDWR, 0);
 
@@ -79,7 +80,7 @@ int main()
 
         switch (buffer->opcion) {
             case 1:
-                if (ingresarMulta(buffer->multas[0].patente, buffer->multas[0].partido, buffer->multas[0].monto, buffer->multas[0].nombre_titular, &lista) == TODO_OK){
+                if (ingresarMulta(buffer->multas[0].patente, buffer->multas[0].partido, buffer->multas[0].monto_total, buffer->multas[0].nombre_titular, &lista) == TODO_OK){
                     printf("Se ingreso la multa exitosamente.\n");
                     buffer->msg = "Se ingreso la multa exitosamente.\n";
                 } else{

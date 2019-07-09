@@ -186,7 +186,7 @@ int buscarMontoTotal(t_buffer *buffer, char *patente, char *partido, t_list *pl)
 /*
     Muestra el monto total a pagar de cada infractor
 */
-int verMontoTotalInfractores(t_buffer *buffer, t_list *pl, const char *partido){
+int verMontoTotalInfractores(t_buffer *buffer, t_list *pl, char *partido){
     if (mostrarLista(buffer, pl, partido, compararPartido) == TODO_OK){
         return TODO_OK;
     } else{
