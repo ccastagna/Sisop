@@ -26,7 +26,7 @@ int main()
     int code;
 
     //t_list lista;
-    char *partido = malloc(20), *patente, *nombre_titular;
+    char partido[100], patente[100], nombre_titular[100];
     float monto;
 
     key_t          ShmKEY;
@@ -62,7 +62,11 @@ int main()
     printf("buffer by shmat %p \n", buffer);  
 
     printf("Ingrese el partido de su sede: \n");
-    scanf("%19[^\n]s", partido);
+
+    do{
+        int i=0;
+        while((partido[i++] = getchar()) != '\n');
+    }while(strlen(partido) > 20);
 
     while (1) {
         printf("pido Cliente\n");
@@ -91,10 +95,14 @@ int main()
 
         switch (code) {
             case 1:
-                patente = malloc(8);
                 printf("Ingrese la patente: \n");
                 fflush(stdin);
-                scanf("%7s", patente);
+
+                do{
+                    int i=0;
+                    while((patente[i++] = getchar()) != '\n');
+                }while(strlen(patente) > 8);
+
                 fflush(stdin);
                 strcpy(buffer->multas[0].patente, patente);
 
@@ -104,12 +112,19 @@ int main()
                 scanf("%lf", buffer->multas[0].monto_total);
                 fflush(stdin);
 
-                //nombre_titular = malloc(25);
+                
                 printf("Ingrese el nombre del titular: \n");
                 fflush(stdin);
-                scanf("%24[^\n]s", nombre_titular);
+
+                do{
+                    int i=0;
+                    while((nombre_titular[i++] = getchar()) != '\n');
+                }while(strlen(nombre_titular) > 8);
+                
                 fflush(stdin);
+                printf("llego aca\n\n");
                 strcpy(buffer->multas[0].nombre_titular, nombre_titular);
+                printf("y acaaa.. \n\n");
 
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
