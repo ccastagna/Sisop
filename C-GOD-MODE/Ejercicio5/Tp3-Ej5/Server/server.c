@@ -142,7 +142,6 @@ int main()
                 devolverSemaforo(responseSem);
                 break;
             case 5:
-		printf("hola");
 		if (verMontoTotalInfractores (buffer, &lista, buffer->multas[0].partido) == NOT_OK){
                     printf("No hay patentes con multas pendientes.\n");
                     strcpy(buffer->msg, "No hay patentes con multas pendientes.\n");

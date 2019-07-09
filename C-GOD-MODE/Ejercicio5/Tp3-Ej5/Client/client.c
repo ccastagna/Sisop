@@ -64,19 +64,12 @@ int main()
     printf("Ingrese el partido de su sede: \n");
     scanf("%19[^\n]s", partido);
 
-    while (1) {
-        printf("pido Cliente\n");
-        
+    while (1) {     
         pedirSemaforo(clientSem);
-
-        printf("limpiandoBuffer\n");
         
         strcpy(buffer->multas[0].partido, partido);
-	printf("sin normalizar: %s\n\n", buffer->multas[0].partido);
 
         normalizarCadena(buffer->multas[0].partido, strlen(buffer->multas[0].partido));
-
-	printf("normalizado: %s\n\n", buffer->multas[0].partido);
 
         mostrarMenu();
 
@@ -101,10 +94,9 @@ int main()
 
                 printf("Ingrese monto de la multa: \n");
                 fflush(stdin);
-                scanf("%lf", buffer->multas[0].monto_total);
+                scanf("%f", &buffer->multas[0].monto_total);
                 fflush(stdin);
 
-                //nombre_titular = malloc(25);
                 printf("Ingrese el nombre del titular: \n");
                 fflush(stdin);
                 scanf("%24[^\n]s", nombre_titular);
@@ -164,8 +156,8 @@ int main()
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
 
-                for(int i=0; i <= buffer->cantMultas ; i++ ){
-                    printf("%s\t%.2f\n", buffer->multas[0].patente, buffer->multas[0].monto_total);
+                for(int i=0; i < buffer->cantMultas ; i++ ){
+                    printf("%s\t%.2f\n", buffer->multas[i].patente, buffer->multas[i].monto_total);
                 }
                 printf("%s",buffer->msg);
                 

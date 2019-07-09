@@ -40,14 +40,14 @@ int normalizarCadena(unsigned char *buf, int len) {
 
 void limpiarBuffer( t_buffer *buffer){
     buffer->opcion = 0;
-    free(buffer->msg);
+    strcpy(buffer->msg, "\0");
     buffer->cantMultas = 0;
     for(int i=0 ; i < MAX_BUFFER_MULTAS; i++){
         buffer->multas[i].cantidad_multas = 0;
         buffer->multas[i].monto_total = 0;
-        strcpy(buffer->multas[i].partido, '\0');
-        strcpy(buffer->multas[i].patente, '\0');
-        strcpy(buffer->multas[i].nombre_titular, '\0');
+        strcpy(buffer->multas[i].partido, "\0");
+        strcpy(buffer->multas[i].patente, "\0");
+        strcpy(buffer->multas[i].nombre_titular, "\0");
     }
 }
 
