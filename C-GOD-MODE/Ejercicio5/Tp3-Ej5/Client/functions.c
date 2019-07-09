@@ -45,9 +45,9 @@ void limpiarBuffer( t_buffer *buffer){
     for(int i=0 ; i < MAX_BUFFER_MULTAS; i++){
         buffer->multas[i].cantidad_multas = 0;
         buffer->multas[i].monto_total = 0;
-        buffer->multas[i].partido = '\0';
-        free(buffer->multas[i].patente);
-        free(buffer->multas[i].nombre_titular);
+        strcpy(buffer->multas[i].partido, '\0');
+        strcpy(buffer->multas[i].patente, '\0');
+        strcpy(buffer->multas[i].nombre_titular, '\0');
     }
 }
 

@@ -71,10 +71,12 @@ int main()
 
         printf("limpiandoBuffer\n");
         
-
-        buffer->multas[0].partido = partido;
+        strcpy(buffer->multas[0].partido, partido);
+	printf("sin normalizar: %s\n\n", buffer->multas[0].partido);
 
         normalizarCadena(buffer->multas[0].partido, strlen(buffer->multas[0].partido));
+
+	printf("normalizado: %s\n\n", buffer->multas[0].partido);
 
         mostrarMenu();
 
@@ -94,7 +96,7 @@ int main()
                 fflush(stdin);
                 scanf("%7s", patente);
                 fflush(stdin);
-                buffer->multas[0].patente = patente;
+                strcpy(buffer->multas[0].patente, patente);
 
 
                 printf("Ingrese monto de la multa: \n");
@@ -102,12 +104,12 @@ int main()
                 scanf("%lf", buffer->multas[0].monto_total);
                 fflush(stdin);
 
-                nombre_titular = malloc(25);
+                //nombre_titular = malloc(25);
                 printf("Ingrese el nombre del titular: \n");
                 fflush(stdin);
                 scanf("%24[^\n]s", nombre_titular);
                 fflush(stdin);
-                buffer->multas[0].nombre_titular = nombre_titular;
+                strcpy(buffer->multas[0].nombre_titular, nombre_titular);
 
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
@@ -159,7 +161,6 @@ int main()
                 devolverSemaforo(clientSem);
                 break;
             case 5:
-                
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
 

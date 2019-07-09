@@ -87,20 +87,19 @@ int mostrarLista(t_buffer *buffer, t_list *p, const char *partido, t_cmp cmp){
      if(listaVacia(p) == TODO_OK){
         return LISTA_VACIA;
     }
-
     int flag = 0;
-    t_dato *d = (t_dato *) malloc (sizeof (t_dato *));
+    //t_dato *d = (t_dato *) malloc (sizeof (t_dato *));
+    t_dato d;
     t_list *aux = p;
 
-    while (*aux){
-        *d = (*aux)->info;
-        if (cmp( d, partido) == TODO_OK) {
+    while (*aux != NULL){
+        d = (*aux)->info;
+        if (cmp( &d, partido) == TODO_OK) {
             flag = 1;
-            buffer->multas[buffer->cantMultas].patente = d->patente;
-            buffer->multas[buffer->cantMultas].monto_total = d->monto_total;
+            strcpy(buffer->multas[buffer->cantMultas].patente, d.patente);
+            buffer->multas[buffer->cantMultas].monto_total = d.monto_total;
             buffer->cantMultas++;
-            
-            printf("%s\t%.2f\n", d->patente, d->monto_total);
+            printf("%s\t%.2f\n", d.patente, d.monto_total);
             fflush(stdin);
         }
         aux = &(*aux)->sig;

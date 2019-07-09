@@ -172,7 +172,7 @@ int buscarMontoTotal(t_buffer *buffer, char *patente, char *partido, t_list *pl)
     dato.patente = patente;
     dato.partido = partido;
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
-        buffer->multas[0].patente = dato.patente;
+        strcpy(buffer->multas[0].patente, dato.patente);
         buffer->multas[0].monto_total = dato.monto_total;
 
         printf("%s\t%.2f\n", dato.patente, dato.monto_total);
