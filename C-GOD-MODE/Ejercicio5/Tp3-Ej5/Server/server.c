@@ -106,7 +106,6 @@ int main()
 
         switch (buffer->opcion) {
             case 1:
-                printf("caso 1");
                 if (ingresarMulta(buffer->multas[0].patente, buffer->multas[0].partido, buffer->multas[0].monto_total, buffer->multas[0].nombre_titular, &lista) == TODO_OK){
                     printf("Se ingreso la multa exitosamente.\n");
                     strcpy(buffer->msg, "Se ingreso la multa exitosamente.\n");
@@ -118,7 +117,6 @@ int main()
                 devolverSemaforo(responseSem);
                 break;
             case 2:
-                printf("caso 2");
                 if (registrosSuspender(buffer, &lista , buffer->multas[0].partido) == NOT_OK){
                     printf("No se encontraron registros a suspender.\n");
                     strcpy(buffer->msg, "No se encontraron registros a suspender.\n");

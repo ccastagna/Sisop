@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <string.h>
 
 // Bibliotecas propias.
 #include "functions.h"
@@ -24,9 +25,9 @@
 int main()
 {
     int code;
-
+    int i;
     //t_list lista;
-    char *partido = malloc(20), *patente, *nombre_titular;
+    char partido[100], patente[100], nombre_titular[100];
     float monto;
 
     key_t          ShmKEY;
@@ -61,8 +62,16 @@ int main()
     buffer = (t_buffer *) shmat(ShmID, NULL, 0);
     printf("buffer by shmat %p \n", buffer);  
 
-    printf("Ingrese el partido de su sede: \n");
-    scanf("%19[^\n]s", partido);
+    printf("Ingrese el partido de su sede: ");
+
+    do{
+	memset(partido, 0, 100);
+	strcpy(partido, "\0");
+        i = 0;
+        while((partido[i++] = getchar()) != '\n');
+    }while(strlen(partido) > 20);
+
+    partido[i-1] = '\0';
 
     while (1) {     
         pedirSemaforo(clientSem);
@@ -73,7 +82,7 @@ int main()
 
         mostrarMenu();
 
-        printf("Indique la opcion: \n");
+        printf("Indique la opcion: ");
         scanf ("%d", &code);
         while (code < 1 || code > 7){
             printf("Opcion invalida, ingrese un numero entre 1 y 7: \n");
@@ -82,12 +91,18 @@ int main()
 
         buffer->opcion = code;
 
+	fflush(stdin);
         switch (code) {
             case 1:
-                patente = malloc(8);
-                printf("Ingrese la patente: \n");
-                fflush(stdin);
-                scanf("%7s", patente);
+
+                do {
+		    printf("Ingrese la patente: ");
+		    memset(patente, 0, 100);
+                    i = 0;
+                    while((patente[i++] = getchar()) != '\n');
+                }while(strlen(patente) > 8 || strlen(patente) < 2);
+		partido[i-1] = '\0';
+
                 fflush(stdin);
                 strcpy(buffer->multas[0].patente, patente);
 
@@ -99,10 +114,18 @@ int main()
 
                 printf("Ingrese el nombre del titular: \n");
                 fflush(stdin);
-                scanf("%24[^\n]s", nombre_titular);
-                fflush(stdin);
-                strcpy(buffer->multas[0].nombre_titular, nombre_titular);
 
+                do{
+	            memset(nombre_titular, 0, 100);
+                    i=0;
+                    while((nombre_titular[i++] = getchar()) != '\n');
+                }while(strlen(nombre_titular) > 8);
+                partido[i-1] = '\0';
+
+                fflush(stdin);
+                
+                strcpy(buffer->multas[0].nombre_titular, nombre_titular);
+                
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
 
@@ -116,7 +139,7 @@ int main()
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
 
-                for(int i=0; i <= buffer->cantMultas ; i++ ){
+                for(i=0; i <= buffer->cantMultas ; i++ ){
                     printf("%s\n", buffer->multas[i].patente);
                 }
 
@@ -156,7 +179,7 @@ int main()
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
 
-                for(int i=0; i < buffer->cantMultas ; i++ ){
+                for(i=0; i < buffer->cantMultas ; i++ ){
                     printf("%s\t%.2f\n", buffer->multas[i].patente, buffer->multas[i].monto_total);
                 }
                 printf("%s",buffer->msg);
@@ -168,7 +191,6 @@ int main()
                 mostrarMenu();
                 break;
             case 7:
-                free(partido);
                 shmdt((void *) buffer);
                 devolverSemaforo(clientSem);
                 exit(0);
@@ -179,5 +201,5 @@ int main()
         }
     }
 
-    return TODO_OK;
+    return (int)TODO_OK;
 }
