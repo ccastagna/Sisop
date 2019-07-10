@@ -74,3 +74,9 @@ void devolverSemaforo(int idSemaforo) {
     opSem.sem_flg = 0;
     semop(idSemaforo,&opSem,1);
 }
+
+void mostrarAyuda(char *nombre) {
+   printf("\nSistema utilizado para conectarse al servidor central de infracciones de La Plata.\n\n");
+   printf("Para iniciar el cliente ejecute lo siguiente:\n");
+   printf("\t%s\n\n", nombre);
+}

@@ -26,5 +26,6 @@ void pedirSemaforo(int);
 
 void devolverSemaforo(int );
 
+void mostrarAyuda(char *);
 
 #endif // FUNCTIONS_H_INCLUDED

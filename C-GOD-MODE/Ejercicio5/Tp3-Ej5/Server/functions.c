@@ -225,3 +225,9 @@ void devolverSemaforo(int idSemaforo) {
 void eliminarSemaforo(int idSemaforo) {
     semctl(idSemaforo,0,IPC_RMID);
 }
+
+void mostrarAyuda(char *nombre) {
+   printf("\nSistema utilizado para levantar el servidor central de infracciones de La Plata.\n\n");
+   printf("Para iniciar el servidor ejecute lo siguiente:\n");
+   printf("\t%s\n\n", nombre);
+}

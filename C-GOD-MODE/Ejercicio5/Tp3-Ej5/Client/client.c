@@ -33,11 +33,18 @@ void cerrarClient(int signum){
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
+    if(argc == 2) {
+        if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "-H") || !strcmp(argv[1], "-?") || !strcmp(argv[1], "-a")) {
+                mostrarAyuda(argv[0]);
+                exit((int)TODO_OK);
+        }
+    }
+
+    
     int code;
     int i;
-    //t_list lista;
     char partido[100], patente[100], nombre_titular[100];
     float monto;
 
@@ -98,6 +105,7 @@ int main()
         printf("\nError al asociar la signal SIGSEGV con el handler.");
         return -1;
     }
+    
 
 
     buffer = (t_buffer *) shmat(ShmID, NULL, 0);

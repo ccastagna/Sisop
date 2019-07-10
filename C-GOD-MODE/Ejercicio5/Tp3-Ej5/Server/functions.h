@@ -70,4 +70,6 @@ void devolverSemaforo(int );
 
 void eliminarSemaforo(int );
 
+void mostrarAyuda(char *);
+
 #endif // FUNCTIONS_H_INCLUDED
