@@ -100,6 +100,11 @@ int main()
         return -1;
     }
 
+    if (signal(SIGSEGV, cerrarServer) < 0) {
+        printf("\nError al asociar la signal SIGSEGV con el handler.");
+        return -1;
+    }
+
     buffer->cantMultas = 0;
     while (1) {
         pedirSemaforo(requestSem);
