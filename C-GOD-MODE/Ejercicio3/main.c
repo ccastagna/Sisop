@@ -224,6 +224,8 @@ void *pruebaThread(){
     }
 }
 void imprimirDescripcion(){
+    printf("Utilice -H o -h o -? para ayuda\n");
+    printf("Utilice -D o -d para la descripcion del programa\n");
     printf("Sistema que recibe en un archivo una patente, una camara y una velocidad. \n");
     printf("Se muestra por pantalla dichos datos y de la misma forma se guardan en un \n");
     printf("denominado: “Transito_AAAAMMDD.txt”.\n");
@@ -234,6 +236,8 @@ void imprimirDescripcion(){
 }
 
 void imprimirAyuda(char *nombrePrograma){
+    printf("Utilice -H o -h o -? para ayuda\n");
+    printf("Utilice -D o -d para la descripcion del programa\n");
     printf("Para ejecutar el programa,  debe ingresar por la opción 3,  y  luego ingresar\n");
     printf("la dirección del archivo FIFO, con el nombre del mismo, entre comillas dobles\n");
     printf("EJ.: \"Desktop/Prueba/ArchivoFifo\" \n");
@@ -241,9 +245,8 @@ void imprimirAyuda(char *nombrePrograma){
     printf("en el mismo archivo FIFO, con el formato: \n");
     printf("Patente camara velocidad, cada campo separado por un espacio\n");
     printf("Ej.: AAA123 cam5 44\n");
-    printf("O bien ejecutar y pasar la url del fifo desde el primer parametro con comilla\n");
-    printf("simple.\n");
-    printf("Ej.: %s 'Desktop/Prueba/ArchivoFifo' \n", nombrePrograma);
+    printf("O bien ejecutar pasando la url del fifo.\n");
+    printf("Ej.: %s Desktop/Prueba/ArchivoFifo \n", nombrePrograma);
 }
 int empiezaConGuion(char *array){
     if(array[0] == '-'){
@@ -313,6 +316,8 @@ int main(int argc, char* argv[]) {
         }while(opcion!=3);
     }
     createDaemonProcess();
+    printf("Utilice -H o -h o -? para ayuda\n");
+    printf("Utilice -D o -d para la descripcion del programa\n");
     printf("Esperando entradas en: %s \n", fifoPath);
     printf("En una nueva consola, escriba en el archivo anterior: \n");
     printf("Patente Camara Velocidad \n");
