@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    
+
     int code;
     int i;
     char partido[100], patente[100], nombre_titular[100];
@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
     ShmID = shmget(ShmKEY, sizeof(t_buffer), 0666);
     if (ShmID < 0) {
         printf("*** shmget error (client) ***\n");
+        printf("PRIMERO SE DEBE EJECUTAR EL SERVIDOR.\n\n");
         exit(1);
     }    
 
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
     requestSem = obtenerSemaforo(requestSemTok);
     printf("\nIdentificador del semaforo de consultas al servidor : %d\n",requestSem);
     responseSem = obtenerSemaforo(responseSemTok);
-    printf("\nIdentificador del semaforo de respuesta de servidor: %d\n",responseSem);
+    printf("\nIdentificador del semaforo de respuesta de servidor: %d\n\n\n",responseSem);
     
     if(clientSem < 0 || requestSem < 0 || responseSem < 0){
         printf("\nERROR DE CONEXION...\n");
@@ -192,6 +193,10 @@ int main(int argc, char *argv[])
                     printf("%s\n", buffer->multas[i].patente);
                 }
 
+                if(buffer->cantMultas == 0){
+                    printf("No hay registros a suspender.\n\n\n");
+                }
+
                 printf("%s",buffer->msg);
 
                 limpiarBuffer(buffer);
@@ -237,9 +242,6 @@ int main(int argc, char *argv[])
                 devolverSemaforo(clientSem);
                 break;
             case 6:
-                mostrarMenu();
-                break;
-            case 7:
                 shmdt((void *) buffer);
                 devolverSemaforo(clientSem);
                 exit(0);

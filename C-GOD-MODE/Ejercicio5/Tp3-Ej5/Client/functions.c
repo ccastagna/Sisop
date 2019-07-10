@@ -6,14 +6,13 @@
 #include "functions.h"
 
 void mostrarMenu(){
-    printf("Menu de Opciones: \n");
+    printf("\n\n\nMenu de Opciones: \n");
     printf("1. Ingresar multa.\n");
     printf("2. Mostrar registros a suspender.\n");
     printf("3. Saldar multa.\n");
     printf("4. Buscar monto total de un infractor.\n");
     printf("5. Buscar monto total a pagar de todos los infractores.\n");
-    printf("6. Ver menu nuevamente.\n");
-    printf("7. Salir.\n");
+    printf("6. Salir.\n");
     fflush(stdin);
 }
 

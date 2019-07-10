@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
                 exit((int)TODO_OK);
         }
     }
-    
+
     int code;
 
     FILE *fp;
@@ -61,7 +61,6 @@ int main(int argc, char *argv[])
         printf("*** shmget error (server) ***\n");
         exit(1);
     }
-    printf("Server has received a shared memory of four integers...\n");
     
     buffer = (t_buffer *) shmat(ShmID, NULL, 0);
     
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
     requestSem = obtenerSemaforo(requestSemTok,0);
     printf("\nIdentificador del semaforo de consulta al servidor : %d\n",requestSem);
     responseSem = obtenerSemaforo(responseSemTok,0);
-    printf("\nIdentificador del semaforo de respuesta de servidor: %d\n",responseSem);
+    printf("\nIdentificador del semaforo de respuesta de servidor: %d\n\n\n",responseSem);
 
     crearLista(&lista);
     leerArchivo(&fp, &lista);
@@ -119,43 +118,66 @@ int main(int argc, char *argv[])
 
         switch (buffer->opcion) {
             case 1:
+                printf("Ingresando multa para la patente: %s  en el partido: %s \n\n", buffer->multas[0].patente, buffer->multas[0].partido);
+
                 if (ingresarMulta(buffer->multas[0].patente, buffer->multas[0].partido, buffer->multas[0].monto_total, buffer->multas[0].nombre_titular, &lista) == (int)TODO_OK){
-                    printf("Se ingreso la multa exitosamente.\n");
-                    strcpy(buffer->msg, "Se ingreso la multa exitosamente.\n");
-                } else{
-                    printf("La multa no se pudo generar, intente nuevamente.\n");
-                    strcpy(buffer->msg, "La multa no se pudo generar, intente nuevamente.\n");
+                    printf("Se ingreso la multa exitosamente.\n\n\n");
+                    strcpy(buffer->msg, "Se ingreso la multa exitosamente.\n\n\n");
+
+                } else {
+                    printf("La multa no se pudo generar, intente nuevamente.\n\n\n");
+                    strcpy(buffer->msg, "La multa no se pudo generar, intente nuevamente.\n\n\n");
                 }
 
                 devolverSemaforo(responseSem);
                 break;
             case 2:
+                printf("Buscando registros a suspender... \n\n");
+
                 if (registrosSuspender(buffer, &lista , buffer->multas[0].partido) == (int)NOT_OK){
-                    printf("No se encontraron registros a suspender.\n");
-                    strcpy(buffer->msg, "No se encontraron registros a suspender.\n");
+                    printf("No se encontraron registros a suspender.\n\n\n");
+                    strcpy(buffer->msg, "No se encontraron registros a suspender.\n\n\n");
+
+                } else {
+                    printf("Se encontraron los registros a suspender.\n\n\n");
                 }
+
                 devolverSemaforo(responseSem);
                 break;
             case 3:
+                printf("Saldando multa para la patente: %s  en el partido: %s \n\n",buffer->multas[0].patente, buffer->multas[0].partido);
+
                 if (saldarMulta(buffer->multas[0].patente, buffer->multas[0].partido, &lista) == (int)NOT_OK){
-                    printf("La patente ingresada no tiene multas a saldar.\n");
-                    strcpy(buffer->msg, "La patente ingresada no tiene multas a saldar.\n");
+                    printf("La patente ingresada no tiene multas a saldar.\n\n\n");
+                    strcpy(buffer->msg, "La patente ingresada no tiene multas a saldar.\n\n\n");
+
+                } else {
+                    printf("Las multas para la patente: %s estan saldadas correctamente...\n\n\n", buffer->multas[0].patente);
+                    strcpy(buffer->msg, "Multas saldadas correctamente...\n\n\n");
                 }
 
                 devolverSemaforo(responseSem);
                 break;
             case 4:
+                printf("Buscando monto total para la patente: %s  en el partido: %s \n\n",buffer->multas[0].patente, buffer->multas[0].partido);
+
                 if(buscarMontoTotal(buffer, buffer->multas[0].patente, buffer->multas[0].partido, &lista) == (int)NOT_OK){
-                    printf("La patente ingresada no tiene multas pendientes.\n");
-                    strcpy(buffer->msg, "La patente ingresada no tiene multas pendientes.\n");
+                    printf("La patente ingresada no tiene multas pendientes.\n\n\n");
+                    strcpy(buffer->msg, "La patente ingresada no tiene multas pendientes.\n\n\n");
+                } else {
+                    printf("Las multas para la patente: %s  se encontraron correctamente. \n\n\n", buffer->multas[0].patente);
                 }
 
                 devolverSemaforo(responseSem);
                 break;
             case 5:
-		if (verMontoTotalInfractores (buffer, &lista, buffer->multas[0].partido) == (int)NOT_OK){
-                    printf("No hay patentes con multas pendientes.\n");
-                    strcpy(buffer->msg, "No hay patentes con multas pendientes.\n");
+                printf("Buscando monto total a pagar de todos los infractores del partido: %s \n\n", buffer->multas[0].partido);
+
+		        if (verMontoTotalInfractores (buffer, &lista, buffer->multas[0].partido) == (int)NOT_OK){
+                    printf("No hay patentes con multas pendientes.\n\n\n");
+                    strcpy(buffer->msg, "No hay patentes con multas pendientes.\n\n\n");
+                } else {
+                    printf("Los montos totales de todos los infractores se encontraron con exito.\n\n\n");
                 }
 
                 devolverSemaforo(responseSem);
