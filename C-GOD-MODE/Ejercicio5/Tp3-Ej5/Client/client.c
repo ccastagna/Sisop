@@ -17,9 +17,20 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <string.h>
+#include <signal.h>
 
 // Bibliotecas propias.
 #include "functions.h"
+
+t_buffer *buffer;
+int clientSem;
+
+void cerrarClient(int signum){
+	printf("terminando client...\n");
+	limpiarBuffer(buffer);
+        devolverSemaforo(clientSem);
+	exit(0);
+}
 
 
 int main()
@@ -32,8 +43,7 @@ int main()
 
     key_t          ShmKEY;
     int            ShmID;
-    t_buffer  *buffer;
-    int clientSem, requestSem, responseSem;
+    int requestSem, responseSem;
     
     ShmKEY = ftok("../Server/", 'x');
     ShmID = shmget(ShmKEY, sizeof(t_buffer), 0666);
@@ -58,6 +68,37 @@ int main()
         printf("PRIMERO SE DEBE EJECUTAR EL SERVIDOR.\n\n");
         exit(2);
     }
+
+    if (signal(SIGQUIT, cerrarClient) < 0) {
+        printf("\nError al asociar la signal SIGQUIT con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGKILL, cerrarClient) < 0) {
+        printf("\nError al asociar la signal SIGKILL con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGSTOP, cerrarClient) < 0) {
+        printf("\nError al asociar la signal SIGSTOP con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGINT, cerrarClient) < 0) {
+        printf("\nError al asociar la signal SIGINT con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGTERM, cerrarClient) < 0) {
+        printf("\nError al asociar la signal SIGTERM con el handler.");
+        return -1;
+    }
+
+    if (signal(SIGSEGV, cerrarClient) < 0) {
+        printf("\nError al asociar la signal SIGSEGV con el handler.");
+        return -1;
+    }
+
 
     buffer = (t_buffer *) shmat(ShmID, NULL, 0);
     printf("buffer by shmat %p \n", buffer);  
