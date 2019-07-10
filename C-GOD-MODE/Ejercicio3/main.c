@@ -200,8 +200,11 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
     readbuf[read_bytes] = '\0';
 
     readString(readbuf, value);
-    fprintf(fpToTraffic,"%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
-    printf("%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
+    
+    if((*value).speed != 0){
+        fprintf(fpToTraffic,"%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
+        printf("%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
+    }
 
     if(isMaximumSpeedExceded(MAXIMUM_SPEED, (*value).speed) ){
         time_t auxBillDate = time(NULL);
