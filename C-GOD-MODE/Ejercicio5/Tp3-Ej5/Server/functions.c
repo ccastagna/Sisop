@@ -112,7 +112,7 @@ int ingresarMulta(char *patente, char *partido, float monto, char *nombre_titula
 /*
     Recibe la patente y devuelve si existe o no.
 */
-int existePatente(const t_dato *dato, t_list *pl) {
+int existePatente(t_dato *dato, t_list *pl) {
     return buscarEnListaNoOrdenadaPorClave (pl, dato, compararPatente);
 }
 

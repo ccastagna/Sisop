@@ -38,7 +38,7 @@ int ingresarMulta(char*, char*, float, char*, t_list *);
 /*
     Recibe la patente y devuelve si existe o no.
 */
-int existePatente(const t_dato*, t_list *);
+int existePatente(t_dato*, t_list *);
 
 /*
     Buscar lista de registros a suspender. Los registros a suspender son aquellos

@@ -83,7 +83,7 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
     return (int)NOT_OK;
 }
 
-int mostrarLista(t_buffer *buffer, t_list *p, const char *partido, t_cmp cmp){
+int mostrarLista(t_buffer *buffer, t_list *p, const char *partido, t_cmp2 cmp){
      if(listaVacia(p) == TODO_OK){
         return (int)LISTA_VACIA;
     }
@@ -114,7 +114,7 @@ int mostrarLista(t_buffer *buffer, t_list *p, const char *partido, t_cmp cmp){
 
 /** FUNCIONES EXTRA */
 
-int *compararPatente (const t_dato *d1, const t_dato *d2) {
+int compararPatente (const t_dato *d1, const t_dato *d2) {
     if (strcmp(d1->partido, d2->partido) == 0 &&
         strcmp(d1->patente, d2->patente) == 0) {
         return (int)TODO_OK;
@@ -124,7 +124,7 @@ int *compararPatente (const t_dato *d1, const t_dato *d2) {
 }
 
 
-int *compararPartido (const t_dato *d1, const char *d2) {
+int compararPartido (const t_dato *d1, const char *d2) {
     if (strcmp(d1->partido, d2) == 0) {
         return (int)TODO_OK;
     } else {
