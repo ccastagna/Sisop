@@ -85,42 +85,42 @@ int main()
         printf("Indique la opcion: ");
         scanf ("%d", &code);
         while (code < 1 || code > 7){
-            printf("Opcion invalida, ingrese un numero entre 1 y 7: \n");
+            printf("Opcion invalida, ingrese un numero entre 1 y 7: ");
             scanf ("%d", &code);
         }
 
         buffer->opcion = code;
-
-	fflush(stdin);
+	
         switch (code) {
             case 1:
-
+		getchar();
                 do {
 		    printf("Ingrese la patente: ");
 		    memset(patente, 0, 100);
                     i = 0;
                     while((patente[i++] = getchar()) != '\n');
                 }while(strlen(patente) > 8 || strlen(patente) < 2);
-		partido[i-1] = '\0';
+		patente[i-1] = '\0';
 
                 fflush(stdin);
                 strcpy(buffer->multas[0].patente, patente);
 
 
-                printf("Ingrese monto de la multa: \n");
+                printf("Ingrese monto de la multa: ");
                 fflush(stdin);
                 scanf("%f", &buffer->multas[0].monto_total);
                 fflush(stdin);
 
-                printf("Ingrese el nombre del titular: \n");
+                printf("Ingrese el nombre del titular: ");
                 fflush(stdin);
 
+		getchar();
                 do{
 	            memset(nombre_titular, 0, 100);
                     i=0;
                     while((nombre_titular[i++] = getchar()) != '\n');
                 }while(strlen(nombre_titular) > 8);
-                partido[i-1] = '\0';
+                nombre_titular[i-1] = '\0';
 
                 fflush(stdin);
                 

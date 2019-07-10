@@ -59,7 +59,7 @@ int obtenerSemaforo(key_t claveSEM) {
 }
 
 void pedirSemaforo(int idSemaforo) {
-    printf("pidiendo Semaforo\n");
+    //printf("pidiendo Semaforo\n");
     struct sembuf opSem;
     opSem.sem_num = 0;
     opSem.sem_op = -1;
