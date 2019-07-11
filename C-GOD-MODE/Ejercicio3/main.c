@@ -1,3 +1,16 @@
+// Script Tp3-Ej3
+
+// Trabajo practico 3
+// Ejercicio 3
+// Primera Reentrega
+
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
+
 #include "functions.h"
 #include "colaDinamica.h"
 #include <time.h>
@@ -11,17 +24,6 @@
 #include <fcntl.h>
 #include <errno.h>
 
-/**
-    Trabajo Práctico 3
-    Ejercicio 3
-    Primer Reentrega
-Integrantes del Equipo:
-    Franco Dario Scarpello 37842567
-    Federico Piacentini 36258738
-    Hernan Baini 32883285
-    Miguel Amengual 35991055
-    Cristian Castagna 37398696
-*/
 FILE *fpToTraffic; // TODOS
 char fifoPath[300];
 t_cola cola;

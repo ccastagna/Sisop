@@ -1,6 +1,3 @@
-#ifndef INFO_H_INCLUDED
-#define INFO_H_INCLUDED
-
 // Script Tp3-Ej4-Cliente
 
 // Trabajo práctico 3
@@ -13,6 +10,9 @@
 // Hernan Baini 32883285
 // Miguel Amengual 35991055
 // Cristian Castagna 3739869
+
+#ifndef INFO_H_INCLUDED
+#define INFO_H_INCLUDED
 
 typedef struct t_cabecera {
     int identificador;

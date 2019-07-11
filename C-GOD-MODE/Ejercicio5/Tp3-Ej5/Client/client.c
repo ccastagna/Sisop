@@ -1,8 +1,8 @@
 // Script Tp3-Ej5-Client
 
-// Trabajo pr�ctico 3
+// Trabajo Practico 3
 // Ejercicio 5
-// Primer Reentrega
+// Primera Reentrega
 
 // Integrantes del Equipo
 // Franco Dario Scarpello 37842567

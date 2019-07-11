@@ -1,6 +1,3 @@
-#ifndef INFO_H_INCLUDED
-#define INFO_H_INCLUDED
-
 // Script Tp3-Ej4-Servidor
 
 // Trabajo práctico 3
@@ -14,6 +11,8 @@
 // Miguel Amengual 35991055
 // Cristian Castagna 3739869
 
+#ifndef INFO_H_INCLUDED
+#define INFO_H_INCLUDED
 
 typedef struct {
     char *partido;
