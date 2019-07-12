@@ -216,8 +216,10 @@ void* threadRoutine(void *arg)
           if (atoi(idStr) == thread->ids_array[pos])
           {
             found++;
+          }else{
+            pos++;
           }
-          pos++;
+
         }
 
         if (!found)
