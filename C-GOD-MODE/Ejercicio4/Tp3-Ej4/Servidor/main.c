@@ -2,7 +2,7 @@
 
 // Trabajo práctico 3
 // Ejercicio 4
-// Primera-Reentrega
+// Primera Reentrega
 
 // Integrantes del Equipo
 // Franco Dario Scarpello 37842567
@@ -33,18 +33,17 @@
 #define MAX                         1024
 #define SA                          struct sockaddr
 #define MAX_PENDING_CONNECTIONS     5
-#define MAX_CLIENT                  10
 
-// Lista compartida por todos los clientes
+// Lista compartida por todos los clientes.
 t_list lista;
 
-// Semaforo mutex para lock de recursos unicos
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+// Semaforo mutex para recursos compartidos.
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-// Contador de clientes actuales
+// Contador de clientes actuales.
 int client_counter;
 
-// Mensajes a clientes
+// Mensajes a clientes.
 char welcome[] = "Bienvenido al sistema de infracciones de transito del gobierno.\n\0";
 char indicate_option[] = "\nIndique la opcion: \0";
 char invalid_option[] = "\nOpcion invalida, ingrese un numero entre 1 y 7: \0";
@@ -53,50 +52,60 @@ char ask_amount[] = "Ingrese monto de la multa: \0";
 char ask_titular_name[] = "Ingrese nombre del titular: \0";
 char fee_succesfull[] = "Se ingreso la multa exitosamente.\n\0";
 char fee_unsuccesfull[] = "La multa no se pudo generar, intente nuevamente.\n\0";
-char paid_pending_fee[] = "Se saldaron las multas de la patentes %s";
+char paid_pending_fee[] = "Se saldaron las multas de la patente ingresada.\n\0";
 char not_pending_fee[] = "La patente ingresada no tiene multas a saldar.\n\0";
 char common_not_found_message[] = "No se encontraron infractores.\n\0";
 
+// Declaracion de prototipos de funcion.
 void INThandler(int);
 void *operar(void *);
 
+// logica principal.
 int main(int argc, char *argv[]) {
-    // Puntero a archivo de la BD
+    // Puntero a archivo de la BD.
     FILE *fp;
 
-    // Declarcion de variables
-    int serverSocket, newSocket, len, portno;
-    struct sockaddr_in servaddr, client;
+    // Declarcion de variables.
+    int serverSocket, newSocket, portno, max_client;
+    struct sockaddr_in servaddr;
     struct sockaddr_storage serverStorage;
     socklen_t addr_size;
 
-    // Controlar seniales enviadas como Ctrl+C
+    // Controlar senhales enviadas como Ctrl+C.
     signal(SIGINT, INThandler);
 
-    if (argc < 2){
-	fprintf(stderr, "Uso %s <puerto_servidor>\n", argv[0]);
-	exit(NOT_OK);
+    if(argc == 2) {
+        if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "-H") || !strcmp(argv[1], "-?")) {
+                mostrarAyuda(argv[0]);
+                exit((int)TODO_OK);
+        }
     }
     
-    // mapeo a variables los parametros recibidos
+    if(argc < 3) {
+	fprintf(stderr,"\nIngrese %s -h para obtener ayuda.\n\n", argv[0]);
+        exit((int)TODO_OK);
+    }
+ 
+    // Mapeo a variables los parametros recibidos.
     portno = atoi(argv[1]);
+    max_client = atoi(argv[2]);
 
-    // Creo la lista que estará compartida para todos los sockets
+    // Creo la lista que estará compartida para todos los sockets.
     crearLista(&lista);
     leerArchivo(&fp, &lista);
 
-    // socket create and verification
+    // Creacion y verificacion de socket.
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1) {
         printf("Socket creation failed...\n");
-        exit(NOT_OK);
+        exit((int)NOT_OK);
     }
     else {
         printf("Socket successfully created...\n");
     }
     memset(&servaddr, 0, sizeof(servaddr));
 
-    // assign IP, PORT
+    // Asigno ip y puerto.
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(portno);
@@ -104,7 +113,7 @@ int main(int argc, char *argv[]) {
     // Binding newly created socket to given IP and verification
     if ((bind(serverSocket, (SA*)&servaddr, sizeof(servaddr))) != 0) {
         printf("socket bind failed...\n");
-        exit(NOT_OK);
+        exit((int)NOT_OK);
     }
     else{
         printf("Socket successfully binded..\n");
@@ -113,29 +122,31 @@ int main(int argc, char *argv[]) {
     // Server listo para escuchar y verificacion
     if ((listen(serverSocket, MAX_PENDING_CONNECTIONS)) != 0) {
         printf("Listen failed...\n");
-        exit(NOT_OK);
+        exit((int)NOT_OK);
     }
     else {
         printf("Server listening on port %d..\n", portno);
     }
 
-    pthread_t tid[MAX_CLIENT];
+    pthread_t tid;
 
     client_counter = 0;
-    // len = sizeof(cli);
 
     while(1) {
-        //Accept call creates a new socket for the incoming connection
-        addr_size = sizeof serverStorage;
-        newSocket = accept(serverSocket, (struct sockaddr *) &serverStorage, &addr_size);
 
-	//for each client request creates a thread and assign the client request to it to process
-        //so the main thread can entertain next request
-        if( pthread_create(&tid[client_counter], NULL, operar, &newSocket) != 0 ){
-	   printf("Failed to create thread...\n");
-	}
+	if(client_counter < max_client) {
+		// Aceptar llamada de creacion de nuevo socket por conexion entrante.
+        	addr_size = sizeof(serverStorage);
+	        newSocket = accept(serverSocket, (struct sockaddr *) &serverStorage, &addr_size);
+
+		// Por cada peticion de nuevo cliente creo un thread y asigno la peticion del cliente a su procesamiento.
+	        // El thread pricipal puede atender a la proxima solicitud
+        	if( pthread_create(&tid, NULL, operar, &newSocket) != 0 ){
+		   printf("Failed to create thread...\n");
+		}
 
 	client_counter ++;
+	}
 	   
     }
 
@@ -149,7 +160,7 @@ int main(int argc, char *argv[]) {
 void INThandler(int sig) {
      char  c;
 
-     printf("Realmente desea cerrar el servidor? [S/N]: ");
+     printf("\nRealmente desea cerrar el servidor? [S/N]: ");
      c = getchar();
      if (c == 's' || c == 'S') {
           exit(0);
@@ -180,6 +191,8 @@ void *operar(void *arg) {
     // Identificador de cabecera
     int identificador;
 
+    printf("Server accepted client %d...\n", sockfd);
+
     // Muestro mensaje de bienvenida
     escribirMensaje(sockfd, id_welcome, welcome, strlen(welcome));
 
@@ -195,13 +208,14 @@ void *operar(void *arg) {
     // Le envio menu al cliente
     memset(buff, 0, MAX);
     mostrarMenu(buff);
+    printf("El cliente %d obtuvo el menu de opciones.\n", sockfd);
     escribirMensaje(sockfd, id_menu, buff, strlen(buff));
     
     while (1) {
         sleep(1);
         // Le pido a cliente que ingrese una opcion
         memset(buff, 0, MAX);
-	escribirMensaje(sockfd, id_indicate_option, indicate_option, sizeof(indicate_option));
+	escribirMensaje(sockfd, id_indicate_option, indicate_option, strlen(indicate_option));
         fflush(stdout);
 
         // Leo opcion ingresada por el cliente
@@ -220,12 +234,14 @@ void *operar(void *arg) {
         fflush(stdout);
 
         switch (code) {
-            case 1:
+            case 1: // Ingresar multa nueva.
                 // Le pido al usuario que ingrese la patente.
 		escribirMensaje(sockfd, id_ask_patente, ask_patente, strlen(ask_patente));
                 memset(buff, 0, MAX);
                 leerMensaje(sockfd, &identificador, buff);
                 strcpy(patente, buff);
+
+		printf("El cliente %d ingreso la patente %s.\n", sockfd, patente);
 
                 // Le pido al usuario que ingrese el monto de la multa.
                 escribirMensaje(sockfd, id_ask_amount, ask_amount, strlen(ask_amount));
@@ -235,6 +251,8 @@ void *operar(void *arg) {
                 leerMensaje(sockfd, &identificador, buff);
                 monto = atof(buff);
 
+		printf("El cliente %d ingreso el monto %.2f.\n", sockfd, monto);
+
                 // Le pido al usuario que ingrese el nombre del titular.
 		escribirMensaje(sockfd, id_ask_titular_name, ask_titular_name, strlen(ask_titular_name));
                 
@@ -243,25 +261,41 @@ void *operar(void *arg) {
                 leerMensaje(sockfd, &identificador, buff);
                 strcpy(nombre_titular, buff);
 
-                if (ingresarMulta(patente, partido, nombre_titular, monto, &lista) == TODO_OK){
-                   escribirMensaje(sockfd, id_fee_succesfull, fee_succesfull, strlen(fee_succesfull));
-                } else{
-		    escribirMensaje(sockfd, id_fee_unsuccesfull, fee_unsuccesfull, strlen(fee_unsuccesfull));
+		printf("El cliente %d ingreso el nombre titular %s.\n", sockfd, nombre_titular);
+		
+		if(strlen(patente) > 2 && strlen(nombre_titular) > 2 && monto > 0) {
+			pthread_mutex_lock(&mutex);
+                	if (ingresarMulta(patente, partido, nombre_titular, monto, &lista) == TODO_OK){
+				printf("El cliente %d ingreso multa exitosamente para la patente %s en partido %s.\n",sockfd, patente, partido);
+				escribirMensaje(sockfd, id_fee_succesfull, fee_succesfull, strlen(fee_succesfull));
+	                } else {
+				printf("El cliente %d no pudo ingresar multa para la patente %s en partido %s.\n",sockfd, patente, partido);
+				escribirMensaje(sockfd, id_fee_unsuccesfull, fee_unsuccesfull, strlen(fee_unsuccesfull));
+                	}
+			pthread_mutex_unlock(&mutex);
+		} else {
+			printf("El cliente %d no pudo ingresar multa para la patente %s en partido %s.\n",sockfd, patente, partido);
+			escribirMensaje(sockfd, id_fee_unsuccesfull, fee_unsuccesfull, strlen(fee_unsuccesfull));
                 }
+
                 fflush(stdout);
                 break;
-            case 2:
+            case 2: // Obtener registros a suspender.
                 memset(buff, 0, MAX);
 
+		pthread_mutex_lock(&mutex);
                 if (registrosSuspender(&lista ,partido, buff) == TODO_OK) {
-		   escribirMensaje(sockfd, id_registros_suspender, buff, strlen(buff));
+		    printf("El cliente %d obtuvo los registros a suspender para el partido %s.\n",sockfd, partido);
+		    escribirMensaje(sockfd, id_registros_suspender, buff, strlen(buff));
                 } else{
-		    escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, sizeof(common_not_found_message));
+		    printf("El cliente %d no pudo obtener los registros a suspender para el partido %s.\n",sockfd, partido);	
+		    escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, strlen(common_not_found_message));
                 }
+		pthread_mutex_unlock(&mutex);
 
                 fflush(stdout);
                 break;
-            case 3:
+            case 3: // Saldar multa.
 		// Pido patente al cliente.
 		escribirMensaje(sockfd, id_ask_patente, ask_patente, strlen(ask_patente));
 
@@ -269,19 +303,24 @@ void *operar(void *arg) {
                 memset(buff, 0, MAX);
                 leerMensaje(sockfd, &identificador, buff);
                 strcpy(patente, buff);
-
-                if (saldarMulta(patente, partido, &lista) == NOT_OK){
+		printf("El cliente %d busca infractor con patente %s.\n", sockfd, patente);
+		
+		pthread_mutex_lock(&mutex);
+                if (saldarMulta(patente, partido, &lista) == TODO_OK){
+			printf("El cliente %d saldo las multas de la patente %s para el partido %s.\n",sockfd, patente, partido);
 		    	escribirMensaje(sockfd, id_paid_pending_fee, paid_pending_fee, strlen(paid_pending_fee));
                 } else {
+			printf("El cliente %d no pudo saldar las multas de la patente %s para el partido %s.\n",sockfd, patente, partido);
 			escribirMensaje(sockfd, id_not_pending_fee, not_pending_fee, strlen(not_pending_fee));
 		}
+		pthread_mutex_unlock(&mutex);
                 fflush(stdout);
                 break;
-            case 4:
-                // Le pido al cliente que ingrese patente
+            case 4: // Obtener datos de un infractor.
+                // Le pido al cliente que ingrese patente.
 		escribirMensaje(sockfd, id_ask_patente, ask_patente, strlen(ask_patente));
 
-                // Leo la patente enviada por el cliente
+                // Leo la patente enviada por el cliente.
                 memset(buff, 0, MAX);
                 leerMensaje(sockfd, &identificador, buff);
                 strcpy(patente, buff);
@@ -289,40 +328,49 @@ void *operar(void *arg) {
                 memset(buff, 0, MAX);
                 printf("El cliente %d busca infractor con patente %s.\n", sockfd, patente);
 
+		pthread_mutex_lock(&mutex);
                 // Le indico al usuario lo que debe la patente o le indico que no existe.
                 if (buscarMontoTotal(patente, partido, &lista, buff) == TODO_OK) {
+			printf("El cliente %d encontro los datos de la patente %s para el partido %s.\n", sockfd, patente, partido);
          		escribirMensaje(sockfd, id_buscar_infractor, buff, strlen(buff));
                 } else {
-		    escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, strlen(common_not_found_message));
-                }
-
-                fflush(stdout);
-                break;
-            case 5:
-                memset(buff, 0, MAX);
-
-                // Si hay infractores para el partido los muestro, sino indico que no hay.
-		if(verMontoTotalInfractores (&lista, partido, buff) == TODO_OK) {
-			escribirMensaje(sockfd, id_monto_total_infractores, buff, strlen(buff));
-                } else{
+			printf("El cliente %d no encontro los datos de la patente %s para el partido %s.\n", sockfd, patente, partido);
 			escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, strlen(common_not_found_message));
                 }
+		pthread_mutex_unlock(&mutex);
 
                 fflush(stdout);
                 break;
-            case 6:
+            case 5: // Obtener todos los infractores de un partido.
+                memset(buff, 0, MAX);
+
+		pthread_mutex_lock(&mutex);
+                // Si hay infractores para el partido los muestro, sino indico que no hay.
+		if(verMontoTotalInfractores (&lista, partido, buff) == TODO_OK) {
+			printf("El cliente %d encontro los infractores para el partido %s.\n", sockfd, partido);
+			escribirMensaje(sockfd, id_monto_total_infractores, buff, strlen(buff));
+                } else{
+			printf("El cliente %d no encontro infractores para el partido %s.\n", sockfd, partido);
+			escribirMensaje(sockfd, id_common_not_found_message, common_not_found_message, strlen(common_not_found_message));
+                }
+		pthread_mutex_unlock(&mutex);
+
+                fflush(stdout);
+                break;
+            case 6: // Mostrar menu.
 		memset(buff, 0, MAX);
                 mostrarMenu(buff);
+		printf("El cliente %d obtuvo el menu de opciones.\n", sockfd);
 		escribirMensaje(sockfd, id_menu, buff, strlen(buff));
                 fflush(stdout);
                 break;
-            case 7:
+            case 7: // Salida de cliente.
                 printf("El cliente %d cierra la sesion exitosamente.\n", sockfd);
                 client_counter--;
 		close(sockfd);
 		pthread_exit(NULL);
                 break;
-            default:
+            default: // Salida de cliente.
                 printf("Se cierra la sesion del cliente %d debido a un problema.\n", sockfd);
 		client_counter--;
 		close(sockfd);

@@ -1,16 +1,15 @@
-/**
-    Trabajo Práctico 3
-    Ejercicio 1
-    Entrega
+// Script Tp3-Ej1
 
-Integrantes del Equipo:
+// Trabajo práctico 3
+// Ejercicio 1
+// Primera Reentrega
 
-    Franco Dario Scarpello 37842567
-    Federico Piacentini 36258738
-    Hernan Baini 32883285
-    Miguel Amengual 35991055
-    Cristian Castagna 37398696
-*/
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
 
 #include "Funciones.h"
 

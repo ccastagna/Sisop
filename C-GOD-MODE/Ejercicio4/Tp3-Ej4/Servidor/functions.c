@@ -1,4 +1,32 @@
+// Script Tp3-Ej4-Servidor
+
+// Trabajo práctico 3
+// Ejercicio 4
+// Primera Reentrega
+
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
+
 #include "functions.h"
+
+/*
+ * Funcion para mostrar ayuda del servidor.
+ */
+void mostrarAyuda(char *nombre) {
+   printf("\nSistema utilizado para levantar el servidor central de infracciones de La Plata.\n\n");
+   printf("Para iniciar el servidor ejecute lo siguiente:\n");
+   printf("\t%s <puerto_servidor> <cantidad_clientes>\n\n", nombre);
+   printf("Parametros:\n");
+   printf("\t<puerto_servidor>: puerto en el cual sera hosteado el servidor.\n");
+   printf("\t<cantidad_clientes>: cantidad de clientes que pueden operar en simultaneo.\n\n");
+   printf("Ejemplo:\n");
+   printf("\t%s 8181 10\n\n", nombre);
+}
+
 
 void mostrarMenu(char *response){
      strcpy(response,  "Menu de Opciones: \n \
@@ -122,11 +150,12 @@ int ingresarMulta(char *patente, char *partido, char *nombre_titular, const floa
     t_dato dato;
     dato.partido = partido;
     dato.patente = patente;
-    dato.nombre_titular = nombre_titular;
 
     if (existePatente(&dato, pl) == TODO_OK){
+	dato.nombre_titular = nombre_titular;
         buscarYActualizar (pl, &dato, monto, compararPatente);
     } else {
+	dato.nombre_titular = nombre_titular;
         dato.cantidad_multas = 1;
         dato.monto_total = monto;
         insertarAlFinal(pl, &dato);
@@ -196,16 +225,23 @@ int buscarMontoTotal(char *patente, char *partido, t_list *pl, char *buff){
     int flag = 0;
     char *aux_monto = malloc(12);
     *aux_monto = '\0';
-	
+    char *aux_cantidad_multas = malloc(5);
+    *aux_cantidad_multas = '\0';	
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
 	flag = 1;
         strcat(buff, dato.patente);
-        strcat(buff, "\t");
-        sprintf(aux_monto, "%.2f", dato.monto_total);
+        strcat(buff, " ");
+        strcat(buff, dato.nombre_titular);
+	strcat(buff, " ");
+	sprintf(aux_monto, "%.2f", dato.monto_total);
         strcat(buff, aux_monto);
+	strcat(buff, " ");
+	sprintf(aux_cantidad_multas, "%d", dato.cantidad_multas);
+	strcat(buff, aux_cantidad_multas);
         strcat(buff, "\n\0");
     }
     free(aux_monto);
+    free(aux_cantidad_multas);
     
     if(flag == 1){
 	    return (int)TODO_OK;

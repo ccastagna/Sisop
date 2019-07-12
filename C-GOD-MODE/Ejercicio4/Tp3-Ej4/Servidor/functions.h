@@ -1,3 +1,16 @@
+// Script Tp3-Ej4-Servidor
+
+// Trabajo práctico 3
+// Ejercicio 4
+// Primera Reentrega
+
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
+
 #ifndef FUNCTIONS_H_INCLUDED
 #define FUNCTIONS_H_INCLUDED
 
@@ -13,15 +26,17 @@
 #define NO_EXISTE_PATENTE   0
 #define EXISTE_PATENTE      1
 
-#define NOT_OK  0
-#define TODO_OK 1
-
 // Usado para archivos
 #define DATABASE_NAME	    "infractores" // nombre de la base de datos.
 #define READ_TEXT           "rt"    //Abre un fichero de texto para lectura.
 #define READ_TEXT_UPDATE    "r+t"   //Abre un fichero de texto para actualización (lectura y escritura).
 #define WRITE_TEXT          "wt"    //Crea o pisa el contenido de un archivo.
 #define CON_MSG             1
+
+/*
+ * Funcion para mostrar la ayuda del servidor.
+ */
+void mostrarAyuda(char *);
 
 /*
  * Recibe un buffer donde guardar el menu.

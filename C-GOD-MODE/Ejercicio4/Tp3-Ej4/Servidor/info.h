@@ -1,3 +1,16 @@
+// Script Tp3-Ej4-Servidor
+
+// Trabajo práctico 3
+// Ejercicio 4
+// Primera Reentrega
+
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
+
 #ifndef INFO_H_INCLUDED
 #define INFO_H_INCLUDED
 

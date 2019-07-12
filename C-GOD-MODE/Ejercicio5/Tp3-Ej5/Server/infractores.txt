@@ -4,10 +4,10 @@ lanus|HIA333|Marcos|3|100.50
 lanus|GGG222|Franco|2|20000.00
 lanus|EEE111|Pedro|4|10000.00
 lanus|BBB555|Miguel|2|25000.00
-lanus|XAX636|Miguel|4|20001.00
 la matanza|PEP111|Matos|2|100.99
 la matanza|PAP900|Franco|1|100.92
 la plata|IYY491|Franco Sc|1|59.59
 banfield|KKJ751|Pedro Perez|1|1000.99
 haedo|ADC345|Norberto|1|2000.00
 palomar|aaa000|pepe|1|2000.00
+lanus|YUI193|Franco|1|100.82

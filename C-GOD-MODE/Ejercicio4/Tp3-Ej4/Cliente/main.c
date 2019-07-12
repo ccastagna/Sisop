@@ -44,16 +44,22 @@ int main(int argc, char *argv[]) {
     char buff[60];
     int identificador;
     signal(SIGINT, &SignalInterruptHandler);
+    if(argc == 2) {
+	if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "-H") || !strcmp(argv[1], "-?")) {
+		mostrarAyuda(argv[0]);
+		exit((int)TODO_OK);
+    	}
+    }
 
     if (argc < 4) {
-        fprintf(stderr,"Uso %s <ip_servidor> <puerto_servidor> <partido>\n", argv[0]);
-        exit(NOT_OK);
+        fprintf(stderr,"\nIngrese %s -h para obtener ayuda.\n\n", argv[0]);
+        exit((int)TODO_OK);
     }
 
     portno = atoi(argv[2]);
 
     // partido al que pertenece el cliente
-    char partido[sizeof(argv[3] + 2)];
+    char partido[strlen(argv[3] + 2)];
     strcpy(partido, argv[3]);
     strcat(partido, "\0");
 
@@ -61,7 +67,7 @@ int main(int argc, char *argv[]) {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
         printf("Socket creation failed...\n");
-        exit(NOT_OK);
+        exit((int)NOT_OK);
     }
     server = gethostbyname(argv[1]);
 
@@ -77,7 +83,7 @@ int main(int argc, char *argv[]) {
     // connect the client socket to server socket
     if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) != 0) {
         printf("Connection with the server failed...\n");
-        exit(NOT_OK);
+        exit((int)NOT_OK);
     }
 
     // Leo bienvenida del servidor
@@ -92,10 +98,7 @@ int main(int argc, char *argv[]) {
     // funcion para operar
     operar(sockfd);
 
-    // close the socket
-    // close(sockfd);
-
-    return (int)TODO_OK;
+    exit((int)TODO_OK);
 }
 
 void SignalInterruptHandler(int n_signal) {
@@ -114,6 +117,9 @@ void operar(int sockfd) {
 
     // indice para leer buffer de consola
     int n;
+
+    // Lo uso para validar ingresos de float
+    char *endptr;
 
     // Leo el menu
     memset(buff, 0, MAX);
@@ -135,8 +141,6 @@ void operar(int sockfd) {
 
 
         while (code < 1 || code > 7){
-            //memset(buff, 0, MAX);
-            //read(sockfd, buff, sizeof(buff));
             printf("%s", invalid_option);
 
             memset(buff, 0, MAX);
@@ -160,7 +164,14 @@ void operar(int sockfd) {
                 memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
+		while(strlen(buff) < 2) {
+			printf("Ingrese una patente valida: ");
+			memset(buff, 0, MAX);
+	                n = 0;
+        	        while ((buff[n++] = getchar()) != '\n');
+		}
 		buff[n-1] = '\0';
+
 		escribirMensaje(sockfd, id_patente, buff, strlen(buff));
 
                 // Server solicita monto
@@ -173,6 +184,14 @@ void operar(int sockfd) {
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
                 buff[n-1] = '\0';
+		while(strlen(buff) == 0
+			&& strtol(buff, &endptr, 10) == 0) {
+			printf("Ingrese un monto valido: ");
+			memset(buff, 0, MAX);
+        	        n = 0;
+	                while ((buff[n++] = getchar()) != '\n');
+                	buff[n-1] = '\0';
+		}	
 		escribirMensaje(sockfd, id_monto, buff, strlen(buff));
 
                 // Server solicita nombre de titular
@@ -184,6 +203,12 @@ void operar(int sockfd) {
                 memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
+		while(strlen(buff) < 2) {
+			printf("Ingrese un nombre valido: ");
+                        memset(buff, 0, MAX);
+                        n = 0;
+                        while ((buff[n++] = getchar()) != '\n');
+                }
 		buff[n-1] = '\0';
                 escribirMensaje(sockfd, id_nombre_titular, buff, strlen(buff));
 
@@ -210,6 +235,12 @@ void operar(int sockfd) {
                 memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
+                while(strlen(buff) < 2) {
+                        printf("Ingrese una patente valida: ");
+                        memset(buff, 0, MAX);
+                        n = 0;
+                        while ((buff[n++] = getchar()) != '\n');
+                }
 		buff[n-1] = '\0';
                 escribirMensaje(sockfd, id_patente, buff, strlen(buff));
 
@@ -228,6 +259,13 @@ void operar(int sockfd) {
                 memset(buff, 0, MAX);
                 n = 0;
                 while ((buff[n++] = getchar()) != '\n');
+                while(strlen(buff) < 2) {
+                        printf("Ingrese una patente valida: ");
+                        memset(buff, 0, MAX);
+                        n = 0;
+                        while ((buff[n++] = getchar()) != '\n');
+                }
+
                 buff[n-1] = '\0';
                 escribirMensaje(sockfd, id_patente, buff, strlen(buff));
 

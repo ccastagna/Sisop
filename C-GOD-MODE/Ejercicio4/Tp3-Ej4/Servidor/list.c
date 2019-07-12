@@ -1,3 +1,16 @@
+// Script Tp3-Ej4-Servidor
+
+// Trabajo práctico 3
+// Ejercicio 4
+// Primera Reentrega
+
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
+
 #include "list.h"
 
 /** PRIMITIVAS */
@@ -66,6 +79,7 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, t_cmp cmp) {
 }
 
 int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp) {
+    
     if(listaVacia(p) == TODO_OK){
         return (int)LISTA_VACIA;
     }
@@ -75,6 +89,7 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
     }
 
     if(*p) {
+	(*p)->info.nombre_titular =  d->nombre_titular;
         (*p)->info.cantidad_multas += 1;
         (*p)->info.monto_total += monto;
         return (int)TODO_OK;
@@ -141,7 +156,7 @@ int compararPartido (const t_dato *d1, const t_dato *d2) {
 
 int compararSuspender(const t_dato *d1, const t_dato *d2){
 	if(strcmp(d1->partido, d2->partido) == 0){
-		if (d2->monto_total > 20000 || d2->cantidad_multas > 3){
+		if (d1->monto_total > 20000 || d1->cantidad_multas > 3){
 			return (int)TODO_OK;
 		}
 	}

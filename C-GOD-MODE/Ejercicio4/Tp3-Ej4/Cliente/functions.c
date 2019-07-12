@@ -1,4 +1,33 @@
+// Script Tp3-Ej4-Cliente
+
+// Trabajo práctico 3
+// Ejercicio 4
+// Primera Reentrega
+
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
+
 #include "functions.h"
+
+/*
+ * Muestra la ayuda para el cliente.
+ */
+void mostrarAyuda(char *nombre) {
+   printf("\nSistema utilizado para conectarse al servidor central de infracciones de La Plata.\n\n");
+   printf("Para iniciar el cliente ejecute lo siguiente:\n");
+   printf("\t%s <ip_servidor> <puerto_servidor> <partido>\n\n", nombre);
+   printf("Parametros:\n");
+   printf("\t<ip_servidor>: IP o nombre del equipo del servidor al que se desea conectar.\n");
+   printf("\t<puerto_servidor>: puerto del servidor al que se desea conectar.\n");
+   printf("\t<partido>: partido desde el que se desea operar.\n\n");
+   printf("Ejemplo:\n");
+   printf("\t%s localhost 8181 Lanus\n\n", nombre);
+}
+
 
 /*
  * Funcion utilizada para escribir mensajes al cliente.

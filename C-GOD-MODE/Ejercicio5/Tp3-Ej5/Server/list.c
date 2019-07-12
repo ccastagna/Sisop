@@ -1,3 +1,16 @@
+// Script Tp3-Ej5-Server
+
+// Trabajo Practico 3
+// Ejercicio 5
+// Primera Reentrega
+
+// Integrantes del Equipo
+// Franco Dario Scarpello 37842567
+// Federico Piacentini 36258738
+// Hernan Baini 32883285
+// Miguel Amengual 35991055
+// Cristian Castagna 3739869
+
 #include "list.h"
 
 /** PRIMITIVAS */
@@ -19,7 +32,7 @@ int listaVacia(const t_list *pl){
 int insertarAlFinal(t_list *p, const t_dato *d) {
     t_nodo *nue = ( t_nodo *) malloc( sizeof(t_nodo) );
     if ( nue == NULL ) {
-        return SIN_MEMORIA;
+        return (int)SIN_MEMORIA;
     }
     while ( *p ) {
         p = &(*p)->sig;
@@ -27,12 +40,12 @@ int insertarAlFinal(t_list *p, const t_dato *d) {
     nue->info = *d;
     nue->sig = NULL;
     *p = nue;
-    return TODO_OK;
+    return (int)TODO_OK;
 }
 
 int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
     if(listaVacia(pl) == TODO_OK){
-        return LISTA_VACIA;
+        return (int)LISTA_VACIA;
     }
 
     while (*pl && cmp(d, &(*pl)->info) != TODO_OK) {
@@ -43,14 +56,14 @@ int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
         nae = *pl;
         *pl = nae->sig;
         free(nae);
-        return TODO_OK;
+        return (int)TODO_OK;
     }
-    return NOT_OK;
+    return (int)NOT_OK;
 }
 
 int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, t_cmp cmp) {
     if(listaVacia(p) == TODO_OK){
-        return LISTA_VACIA;
+        return (int)LISTA_VACIA;
     }
 
     while ( *p && cmp( &(*p)->info, d ) != TODO_OK ){
@@ -59,15 +72,15 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, t_cmp cmp) {
 
     if(*p) {
         *d = (*p)->info;
-        return TODO_OK;
+        return (int)TODO_OK;
     }
 
-    return NOT_OK;
+    return (int)NOT_OK;
 }
 
 int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp) {
     if(listaVacia(p) == TODO_OK){
-        return LISTA_VACIA;
+        return (int)LISTA_VACIA;
     }
 
     while ( *p && cmp( &(*p)->info, d ) != TODO_OK ){
@@ -77,54 +90,57 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
     if(*p) {
         (*p)->info.cantidad_multas += 1;
         (*p)->info.monto_total += monto;
-        return TODO_OK;
+        return (int)TODO_OK;
     }
 
-    return NOT_OK;
+    return (int)NOT_OK;
 }
 
-int mostrarLista(t_list *p, const char *partido, t_cmp cmp){
+int mostrarLista(t_buffer *buffer, t_list *p, const char *partido, t_cmp2 cmp){
      if(listaVacia(p) == TODO_OK){
-        return LISTA_VACIA;
+        return (int)LISTA_VACIA;
     }
-
     int flag = 0;
-    t_dato *d = (t_dato *) malloc (sizeof (t_dato *));
+   ;
+    t_dato d;
     t_list *aux = p;
 
-    while (*aux){
-        *d = (*aux)->info;
-        if (cmp( d, partido) == TODO_OK) {
-            flag = 1;
-            printf("%s\t%.2f\n", d->patente, d->monto_total);
+    while (*aux != NULL){
+        d = (*aux)->info;
+        if (cmp( &d, partido) == TODO_OK) {
+	    flag = 1;
+            strcpy(buffer->multas[buffer->cantMultas].patente, d.patente);
+            buffer->multas[buffer->cantMultas].monto_total = d.monto_total;
+            buffer->cantMultas++;
+            printf("%s\t%.2f\n", d.patente, d.monto_total);
             fflush(stdin);
         }
         aux = &(*aux)->sig;
     }
 
     if (flag == 1){
-        return TODO_OK;
+        return (int)TODO_OK;
     } else {
-        return NOT_OK;
+        return (int)NOT_OK;
     }
 }
 
 /** FUNCIONES EXTRA */
 
-int *compararPatente (const t_dato *d1, const t_dato *d2) {
+int compararPatente (const t_dato *d1, const t_dato *d2) {
     if (strcmp(d1->partido, d2->partido) == 0 &&
         strcmp(d1->patente, d2->patente) == 0) {
-        return TODO_OK;
+        return (int)TODO_OK;
     } else {
-        return NOT_OK;
+        return (int)NOT_OK;
     }
 }
 
 
-int *compararPartido (const t_dato *d1, const char *d2) {
+int compararPartido (const t_dato *d1, const char *d2) {
     if (strcmp(d1->partido, d2) == 0) {
-        return TODO_OK;
+        return (int)TODO_OK;
     } else {
-        return NOT_OK;
+        return (int)NOT_OK;
     }
 }
