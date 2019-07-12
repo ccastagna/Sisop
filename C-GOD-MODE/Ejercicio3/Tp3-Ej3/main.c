@@ -10,28 +10,30 @@
 #include <pthread.h>
 #include <fcntl.h>
 #include <errno.h>
-// typedef struct{
-//     char plate[7];
-//     char camera[4];
-//     int speed;
-//     int hour;
-//     int minutes;
-// }t_dato;
 
 FILE *pf_archLog;
+FILE *fpToTraffic; // TODOS
+char fifoPath[300];
 
+
+t_cola cola;
+
+int count = 0;
 // ATRIBUTOS - VAR GLOBALES PARA EL PROCESO DEMONIO
 pid_t pid = 0;
 pid_t sid = 0;
 
 // ATRIBUTOS - VAR GLOBALES
 int didDayChange = FALSE;
-struct tm *fixedDate; // ESTA FECHA SIRVE PARA REFERENCIA
+struct tm *fixedDate; // Esta fecha sirve para referencia
+struct tm *today; // Esta fecha es la fecha actual
 
+struct DateAndEndOfDay{
+    struct tm *fixedDate;
+    int isANewDay;
+};
+struct DateAndEndOfDay *DateAndEndOfDayPointer;
 #define OPCION_SALIR 0
-#define PILA_FIN 16
-#define COLA_INI 1
-#define COLA_FIN 7
 #define SI 1
 #define NO 0
 void imprimirMenu(){
@@ -112,21 +114,24 @@ int isEndOfTheDay(struct tm fixedDate, struct tm currentDate) {
 }
 
 //FUNCION PARA EL HILO
-void *validateEndOfDay(void *fixedDate) {
+void *validateEndOfDay(struct DateAndEndOfDay *pointer) {
     int mustChange = FALSE;
     while(TRUE){
-        struct tm *parameter = (struct tm*)fixedDate;
+        //struct tm *parameter = (struct tm*) (*pointer).fixedDate;
         time_t auxCurrent = time(NULL);
         struct tm currentDate = *localtime(&auxCurrent);
-        mustChange = isEndOfTheDay(*parameter, currentDate);
+        mustChange = isEndOfTheDay( *(DateAndEndOfDayPointer->fixedDate) , currentDate);
         //Se agrega este if para ver si realmente debo cambiar, ya que sino, solo por un seg estaria en TRUE
         if(mustChange){
-            didDayChange = TRUE;
+            DateAndEndOfDayPointer->isANewDay = TRUE;
+
             fprintf(pf_archLog,"Cambio de dia \n");
-            printf("CAMBIO DE DIA");
+            printf("CAMBIO DE DIA \n");
         }
         fflush(stdout); // es para imprimir por consola si no ponemos el \n
-        printf("%d:%d:%d \n", currentDate.tm_hour, currentDate.tm_min,currentDate.tm_sec );
+        printf("Dia Actual%d %d:%d:%d \n", currentDate.tm_mday, currentDate.tm_hour, currentDate.tm_min,currentDate.tm_sec );
+        printf("Dia Fijo%d %d:%d:%d \n", (*(DateAndEndOfDayPointer->fixedDate)).tm_mday, (*(DateAndEndOfDayPointer->fixedDate)).tm_hour, (*(DateAndEndOfDayPointer->fixedDate)).tm_min, (*(DateAndEndOfDayPointer->fixedDate)).tm_sec );
+
         sleep(1);
     }
 }
@@ -160,11 +165,11 @@ static void createDaemonProcess(){
     close(STDERR_FILENO);
 }
 
-void createThreadDateTime(){
+void createThreadDateTime(struct DateAndEndOfDay *pointer){
     int thread;
     pthread_t threads[NUM_THREADS];
-
-    thread = pthread_create(&threads[0], NULL, validateEndOfDay, (void *) fixedDate);
+    //thread = pthread_create(&threads[0], NULL, validateEndOfDay, (void *) fixedDate);
+    thread = pthread_create(&threads[0], NULL, validateEndOfDay, &threads[0]);
 
     if (thread) {
         printf("Error:unable to create thread, %d\n", thread);
@@ -213,14 +218,16 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
     readbuf[read_bytes] = '\0';
 
     readString(readbuf, value);
-    fprintf(fpToTraffic,"%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
+    fprintf(fpToTraffic,"%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed); // TODO : DESCOMENTAR
     printf("%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
 
     if(isMaximumSpeedExceded(MAXIMUM_SPEED, (*value).speed) ){
-        time_t auxCurrent = time(NULL);
-        struct tm currentDate = *localtime(&auxCurrent);
-        (*value).hour = currentDate.tm_hour;
-        (*value).minutes = currentDate.tm_min;
+        time_t auxBillDate = time(NULL);
+        struct tm billDate = *localtime(&auxBillDate);
+        (*value).hour = billDate.tm_hour;
+        (*value).minutes = billDate.tm_min;
+        (*value).hour = (*today).tm_hour;
+        (*value).minutes = (*today).tm_min;
         acolar(cola,value);
     }
 
@@ -235,16 +242,21 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
     return value;
 }
 
+void pruebaThread(){
+    while(TRUE){
+        readFromFifoFile(fifoPath, fpToTraffic, &cola);
+        //count++;
+        //sleep(1);
+    }
+}
 int main(int argc, char* argv[]) {
 
     // Cola para menejar el procesamiento del archivo
-    t_cola cola;
     crearCola(&cola);
     // Archivo de Log
     pf_archLog = createFile("Log.txt","a+");
-    fprintf(pf_archLog,"Inicio");
+    fprintf(pf_archLog,"Inicio\n");
     // Punteros a los archivos que voy a manejar
-    FILE *fpToTraffic; // TODOS
     FILE *fpToCreateTrafficTicket; // SOLO LOS QUE SUPERAN VEL MAX
 
     // Variable local para manejar la logica de apertura de archivo
@@ -257,7 +269,6 @@ int main(int argc, char* argv[]) {
     fixedDate = malloc(sizeof(struct tm));
     *fixedDate = *localtime(&auxFixedDate);
 
-    char fifoPath[300];
     char temp;
     int opcion;
     do
@@ -297,7 +308,6 @@ int main(int argc, char* argv[]) {
 
             scanf("%c",&temp); // temp statement to clear buffer
             scanf("%[^\n]",fifoPath);
-            printf("Selected Path: %s", fifoPath); // TODO: BORRAR
             break;
         case 4:
             exit(0);
@@ -305,18 +315,31 @@ int main(int argc, char* argv[]) {
         }
     }while(opcion!=3);
 
-    //char fifoFileName[] = "Prueba.txt"; // TODO: BORRAR
-
     // TODO: Descomentar cuando funcione FIFO
     // createDaemonProcess();
-    createThreadDateTime();
+    // createThreadDateTime(DateAndEndOfDayPointer);
 
     //Variables para el FIFO
     /* Create the FIFO if it does not exist */
     mknod(fifoPath, S_IFIFO|0640, 0);
     t_dato dataFromQueue;
-    //t_dato *readedFromFifo = NULL;
+
     // INICIO DE SERVICIO
+    // Variable para el manejo de fechas
+    time_t auxCurrent = time(NULL);
+    today = malloc(sizeof(struct tm));
+    *today = *localtime(&auxCurrent);
+
+    int thread;
+    pthread_t threads[NUM_THREADS];
+    thread = pthread_create(&threads[0], NULL, pruebaThread, &threads[0]);
+
+    if (thread) {
+        printf("Error:unable to create thread, %d\n", thread);
+        exit(-1);
+    }
+
+    //pthread_exit(NULL); // Cierra el Thread
     while(TRUE) {
         if(isFirstTime) {
             fprintf(pf_archLog,"Iniciando Archivo Trafico Diario \n");
@@ -328,23 +351,35 @@ int main(int argc, char* argv[]) {
                 fpToTraffic = createFile(fileName,"w+");
             }
         }
+        //if(isEndOfTheDay(fixedDate,currentDate)DateAndEndOfDayPointer->isANewDay == TRUE){
+        fflush(stdout);
+        //printf("Dia Fijo %d %d:%d:%d \n", (*fixedDate).tm_mday, (*fixedDate).tm_hour, (*fixedDate).tm_min,(*fixedDate).tm_sec );
+        //printf("Dia Actual %d %d:%d:%d \n", (*today).tm_mday, (*today).tm_hour, (*today).tm_min,(*today).tm_sec );
+        auxCurrent = time(NULL);
+        *today = *localtime(&auxCurrent);
+        //sleep(1);
+        if(isEndOfTheDay(*fixedDate,(*today)) == TRUE ){
 
-
-        if(didDayChange){
-            didDayChange = FALSE; // Pongo como que ya lo lei, para que no actualice todo
+            //DateAndEndOfDayPointer->isANewDay = FALSE; // Pongo como que ya lo lei, para que no actualice todo
             char *fileName = createNameOfFile(DAILY_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
+            printf("\n FILENAME DIARIO : %s", fileName);
+            printf("\n CONTADOR: %d \n", count);
             fpToCreateTrafficTicket = createFile(fileName,"w+");
-            while(!colaVacia(&cola)){
+
+            while(colaVacia(&cola) == FALSE){
                 desacolar(&cola, &dataFromQueue);
                 fprintf(fpToCreateTrafficTicket,"%s %d:%d %d/%d/%d %d km/h $%.0lf\n", dataFromQueue.plate, dataFromQueue.hour, dataFromQueue.minutes, (*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR  , dataFromQueue.speed, calculateAmount(AMOUNT,MAXIMUM_SPEED,dataFromQueue.speed));
+                printf("%s %d:%d %d/%d/%d %d km/h $%.0lf\n", dataFromQueue.plate, dataFromQueue.hour, dataFromQueue.minutes, (*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR  , dataFromQueue.speed, calculateAmount(AMOUNT,MAXIMUM_SPEED,dataFromQueue.speed));
             }
             fclose(fpToCreateTrafficTicket);
             fclose(fpToTraffic);
+            auxFixedDate = time(NULL);
+            //*fixedDate = *localtime(&auxFixedDate);
             *fixedDate = *localtime(&auxFixedDate); // Actualizo la fecha de referencia
             isFirstTime = TRUE;
         }
 
-        readFromFifoFile(fifoPath, fpToTraffic, &cola);
+        //readFromFifoFile(fifoPath, fpToTraffic, &cola);
     }
-    // return 0;
+    return 0;
 }
