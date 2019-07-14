@@ -154,9 +154,11 @@ int ingresarMulta(char *patente, char *partido, char *nombre_titular, const floa
     strcpy(dato.patente, patente);
 
     if (existePatente(&dato, pl) == TODO_OK){
-	dato.nombre_titular = nombre_titular;
+	dato.nombre_titular = malloc(sizeof(nombre_titular));
+	strcpy(dato.nombre_titular, nombre_titular);
         buscarYActualizar (pl, &dato, monto, compararPatente);
     } else {
+        dato.nombre_titular = malloc(sizeof(nombre_titular));
 	strcpy(dato.nombre_titular, nombre_titular);
         dato.cantidad_multas = 1;
         dato.monto_total = monto;
