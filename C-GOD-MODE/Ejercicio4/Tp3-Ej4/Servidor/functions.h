@@ -1,6 +1,3 @@
-#ifndef FUNCTIONS_H_INCLUDED
-#define FUNCTIONS_H_INCLUDED
-
 // Script Tp3-Ej4-Servidor
 
 // Trabajo práctico 3
@@ -14,6 +11,8 @@
 // Miguel Amengual 35991055
 // Cristian Castagna 3739869
 
+#ifndef FUNCTIONS_H_INCLUDED
+#define FUNCTIONS_H_INCLUDED
 
 #include <string.h>
 #include <stdlib.h>

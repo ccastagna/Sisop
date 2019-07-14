@@ -2,7 +2,7 @@
 
 // Trabajo práctico 3
 // Ejercicio 4
-// Primera-Reentrega
+// Primera Reentrega
 
 // Integrantes del Equipo
 // Franco Dario Scarpello 37842567

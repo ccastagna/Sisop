@@ -2,7 +2,7 @@
 
 // Trabajo practico 3
 // Ejercicio 2
-// Entrega
+// Primera Reentrega
 
 // Integrantes del Equipo
 // Franco Dario Scarpello 37842567
@@ -10,6 +10,7 @@
 // Hernan Baini 32883285
 // Miguel Amengual 35991055
 // Cristian Castagna 3739869
+
 #include "colaDinamica.h"
 void crearCola(t_cola *cola){
     cola->pri=NULL;
