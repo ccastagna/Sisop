@@ -31,12 +31,13 @@ int listaVacia(const t_list *pl){
 
 int insertarAlFinal(t_list *p, const t_dato *d) {
     t_nodo *nue = ( t_nodo *) malloc( sizeof(t_nodo) );
-    if ( nue == NULL ) {
+    if (nue == NULL) {
         return (int)SIN_MEMORIA;
     }
-    while ( *p ) {
+    while (*p != NULL) {
         p = &(*p)->sig;
     }
+    
     nue->info = *d;
     nue->sig = NULL;
     *p = nue;
@@ -44,14 +45,14 @@ int insertarAlFinal(t_list *p, const t_dato *d) {
 }
 
 int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
-    if(listaVacia(pl) == TODO_OK){
+    if(listaVacia(pl) == (int)TODO_OK){
         return (int)LISTA_VACIA;
     }
 
-    while (*pl && cmp(d, &(*pl)->info) != TODO_OK) {
+    while (*pl && cmp(d, &(*pl)->info) != (int)TODO_OK) {
         pl = &(*pl)->sig;
     }
-    if (*pl && cmp(d, &(*pl)->info) == TODO_OK) {
+    if (*pl && cmp(d, &(*pl)->info) == (int)TODO_OK) {
         t_nodo *nae;
         nae = *pl;
         *pl = nae->sig;
@@ -62,14 +63,14 @@ int eliminarPorClave(t_list *pl, const t_dato *d, t_cmp cmp){
 }
 
 int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, t_cmp cmp) {
-    if(listaVacia(p) == TODO_OK){
+    if(listaVacia(p) == (int)TODO_OK){
         return (int)LISTA_VACIA;
     }
 
-    while ( *p && cmp( &(*p)->info, d ) != TODO_OK ){
-        p = &(*p)->sig;
+    while ( *p && cmp( &(*p)->info, d ) != (int)TODO_OK ){
+       	p = &(*p)->sig;
     }
-
+   
     if(*p) {
         *d = (*p)->info;
         return (int)TODO_OK;
@@ -80,15 +81,15 @@ int buscarEnListaNoOrdenadaPorClave (t_list *p, t_dato *d, t_cmp cmp) {
 
 int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp) {
     
-    if(listaVacia(p) == TODO_OK){
+    if(listaVacia(p) == (int)TODO_OK){
         return (int)LISTA_VACIA;
     }
 
-    while ( *p && cmp( &(*p)->info, d ) != TODO_OK ){
+    while ( *p && cmp( &(*p)->info, d ) != (int)TODO_OK ){
         p = &(*p)->sig;
     }
 
-    if(*p) {
+    if(*p != NULL) {
 	(*p)->info.nombre_titular =  d->nombre_titular;
         (*p)->info.cantidad_multas += 1;
         (*p)->info.monto_total += monto;
@@ -99,7 +100,7 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
 }
 
 int mostrarLista(t_list *p, t_dato *busqueda, t_cmp cmp, char *response){
-     if(listaVacia(p) == TODO_OK){
+     if(listaVacia(p) == (int)TODO_OK){
         return (int)LISTA_VACIA;
     }
 
@@ -112,7 +113,7 @@ int mostrarLista(t_list *p, t_dato *busqueda, t_cmp cmp, char *response){
 
     while(*aux != NULL){
         dato = (*aux)->info;
-        if (cmp(&dato, busqueda) == TODO_OK){
+        if (cmp(&dato, busqueda) == (int)TODO_OK){
                 strcat(response, dato.patente);
 		if(busqueda->cantidad_multas == 0){
                 	strcat(response, " ");
