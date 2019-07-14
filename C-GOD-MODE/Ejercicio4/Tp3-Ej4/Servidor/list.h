@@ -1,6 +1,3 @@
-#ifndef LIST_H_INCLUDED
-#define LIST_H_INCLUDED
-
 // Script Tp3-Ej4-Servidor
 
 // Trabajo práctico 3
@@ -13,6 +10,10 @@
 // Hernan Baini 32883285
 // Miguel Amengual 35991055
 // Cristian Castagna 3739869
+
+#ifndef LIST_H_INCLUDED
+#define LIST_H_INCLUDED
+
 
 #include <stdio.h>
 #include <stdlib.h>

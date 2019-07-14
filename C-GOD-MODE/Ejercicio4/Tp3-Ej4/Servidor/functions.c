@@ -148,14 +148,18 @@ int normalizarCadena(char *buf, int len) {
 int ingresarMulta(char *patente, char *partido, char *nombre_titular, const float monto, t_list *pl){
     FILE *fp;
     t_dato dato;
-    dato.partido = partido;
-    dato.patente = patente;
+    dato.patente = malloc(sizeof(patente));
+    dato.partido = malloc(sizeof(partido));
+    strcpy(dato.partido, partido);
+    strcpy(dato.patente, patente);
 
     if (existePatente(&dato, pl) == TODO_OK){
-	dato.nombre_titular = nombre_titular;
+	dato.nombre_titular = malloc(sizeof(nombre_titular));
+	strcpy(dato.nombre_titular, nombre_titular);
         buscarYActualizar (pl, &dato, monto, compararPatente);
     } else {
-	dato.nombre_titular = nombre_titular;
+        dato.nombre_titular = malloc(sizeof(nombre_titular));
+	strcpy(dato.nombre_titular, nombre_titular);
         dato.cantidad_multas = 1;
         dato.monto_total = monto;
         insertarAlFinal(pl, &dato);
@@ -183,7 +187,8 @@ int existePatente(t_dato *dato, t_list *pl) {
 */
 int registrosSuspender(t_list *pl, char *partido, char *buff){
     t_dato dato;
-    dato.partido = partido;
+    dato.partido = malloc(sizeof(partido));
+    strcpy(dato.partido, partido);
     dato.cantidad_multas = 3;
     dato.monto_total= 20000;
 
@@ -199,8 +204,10 @@ int registrosSuspender(t_list *pl, char *partido, char *buff){
 */
 int saldarMulta(char *patente, char *partido, t_list *pl){
     t_dato dato;
-    dato.patente = patente;
-    dato.partido = partido;
+    dato.patente = malloc(sizeof(patente));
+    dato.partido = malloc(sizeof(partido));
+    strcpy(dato.patente, patente);
+    strcpy(dato.partido, partido);
     FILE *fp;
 
     if (existePatente(&dato, pl) == TODO_OK){
@@ -219,14 +226,17 @@ int saldarMulta(char *patente, char *partido, t_list *pl){
 */
 int buscarMontoTotal(char *patente, char *partido, t_list *pl, char *buff){
     t_dato dato;
-    dato.patente = patente;
-    dato.partido = partido;
+    dato.patente = malloc(sizeof(patente));
+    dato.partido = malloc(sizeof(partido));
+    strcpy(dato.patente, patente);
+    strcpy(dato.partido, partido);
 
     int flag = 0;
     char *aux_monto = malloc(12);
     *aux_monto = '\0';
     char *aux_cantidad_multas = malloc(5);
-    *aux_cantidad_multas = '\0';	
+    *aux_cantidad_multas = '\0';
+    
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
 	flag = 1;
         strcat(buff, dato.patente);
@@ -255,7 +265,8 @@ int buscarMontoTotal(char *patente, char *partido, t_list *pl, char *buff){
 */
 int verMontoTotalInfractores(t_list *pl, char *partido, char *buff) {
     t_dato dato;
-    dato.partido = partido;
+    dato.partido = malloc(sizeof(partido));
+    strcpy(dato.partido, partido);
     dato.cantidad_multas = 0;
 
     if (mostrarLista(pl, &dato, compararPartido, buff) == (int)TODO_OK){

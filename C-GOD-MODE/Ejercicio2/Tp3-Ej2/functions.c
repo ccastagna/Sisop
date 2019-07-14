@@ -2,7 +2,7 @@
 
 // Trabajo practico 3
 // Ejercicio 2
-// Entrega
+// Primera Reentrega
 
 // Integrantes del Equipo
 // Franco Dario Scarpello 37842567
@@ -216,8 +216,10 @@ void* threadRoutine(void *arg)
           if (atoi(idStr) == thread->ids_array[pos])
           {
             found++;
+          }else{
+            pos++;
           }
-          pos++;
+
         }
 
         if (!found)
