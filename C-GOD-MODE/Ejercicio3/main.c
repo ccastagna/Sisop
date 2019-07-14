@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <signal.h>
 
 /**
     Trabajo Práctico 3
@@ -22,6 +23,8 @@ Integrantes del Equipo:
     Miguel Amengual 35991055
     Cristian Castagna 37398696
 */
+// Punteros a los archivos que voy a manejar
+FILE *fpToCreateTrafficTicket; // SOLO LOS QUE SUPERAN VEL MAX
 FILE *fpToTraffic; // TODOS
 char fifoPath[300];
 t_cola cola;
@@ -148,7 +151,9 @@ static void createDaemonProcess(){
     if (pid > 0)// its the parent process
     {
         printf("PID para detener demonio: %d \n", pid);
+        printf("Ejecute: kill %d, en una terminal para terminar el proceso.\n", pid);
         exit(0); //terminate the parent process succesfully
+        kill(pid,SIGTERM);
     }
 
     umask(0);//unmasking the file mode
@@ -159,8 +164,8 @@ static void createDaemonProcess(){
         exit(1);
     }
 
-    close(STDIN_FILENO);
-    close(STDERR_FILENO);
+    //close(STDIN_FILENO);
+    //close(STDERR_FILENO);
 }
 
 t_dato *readString (char *fifoString, t_dato *value) {
@@ -186,6 +191,18 @@ t_dato *readString (char *fifoString, t_dato *value) {
     return value;
 }
 
+void cerrarArchivos(){
+    printf("Cerrando Archivos\n");
+    if(fpToCreateTrafficTicket != NULL){
+        fclose(fpToCreateTrafficTicket);
+    }
+    if(fpToTraffic != NULL){
+        fclose(fpToTraffic);
+    }
+    printf("Fin de Programa\n");
+    exit(0);
+}
+
 t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
     t_dato *value =(t_dato*)malloc(sizeof(t_dato));
     if(value==NULL){
@@ -202,7 +219,7 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
     readString(readbuf, value);
     
     if((*value).speed != 0){
-        fprintf(fpToTraffic,"%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
+        fprintf(fpToTraffic,"%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);      
         printf("%s %s %d km/h\n", (*value).plate, (*value).camera, (*value).speed);
     }
 
@@ -223,6 +240,7 @@ void *pruebaThread(){
         readFromFifoFile(fifoPath, fpToTraffic, &cola);
     }
 }
+
 void imprimirDescripcion(){
     printf("Utilice -H o -h o -? para ayuda\n");
     printf("Utilice -D o -d para la descripcion del programa\n");
@@ -247,6 +265,7 @@ void imprimirAyuda(char *nombrePrograma){
     printf("Ej.: AAA123 cam5 44\n");
     printf("O bien ejecutar pasando la url del fifo.\n");
     printf("Ej.: %s Desktop/Prueba/ArchivoFifo \n", nombrePrograma);
+    printf("Para finalizar el proceso ejecute: kill pid, en donde pid es el pid del proceso\n");
 }
 int empiezaConGuion(char *array){
     if(array[0] == '-'){
@@ -260,8 +279,10 @@ int main(int argc, char* argv[]) {
     // Cola para menejar el procesamiento del archivo
     crearCola(&cola);
 
-    // Punteros a los archivos que voy a manejar
-    FILE *fpToCreateTrafficTicket; // SOLO LOS QUE SUPERAN VEL MAX
+    // struct sigaction action;
+    // memset(&action, 0, sizeof(action));
+    // action.sa_handler = term;
+    // sigaction(SIGTERM, &action, NULL);
 
     // Variable local para manejar la logica de apertura de archivo
     int isFirstTime = TRUE;
@@ -337,10 +358,12 @@ int main(int argc, char* argv[]) {
     pthread_t threads[NUM_THREADS];
     thread = pthread_create(&threads[0], NULL, pruebaThread, &threads[0]);
 
-    if (thread) {
-        printf("Error:unable to create thread, %d\n", thread);
-        exit(-1);
+    if (signal(SIGTERM, cerrarArchivos) < 0) {
+        printf("\nError al asociar la signal SIGTERM con el handler.");
+        return -1;
     }
+
+
 
     while(TRUE) {
         if(isFirstTime) {
