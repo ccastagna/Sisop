@@ -31,10 +31,10 @@ int listaVacia(const t_list *pl){
 
 int insertarAlFinal(t_list *p, const t_dato *d) {
     t_nodo *nue = ( t_nodo *) malloc( sizeof(t_nodo) );
-    if ( nue == NULL ) {
+    if (nue == NULL) {
         return (int)SIN_MEMORIA;
     }
-    while ( *p ) {
+    while (*p != NULL) {
         p = &(*p)->sig;
     }
     nue->info = *d;
@@ -87,7 +87,7 @@ int buscarYActualizar (t_list *p, const t_dato *d, const float monto, t_cmp cmp)
         p = &(*p)->sig;
     }
 
-    if(*p) {
+    if(*p != NULL) {
         (*p)->info.cantidad_multas += 1;
         (*p)->info.monto_total += monto;
         return (int)TODO_OK;

@@ -102,9 +102,12 @@ int escribirArchivo(FILE **fp, t_list *pl){
 int ingresarMulta(char *patente, char *partido, float monto, char *nombre_titular , t_list *pl){
     FILE *fp;
     t_dato dato;
-    dato.partido = partido;
-    dato.patente = patente;
-    dato.nombre_titular = nombre_titular;
+    dato.patente = malloc(sizeof(patente));
+    dato.partido = malloc(sizeof(partido));
+    dato.nombre_titular = malloc(sizeof(nombre_titular));
+    strcpy(dato.partido, partido);
+    strcpy(dato.patente, patente);
+    strcpy(dato.nombre_titular, nombre_titular);
 
     if (existePatente(&dato, pl) == TODO_OK){
         buscarYActualizar (pl, &dato, monto, compararPatente);
@@ -163,8 +166,10 @@ int registrosSuspender(t_buffer *buffer, t_list *pl, char *partido){
 */
 int saldarMulta( char *patente, char *partido, t_list *pl){
     t_dato dato;
-    dato.patente = patente;
-    dato.partido = partido;
+    dato.patente = malloc(sizeof(patente));
+    dato.partido = malloc(sizeof(partido));
+    strcpy(dato.patente, patente);
+    strcpy(dato.partido, partido);
     FILE *fp;
 
     if (existePatente(&dato, pl) == TODO_OK){
@@ -183,8 +188,10 @@ int saldarMulta( char *patente, char *partido, t_list *pl){
 */
 int buscarMontoTotal(t_buffer *buffer, char *patente, char *partido, t_list *pl){
     t_dato dato;
-    dato.patente = patente;
-    dato.partido = partido;
+    dato.patente = malloc(sizeof(patente));
+    dato.partido = malloc(sizeof(partido));
+    strcpy(dato.patente, patente);
+    strcpy(dato.partido, partido);
     if (buscarEnListaNoOrdenadaPorClave (pl, &dato, compararPatente) == TODO_OK){
         strcpy(buffer->multas[0].patente, dato.patente);
         buffer->multas[0].monto_total = dato.monto_total;
