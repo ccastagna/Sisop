@@ -47,6 +47,7 @@ pid_t sid = 0;
 char *fileName;
 // ATRIBUTOS - VAR GLOBALES
 int didDayChange = FALSE;
+int simulatedEndOfDay = FALSE;
 struct tm *fixedDate; // Esta fecha sirve para referencia
 struct tm *today; // Esta fecha es la fecha actual
 
@@ -163,8 +164,8 @@ static void createDaemonProcess(){
 
     if (pid > 0)// its the parent process
     {
-        printf("PID para detener demonio: %d \n", pid);
-        printf("Ejecute: kill %d, en una terminal para terminar el proceso.\n", pid);
+        printf("Para simular fin de dia ejecute: kill %d\n", pid);
+        printf("Para detener el servicio, ejecutar: kill -9 %d\n", pid);
         exit(0); //terminate the parent process succesfully
         kill(pid,SIGTERM);
     }
@@ -204,16 +205,15 @@ t_dato *readString (char *fifoString, t_dato *value) {
     return value;
 }
 
-void cerrarArchivos(){
-    printf("Cerrando Archivos\n");
-    if(fpToCreateTrafficTicket != NULL){
-        fclose(fpToCreateTrafficTicket);
-    }
-    if(fpToTraffic != NULL){
-        fclose(fpToTraffic);
-    }
-    printf("Fin de Programa\n");
-    exit(0);
+void simularFinDia(){
+    printf("Simulacion fin de dia\n");
+    simulatedEndOfDay = TRUE;
+    // if(fpToCreateTrafficTicket != NULL){
+    //     fclose(fpToCreateTrafficTicket);
+    // }
+    // if(fpToTraffic != NULL){
+    //     fclose(fpToTraffic);
+    // }
 }
 
 t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
@@ -281,7 +281,9 @@ void imprimirAyuda(char *nombrePrograma){
     printf("Ej.: AAA123 cam5 44\n");
     printf("O bien ejecutar pasando la url del fifo.\n");
     printf("Ej.: %s Desktop/Prueba/ArchivoFifo \n", nombrePrograma);
-    printf("Para finalizar el proceso ejecute: kill pid, en donde pid es el pid del proceso\n");
+    printf("Para simular fin de dia ejecute: kill %d\n", pid);
+    printf("Para detener el servicio, ejecutar: kill -9 %d\n", pid);
+
 }
 int empiezaConGuion(char *array){
     if(array[0] == '-'){
@@ -374,7 +376,7 @@ int main(int argc, char* argv[]) {
     pthread_t threads[NUM_THREADS];
     thread = pthread_create(&threads[0], NULL, pruebaThread, &threads[0]);
 
-    if (signal(SIGTERM, cerrarArchivos) < 0) {
+    if (signal(SIGTERM, simularFinDia) < 0) {
         printf("\nError al asociar la signal SIGTERM con el handler.");
         return -1;
     }
@@ -394,9 +396,10 @@ int main(int argc, char* argv[]) {
         fflush(stdout);
         auxCurrent = time(NULL);
         *today = *localtime(&auxCurrent);
-        if(isEndOfTheDay(*fixedDate,(*today)) == TRUE ){
+        if(isEndOfTheDay(*fixedDate,(*today)) == TRUE || simulatedEndOfDay == TRUE ){
+            simulatedEndOfDay = FALSE;
             fileName = createNameOfFile(DAILY_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
-            fpToCreateTrafficTicket = createFile(fileName,"w+");
+            fpToCreateTrafficTicket = createFile(fileName,"a+");
 
             while(colaVacia(&cola) == FALSE){
                 desacolar(&cola, &dataFromQueue);
