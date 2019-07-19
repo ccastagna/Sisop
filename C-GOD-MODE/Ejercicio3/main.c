@@ -44,7 +44,7 @@ t_cola cola;
 // ATRIBUTOS - VAR GLOBALES PARA EL PROCESO DEMONIO
 pid_t pid = 0;
 pid_t sid = 0;
-
+char *fileName;
 // ATRIBUTOS - VAR GLOBALES
 int didDayChange = FALSE;
 struct tm *fixedDate; // Esta fecha sirve para referencia
@@ -250,7 +250,10 @@ t_dato *readFromFifoFile(char *fifoFileName, FILE *fpToTraffic, t_cola *cola){
 
 void *pruebaThread(){
     while(TRUE){
+        
         readFromFifoFile(fifoPath, fpToTraffic, &cola);
+        fclose(fpToTraffic);
+        fpToTraffic = fopen(fileName, "a+");
     }
 }
 
@@ -381,7 +384,7 @@ int main(int argc, char* argv[]) {
     while(TRUE) {
         if(isFirstTime) {
             isFirstTime = FALSE;
-            char *fileName = createNameOfFile(TRAFFIC_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
+            fileName = createNameOfFile(TRAFFIC_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
             if( access(  fileName , F_OK ) != -1 ) {
                 fpToTraffic = createFile(fileName,"a+");
             } else {
@@ -392,7 +395,7 @@ int main(int argc, char* argv[]) {
         auxCurrent = time(NULL);
         *today = *localtime(&auxCurrent);
         if(isEndOfTheDay(*fixedDate,(*today)) == TRUE ){
-            char *fileName = createNameOfFile(DAILY_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
+            fileName = createNameOfFile(DAILY_FILE_NAME,(*fixedDate).tm_mday, (*fixedDate).tm_mon + OFFSET_MONTH, (*fixedDate).tm_year + OFFSET_YEAR);
             fpToCreateTrafficTicket = createFile(fileName,"w+");
 
             while(colaVacia(&cola) == FALSE){

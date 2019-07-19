@@ -39,6 +39,13 @@ int main(int argc, char *argv[])
   unsigned int *min_stock_array;
   unsigned int *real_stock_array;
 
+ if (argc == 1)
+  {
+    printf("La aplicacion espera 3 parametros la cantidad de threads a crear, \nel directorio donde se encuentran los archivos a procesar y el archivo maestro de articulos. \n");
+    printf("Por ejemplo: ./Tp3-Ej2 5 ../files ../files/articulos.txt\n");
+    printf("Para mas informacion, ejecute de la siguiente manera: ./-h \n");
+    return 0;
+  }
 
   if (!strcmp(argv[1], "-h"))
   {
