@@ -2,7 +2,6 @@ lanus|ABC123|Pepe|5|10000.00
 lanus|CDD999|Raul|2|100.50
 lanus|HIA333|Marcos|3|100.50
 lanus|GGG222|Franco|2|20000.00
-lanus|EEE111|Pedro|4|10000.00
 lanus|BBB555|Miguel|2|25000.00
 la matanza|PEP111|Matos|2|100.99
 la matanza|PAP900|Franco|1|100.92
@@ -12,3 +11,5 @@ haedo|ADC345|Norberto|1|2000.00
 palomar|aaa000|pepe|1|2000.00
 lanus|YUI193|Franco|1|100.82
 palomar|AEA999|pedro|1|6999.00
+lanus|HUG543|Pinocho|1|432.00
+lanus|RRR999|juan|1|999999.00

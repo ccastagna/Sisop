@@ -143,14 +143,14 @@ int main(int argc, char *argv[])
 	
         switch (code) {
             case 1:
-		getchar();
+		        getchar();
                 do {
-		    printf("Ingrese la patente: ");
-		    memset(patente, 0, 100);
+		            printf("Ingrese la patente: ");
+		            memset(patente, 0, 100);
                     i = 0;
                     while((patente[i++] = getchar()) != '\n');
                 }while(strlen(patente) > 8 || strlen(patente) < 2);
-		patente[i-1] = '\0';
+		        patente[i-1] = '\0';
 
                 fflush(stdin);
                 strcpy(buffer->multas[0].patente, patente);
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
                 printf("Ingrese el nombre del titular: ");
                 fflush(stdin);
 
-		getchar();
+		        getchar();
                 do{
 	            memset(nombre_titular, 0, 100);
                     i=0;
@@ -203,9 +203,17 @@ int main(int argc, char *argv[])
                 devolverSemaforo(clientSem);
                 break;
             case 3:
+                getchar();
+                do {
+		            printf("Ingrese la patente: ");
+		            memset(patente, 0, 100);
+                    i = 0;
+                    while((patente[i++] = getchar()) != '\n');
+                }while(strlen(patente) > 8 || strlen(patente) < 2);
+		        patente[i-1] = '\0';
 
-                printf("Ingrese la patente: ");
-                scanf("%7s", buffer->multas[0].patente);
+                fflush(stdin);
+                strcpy(buffer->multas[0].patente, patente);
                 
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
@@ -216,14 +224,25 @@ int main(int argc, char *argv[])
                 devolverSemaforo(clientSem);
                 break;
             case 4:
+                getchar();
+                do {
+		            printf("Ingrese la patente de 2 a 7 caracteres: ");
+		            memset(patente, 0, 100);
+                    i = 0;
+                    while((patente[i++] = getchar()) != '\n');
+                    printf("\n");
+                }while(strlen(patente) > 8 || strlen(patente) < 2);
+		        patente[i-1] = '\0';
+                fflush(stdin);
 
-                printf("Ingrese la patente: ");
-                scanf("%7s", buffer->multas[0].patente);
+                strcpy(buffer->multas[0].patente, patente);
                 
                 devolverSemaforo(requestSem);
                 pedirSemaforo(responseSem);
 
-                printf("%s\t%.2f\n", buffer->multas[0].patente, buffer->multas[0].monto_total);
+                if(buffer->multas[0].monto_total != 0){
+                    printf("%s\t%s\t%.2f\t%d\n", buffer->multas[0].patente, buffer->multas[0].nombre_titular, buffer->multas[0].monto_total, buffer->multas[0].cantidad_multas);
+                }
                 printf("%s",buffer->msg);
 
                 limpiarBuffer(buffer);
